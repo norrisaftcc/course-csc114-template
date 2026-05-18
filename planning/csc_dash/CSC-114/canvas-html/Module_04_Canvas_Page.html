@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: AI Agents - Sprint 2</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #00897b;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #00897b;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #00897b;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #e0f2f1;
+            border-left: 5px solid #009688;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+            color: #000;
+            border: 3px solid #ff9800;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2em;
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card h3 {
+            color: #00897b;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #009688;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #00897b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #00695c;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #00897b;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #00897b;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #00897b;
+        }
+
+        .checklist {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #e0f2f1;
+            border: 2px solid #009688;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #00695c;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        .velocity-box {
+            background: #e8eaf6;
+            border: 3px solid #3f51b5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .velocity-box h4 {
+            margin-top: 0;
+            color: #1a237e;
+            font-size: 1.3em;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>🤖 Module 4: AI Agents - You're No Longer a Sprint Newbie!</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">Autonomous agent development + Improved sprint practices</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 7-8</div>
+        <div class="meta-item">📊 Points: 75 total</div>
+        <div class="meta-item">🏃 Sprint #2</div>
+        <div class="meta-item">📅 Sprint Due: End of Week 8</div>
+    </div>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🚀 Sprint 2: You're No Longer a Sprint Newbie!</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>You've done this before—use what you learned.</strong> Sprint 1 taught you the mechanics (planning, standups, burndown). Sprint 2 is about applying your retrospective insights and demonstrating improvement. This is where velocity-based planning and continuous improvement become real.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🎯 What's Different in Sprint 2</h3>
+        <ul class="deliverable-list">
+            <li><strong>Velocity-Based Planning:</strong> Use Sprint 1 velocity to inform capacity (not guess)</li>
+            <li><strong>Retrospective Action Items:</strong> Your Sprint 1 retro should drive Sprint 2 improvements</li>
+            <li><strong>Estimation Refinement:</strong> Reference estimates adjusted based on Sprint 1 actuals</li>
+            <li><strong>Process Improvements Visible:</strong> I should see evidence you learned from Sprint 1</li>
+            <li><strong>Still Messy? That's Normal:</strong> Better than Sprint 1? That's growth.</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.1em; margin: 15px 0; font-weight: bold;">
+        Sprint 2 isn't about perfection—it's about demonstrating you can learn from experience and apply retrospective insights to improve your process.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 4.1:</strong> Design autonomous agents with decision-making capabilities</li>
+        <li><strong>MLO 4.2:</strong> Execute Sprint 2 with velocity-based planning and retrospective-driven improvements</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> CLO3 (Design agents), CLO5 (Document process)</p>
+</div>
+
+<!-- Velocity-Based Planning -->
+<div class="velocity-box">
+    <h4>📊 Planning Sprint 2 with Sprint 1 Velocity</h4>
+    <p><strong>Your Sprint 1 velocity informs Sprint 2 capacity. Here's how to use it smartly:</strong></p>
+    <ul>
+        <li><strong>If Sprint 1 velocity was 12:</strong> Plan 11-13 points for Sprint 2 (conservative growth)</li>
+        <li><strong>Don't over-commit because you're confident:</strong> Planning 25 points after a 12-point Sprint 1? That's hubris, not data.</li>
+        <li><strong>Account for Sprint 1 lessons:</strong> If retro said "underestimated debugging time," buffer accordingly</li>
+        <li><strong>AI agents are fun but tricky:</strong> Decision trees get complex fast. Give yourself debugging time.</li>
+    </ul>
+    <p style="font-weight: bold; margin-top: 15px;">
+        Evidence of velocity-based planning = higher PM grade. "I did 12 points last sprint, so I planned 12 this sprint" is smart. "I planned 20 because I feel confident" is not.
+    </p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint 2 Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build autonomous AI agent with decision-making capabilities, applying Sprint 1 retrospective insights"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 7): Sprint Planning</h4>
+                <p>Review Sprint 1 velocity and retro action items, estimate user stories using adjusted reference estimates, commit to capacity based on Sprint 1 data</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-9</div>
+            <div class="timeline-content">
+                <h4>Days 2-9: Daily Development & Standups</h4>
+                <p>Code AI agent system, log daily standups (min 8 of 10 days), update sprint board, maintain burndown chart, implement retro action items</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 8): Sprint Review & Retro</h4>
+                <p>Demo working agent, compare Sprint 1 vs Sprint 2 velocity, complete retrospective analyzing improvement, submit all sprint artifacts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (75 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 7-8: AI Agent Development Sprint</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">50 points</span>
+            <span class="sprint-badge">Sprint #2</span>
+            <span class="pm-badge">PM: 50%</span>
+        </div>
+
+        <h4>Technical Deliverable (25 points):</h4>
+        <ul>
+            <li><strong>Code Quality (10 pts):</strong> Runs without errors, well-commented, follows best practices</li>
+            <li><strong>Functionality (10 pts):</strong> Agent demonstrates autonomous decision-making, implements chosen architecture (reactive/deliberative/hybrid), responds appropriately to environment</li>
+            <li><strong>Analysis (5 pts):</strong> Decision-making algorithm documented, architecture justified, README updated with usage examples</li>
+        </ul>
+
+        <h4>PM Execution (20 points):</h4>
+        <ul>
+            <li><strong>Sprint Planning (5 pts):</strong> Velocity-based capacity, Sprint 1 retro action items incorporated, clear goal</li>
+            <li><strong>Daily Execution (8 pts):</strong> 8+ standups logged, sprint board updated, burndown maintained</li>
+            <li><strong>Sprint Artifacts (5 pts):</strong> GitHub Issues created, planning doc shows learning from Sprint 1, professional presentation</li>
+            <li><strong>Velocity Comparison (2 pts):</strong> Sprint 1 vs Sprint 2 velocity tracked, analysis of estimation improvements</li>
+        </ul>
+
+        <h4>Improvement Bonus (5 points):</h4>
+        <ul>
+            <li>Sprint completed on time (2 pts)</li>
+            <li>Evidence of retro action items implemented (2 pts)</li>
+            <li>Estimation accuracy improved from Sprint 1 (1 pt)</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Sprint Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Sprint Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Sprint Planning Template</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>Week 8: Sprint 2 Review & Retrospective</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">25 points</span>
+            <span class="pm-badge">PM: 100%</span>
+        </div>
+
+        <p><strong>What you'll reflect on:</strong></p>
+        <ul>
+            <li><strong>Sprint 1 vs Sprint 2 Comparison:</strong> Velocity comparison, estimation accuracy improvement, process improvements implemented</li>
+            <li><strong>What Went Well:</strong> 3-5 specific wins (technical + process)</li>
+            <li><strong>What Didn't Go Well:</strong> 3-5 challenges encountered</li>
+            <li><strong>Action Item Follow-Through:</strong> Did you implement Sprint 1 retro action items? Evidence?</li>
+            <li><strong>Root Cause Analysis:</strong> Use "5 Whys" for persistent problems</li>
+            <li><strong>Action Items for Sprint 3:</strong> Specific, measurable improvements</li>
+            <li><strong>Estimation Learning:</strong> Reference estimate adjustments based on Sprint 2 actuals</li>
+        </ul>
+
+        <p><strong>Grading (25 pts):</strong></p>
+        <ul>
+            <li>Sprint 1 vs Sprint 2 Analysis (8 pts)</li>
+            <li>Honest Reflection (7 pts)</li>
+            <li>Actionable Improvements (6 pts)</li>
+            <li>Estimation Learning (4 pts)</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Retrospective Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Retrospective Template</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🤖 AI Agent Architectures You'll Explore</h2>
+    <ul>
+        <li><strong>Reactive Agents:</strong> Simple stimulus-response, no internal state (reflex-based behavior)</li>
+        <li><strong>Deliberative Agents:</strong> Plan ahead, maintain world model, reason about goals</li>
+        <li><strong>Hybrid Agents:</strong> Combine reactive and deliberative (most practical for real systems)</li>
+        <li><strong>Decision Trees:</strong> Structured decision-making with branching logic</li>
+        <li><strong>State Machines:</strong> Finite states with transition rules</li>
+        <li><strong>Goal-Based Agents:</strong> Define objectives, search for paths to achieve them</li>
+        <li><strong>Multi-Agent Systems (Intro):</strong> Multiple agents interacting, coordination challenges</li>
+    </ul>
+</div>
+
+<!-- PM Integration -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚙️ PM Integration: Continuous Improvement</h2>
+    <p><strong>Sprint 2 is where retrospective-driven improvement becomes tangible:</strong></p>
+    <ul>
+        <li><strong>Sprint 2 Execution with Lessons Learned:</strong> Your planning doc should reference Sprint 1 retro action items. Show me you implemented them.</li>
+        <li><strong>Velocity-Based Capacity Planning:</strong> "Sprint 1 velocity was X, so I planned Y for Sprint 2 because Z" = evidence of data-driven decision-making</li>
+        <li><strong>Retrospective Action Item Tracking:</strong> Did you say "start standups earlier"? Show me you did. Did you say "add buffer for debugging"? Show me in your estimates.</li>
+        <li><strong>Continuous Improvement Mindset:</strong> Not "what went wrong" but "how do we get better"</li>
+    </ul>
+    <p style="font-weight: bold; margin-top: 15px;">
+        The difference between Sprint 1 and Sprint 2 grading: In Sprint 1, I grade on execution. In Sprint 2, I grade on improvement. Show me you learned.
+    </p>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Sprint 2 Completion Checklist</h3>
+    <ul>
+        <li>Review Sprint 1 velocity and retrospective action items</li>
+        <li>Complete sprint planning with velocity-based capacity</li>
+        <li>Create GitHub Issues for all user stories</li>
+        <li>Set up GitHub Project board (To Do, In Progress, Done)</li>
+        <li>Create burndown chart (spreadsheet or tool)</li>
+        <li>Log daily standups (minimum 8 of 10 days)</li>
+        <li>Update sprint board as stories progress</li>
+        <li>Update burndown chart daily</li>
+        <li>Implement AI agent with decision-making algorithm</li>
+        <li>Document agent architecture and behavior</li>
+        <li>Demo working agent (screenshots or video)</li>
+        <li>Calculate Sprint 2 velocity and compare to Sprint 1</li>
+        <li>Complete retrospective with Sprint 1 vs Sprint 2 analysis</li>
+        <li>Document estimation accuracy improvements</li>
+        <li>Submit all artifacts via PR</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's Sprint 2 Success Tips</h4>
+    <ul>
+        <li><strong>Start with Sprint 1 retro review:</strong> What did you say you'd improve? Write those down BEFORE planning Sprint 2.</li>
+        <li><strong>Use velocity data, not feelings:</strong> "I feel like I can do more" isn't planning. "My velocity was 12, so I'll plan 12-13" is.</li>
+        <li><strong>AI agent debugging is time-consuming:</strong> Decision trees with 5+ branches? Plan buffer time for testing edge cases.</li>
+        <li><strong>Show, don't tell, improvement:</strong> Don't just say "I improved estimation." Show me adjusted reference estimates with rationale.</li>
+        <li><strong>Retrospective should compare sprints:</strong> "Sprint 1 velocity: 10. Sprint 2 velocity: 13. Reason: Better estimation + less scope creep."</li>
+        <li><strong>State machines are easier to debug than big if/else trees:</strong> Trust me on this. Draw it out first.</li>
+        <li><strong>Still messy? That's okay:</strong> Better than Sprint 1 = success. Perfection isn't expected until Sprint 3+.</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Sprint 2 Pitfalls</h4>
+    <ul>
+        <li><strong>Ignoring Sprint 1 retro action items:</strong> If your Sprint 2 planning doc doesn't mention Sprint 1 retro, you're missing the point.</li>
+        <li><strong>Planning based on confidence instead of data:</strong> "I learned a lot so I'm planning 25 points" after a 12-point Sprint 1 = recipe for failure.</li>
+        <li><strong>Not comparing sprints in retro:</strong> Sprint 2 retro should explicitly analyze Sprint 1 vs Sprint 2. That's the whole point!</li>
+        <li><strong>Agent complexity explosion:</strong> AI agents get complicated fast. Start simple, add complexity incrementally.</li>
+        <li><strong>Over-engineering decision logic:</strong> A working simple agent beats a broken complex one. Always.</li>
+        <li><strong>Forgetting to update reference estimates:</strong> If Sprint 1 taught you small stories take 4 hours not 2, update your references!</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Note: Sprint 2 Is Where You Prove Sprint 1 Wasn't a Fluke</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Sprint 2 is where you prove Sprint 1 wasn't a fluke. If your retro said "start daily standups earlier," show me you did. If your velocity was 12 in Sprint 1, planning 11-13 for Sprint 2 is smart. Planning 25 because you're confident now? That's hubris.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        AI agents are fun to build but tricky to debug. Decision trees seem simple until you have 10 branches and 3 edge cases you didn't think about. State machines help, but you still need to test thoroughly. Give yourself buffer time for "why is my agent doing that?!" moments.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        <strong>The biggest difference between Sprint 1 and Sprint 2?</strong> In Sprint 1, everyone struggles. In Sprint 2, you see who learns from their struggles. Show me you learned. That's all I'm looking for.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        Stuck on agent architecture? Can't figure out state transitions? #module-04 on Discord, office hours, or email me. Don't spin your wheels—ask.
+    </p>
+</div>
+
+<!-- Process Grading Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚖️ Sprint 2 Grading: What "Improvement" Looks Like</h2>
+    <p><strong>Sprint 2 is still 50/50 (Technical/Process), but process grading focuses on improvement:</strong></p>
+    <ul>
+        <li><strong>Sprint Planning (5 pts):</strong> Did you use velocity data? Are retro action items visible?</li>
+        <li><strong>Daily Execution (8 pts):</strong> Did you implement process improvements from Sprint 1 retro?</li>
+        <li><strong>Sprint Artifacts (5 pts):</strong> Does your planning doc show learning? Are reference estimates updated?</li>
+        <li><strong>Velocity Comparison (2 pts):</strong> Can you articulate why Sprint 2 velocity differs from Sprint 1?</li>
+        <li><strong>Improvement Bonus (5 pts):</strong> Evidence of retro action items implemented = 2 pts. That's 40% of the bonus!</li>
+    </ul>
+    <p style="font-weight: bold; margin-top: 15px;">
+        I'm not grading on perfection. I'm grading on "did you learn from Sprint 1 and apply those lessons?" Show me the learning curve.
+    </p>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+    <h3 style="margin-top: 0;">Ready to Prove Sprint 1 Wasn't a Fluke?</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">Start with your Sprint 1 retrospective. Review your action items, analyze your velocity, and plan Sprint 2 with data-driven confidence!</p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.2em; padding: 15px 30px;">View Sprint Assignment</a>
+    <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Download Planning Template</a>
+    <p style="margin-top: 30px; font-style: italic; color: #666;">
+        "Sprint 2 is where continuous improvement stops being theory and becomes practice." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>

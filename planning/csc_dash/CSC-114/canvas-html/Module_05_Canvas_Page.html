@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Neural Networks - Sprint Mastery</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #f4511e 0%, #d84315 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #f4511e;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #f4511e;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #f4511e;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #fbe9e7;
+            border-left: 5px solid #ff5722;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+            color: #000;
+            border: 3px solid #ff9800;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2em;
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card h3 {
+            color: #f4511e;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #ff5722;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #f4511e;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #d84315;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #f4511e;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #f4511e;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #f4511e;
+        }
+
+        .checklist {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #fbe9e7;
+            border: 2px solid #ff5722;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #d84315;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        .pm-integration-box {
+            background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+            border: 3px solid #9c27b0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .pm-integration-box h3 {
+            margin-top: 0;
+            color: #4a148c;
+            font-size: 1.8em;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>🧠 Module 5: Neural Networks - Sprint 3 Mastery</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">Deep learning foundations + Autonomous sprint execution</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 9-10</div>
+        <div class="meta-item">📊 Points: 75 total</div>
+        <div class="meta-item">🏃 Sprint #3</div>
+        <div class="meta-item">📅 Sprint Due: End of Week 10</div>
+    </div>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🎯 Sprint 3: PM Should Feel Automatic Now</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>No more hand-holding on sprint process.</strong> You've done this twice. The training wheels are off. Sprint 3 is about executing autonomously—you plan, track, and iterate without needing detailed templates or step-by-step guidance.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🚀 What "Autonomous Execution" Means</h3>
+        <ul class="deliverable-list">
+            <li><strong>Self-Directed Planning:</strong> You set the sprint goal and estimate stories without prompting</li>
+            <li><strong>Natural Standups:</strong> Daily updates happen as part of your workflow, not a checkbox</li>
+            <li><strong>Proactive Board Management:</strong> Sprint board updates as you work, not all at the end</li>
+            <li><strong>Burndown as Habit:</strong> Tracking story points feels second nature</li>
+            <li><strong>Sprint Review Focus:</strong> Demo confidently, discuss technical decisions</li>
+            <li><strong>Actionable Retrospective:</strong> Real insights, not just "did it" reflections</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.1em; margin: 15px 0; font-weight: bold;">
+        If you're still struggling with PM mechanics (how to write a standup, what goes in a burndown), we need to talk. Office hours NOW. By Sprint 3, the process should be muscle memory.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 5.1:</strong> Implement neural networks using TensorFlow/Keras for supervised learning tasks</li>
+        <li><strong>MLO 5.2:</strong> Execute complete sprint autonomously with minimal scaffolding</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> CLO1 (Implement ML applications), CLO2 (Evaluate AI model performance)</p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build functional neural network demonstrating deep learning fundamentals and autonomous sprint execution"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 9): Sprint Planning</h4>
+                <p>Set sprint goal, estimate user stories based on Sprint 1-2 velocity, commit to realistic capacity. No template required—you know the drill.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-9</div>
+            <div class="timeline-content">
+                <h4>Days 2-9: Daily Development & Standups</h4>
+                <p>Build neural network with TensorFlow/Keras, implement backpropagation, tune hyperparameters. Log standups as part of daily workflow, update board proactively.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 10): Sprint Review & Retro</h4>
+                <p>Demo working neural network, discuss architecture decisions, calculate velocity, complete retrospective with actionable insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (75 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 9-10: Neural Networks Sprint 3</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">75 points</span>
+            <span class="sprint-badge">Sprint #3</span>
+            <span class="pm-badge">PM: 50%</span>
+        </div>
+
+        <h4>Technical Deliverable (37.5 points):</h4>
+        <ul>
+            <li><strong>Architecture (12 pts):</strong> Neural network properly structured (input, hidden, output layers), activation functions appropriate, model compiled correctly</li>
+            <li><strong>Implementation (15 pts):</strong> Backpropagation working, hyperparameter tuning demonstrated, training/validation split proper, handles overfitting (dropout, L2 regularization)</li>
+            <li><strong>Analysis (10.5 pts):</strong> Training curves analyzed, performance metrics reported, model evaluation thorough, README documents architecture decisions</li>
+        </ul>
+
+        <h4>PM Execution (37.5 points):</h4>
+        <ul>
+            <li><strong>Sprint Planning (7.5 pts):</strong> Clear goal, realistic estimates, capacity-based commitment</li>
+            <li><strong>Daily Execution (15 pts):</strong> 8+ standups logged naturally, sprint board updated proactively, burndown maintained consistently</li>
+            <li><strong>Sprint Artifacts (10 pts):</strong> GitHub Issues complete, planning doc professional, evidence of autonomous execution</li>
+            <li><strong>Retrospective (5 pts):</strong> Actionable insights, honest reflection, process improvements identified</li>
+        </ul>
+
+        <p><strong>PM Integration Focus:</strong> Minimal scaffolding provided. You should execute sprint process without templates. Process quality, not checkbox completion.</p>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Sprint Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Sprint Rubric</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🔬 Neural Network Topics You'll Implement</h2>
+    <ul>
+        <li><strong>Network Architecture:</strong> Input layer, hidden layers, output layer design</li>
+        <li><strong>Activation Functions:</strong> ReLU for hidden layers, sigmoid/softmax for output</li>
+        <li><strong>Backpropagation:</strong> Understanding gradient flow and weight updates</li>
+        <li><strong>Gradient Descent:</strong> Optimization algorithms (SGD, Adam, RMSprop)</li>
+        <li><strong>Overfitting Prevention:</strong> Dropout layers, L2 regularization, early stopping</li>
+        <li><strong>Training Curves:</strong> Loss and accuracy over epochs, identifying overfitting</li>
+        <li><strong>TensorFlow/Keras API:</strong> Sequential models, Dense layers, compilation, fitting</li>
+        <li><strong>Hyperparameter Tuning:</strong> Learning rate, batch size, epochs, layer sizes</li>
+    </ul>
+</div>
+
+<!-- PM Integration Box -->
+<div class="pm-integration-box">
+    <h3>🎯 Sprint 3 PM Integration: Autonomous Execution</h3>
+    <p><strong>You're halfway through the semester. Sprint mechanics should be muscle memory by now.</strong></p>
+    <ul>
+        <li><strong>No Templates Provided:</strong> You know how to plan sprints, write standups, track burndown</li>
+        <li><strong>Process Should Be Habitual:</strong> Standups happen naturally, board updates as you work</li>
+        <li><strong>Focus on Efficiency:</strong> How can you optimize your sprint process? What's working? What's slowing you down?</li>
+        <li><strong>Professional Autonomy:</strong> Less scaffolding = more ownership. This is how real teams work.</li>
+    </ul>
+    <p style="font-weight: bold; margin-top: 15px;">
+        If you're still looking up "how to write a standup" or "what goes in sprint planning," we need to talk. By Sprint 3, these should be automatic. Office hours exist for a reason.
+    </p>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Sprint 3 Completion Checklist</h3>
+    <ul>
+        <li>Complete sprint planning autonomously (no template needed)</li>
+        <li>Create GitHub Issues for all user stories</li>
+        <li>Set up/maintain GitHub Project board</li>
+        <li>Track burndown chart consistently</li>
+        <li>Log daily standups as part of workflow (min 8/10 days)</li>
+        <li>Update sprint board proactively, not retroactively</li>
+        <li>Build neural network with TensorFlow/Keras</li>
+        <li>Implement backpropagation and gradient descent</li>
+        <li>Tune hyperparameters (learning rate, layers, dropout)</li>
+        <li>Generate and analyze training curves</li>
+        <li>Implement overfitting prevention techniques</li>
+        <li>Write comprehensive analysis of model performance</li>
+        <li>Demo working neural network</li>
+        <li>Calculate sprint velocity</li>
+        <li>Complete retrospective with actionable improvements</li>
+        <li>Submit all artifacts via PR</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's Neural Network Implementation Guide</h4>
+    <ul>
+        <li><strong>Start simple:</strong> 1-2 hidden layers, 32-64 neurons each. Complexity later.</li>
+        <li><strong>Expect slow training:</strong> Neural networks take time. Start with small epochs (10-20) to test, then scale up.</li>
+        <li><strong>Your first model will perform poorly:</strong> That's step 1. Optimization is where the art happens.</li>
+        <li><strong>Watch for overfitting:</strong> Training accuracy high, validation accuracy low? You're overfitting. Add dropout or L2.</li>
+        <li><strong>Learning rate matters:</strong> Too high = unstable. Too low = slow. Start with 0.001 and adjust.</li>
+        <li><strong>Visualize training curves:</strong> Plot loss and accuracy. They tell you everything about training dynamics.</li>
+        <li><strong>Keras documentation is your friend:</strong> Don't memorize APIs. Learn to read docs efficiently.</li>
+        <li><strong>PM should be automatic by now:</strong> If you're spending time figuring out sprint mechanics, you're missing the point.</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Sprint 3 Pitfalls</h4>
+    <ul>
+        <li><strong>Treating PM as checkbox exercise:</strong> I can tell if you're just going through motions. Authentic execution only.</li>
+        <li><strong>Not tracking training time:</strong> Neural networks train SLOWLY. Budget your time accordingly.</li>
+        <li><strong>Ignoring overfitting:</strong> High training accuracy doesn't mean good model. Check validation metrics!</li>
+        <li><strong>Random hyperparameters:</strong> Don't just guess. Make deliberate changes and track results.</li>
+        <li><strong>Skipping retrospective depth:</strong> "Sprint went fine" isn't a retro. What SPECIFICALLY can you improve?</li>
+        <li><strong>Over-engineering architecture:</strong> 10 hidden layers won't make your model better. Start simple.</li>
+        <li><strong>Not using early stopping:</strong> Let the model tell you when it's done training. Don't hardcode epochs.</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Honest Talk About Sprint 3 and Neural Networks</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        You're halfway through the semester. Sprint mechanics should be muscle memory by now. If you're still struggling with PM basics—how to write a standup, what goes in a sprint plan—we need to talk. <strong>Sprint 3 is about autonomous execution, not following templates.</strong>
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Neural networks are where ML gets REAL. This is the foundation for everything modern: computer vision, natural language processing, generative AI. The math is intimidating at first. Don't worry about understanding backpropagation derivations perfectly—focus on implementation and intuition. The theory deepens with practice.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        <strong>Expect your first model to train slowly and perform poorly.</strong> That's not failure. That's step 1. Optimization—tuning hyperparameters, adjusting architecture, preventing overfitting—is the art. Every data scientist has watched a model train for hours only to get 60% accuracy. Welcome to deep learning.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        If your sprint process feels forced or mechanical, something's wrong. It should feel like a natural workflow by now. If it doesn't, office hours. Let's fix it.
+    </p>
+</div>
+
+<!-- Process Grading Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚖️ Sprint 3 Grading: Autonomous Execution Expected</h2>
+    <p>Sprint 3 grading reflects higher expectations for PM execution:</p>
+    <ul>
+        <li><strong>Quality over templates:</strong> No templates provided. You should know the process by now.</li>
+        <li><strong>Proactive execution:</strong> Evidence of real-time board updates, not retroactive logging.</li>
+        <li><strong>Professional autonomy:</strong> Less scaffolding = more responsibility. Own your sprint.</li>
+        <li><strong>Process optimization:</strong> Retro should include insights on improving YOUR sprint efficiency.</li>
+        <li><strong>Habitual, not forced:</strong> Standups, burndown, board updates should feel natural.</li>
+    </ul>
+    <p><strong>The shift:</strong> Sprint 1 was learning the process. Sprint 2 was practicing with support. Sprint 3 is autonomous execution. You're a professional developer now—act like it.</p>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+    <h3 style="margin-top: 0;">Ready for Sprint 3?</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">You know the drill. Plan your sprint, build your neural network, execute autonomously. No more training wheels.</p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.2em; padding: 15px 30px;">View Sprint Assignment</a>
+    <a href="/courses/[COURSE_ID]/modules" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Back to Module List</a>
+    <p style="margin-top: 30px; font-style: italic; color: #666;">
+        "Neural networks are where intuition meets mathematics. Build, train, iterate, learn." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>

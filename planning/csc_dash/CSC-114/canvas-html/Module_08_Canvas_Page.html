@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 8: Capstone & Portfolio Defense</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #5e35b1 0%, #4527a0 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            border: 3px solid #311b92;
+        }
+
+        .module-header h1 {
+            margin: 0 0 15px 0;
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            font-size: 1em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.25);
+            padding: 10px 18px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #5e35b1;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #5e35b1;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #5e35b1;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #ede7f6;
+            border-left: 5px solid #673ab7;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+            color: #000;
+            border: 4px solid #ff6f00;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2.2em;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 12px;
+            margin: 8px 0;
+            background: #fff8e1;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 3px solid #5e35b1;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .assignment-card h3 {
+            color: #5e35b1;
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #5e35b1;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .capstone-badge {
+            background: #d32f2f;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .button-primary {
+            background: #5e35b1;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #4527a0;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #5e35b1;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.2em;
+            border: 3px solid #4527a0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #5e35b1;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #5e35b1;
+            font-size: 1.3em;
+        }
+
+        .checklist {
+            background: #fff8e1;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #e8eaf6;
+            border: 3px solid #5e35b1;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #4527a0;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        .portfolio-box {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border: 3px solid #9c27b0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .portfolio-box h3 {
+            margin-top: 0;
+            color: #6a1b9a;
+            font-size: 1.8em;
+        }
+
+        .journey-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 3px solid #1976d2;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .journey-section h3 {
+            margin-top: 0;
+            color: #0d47a1;
+            font-size: 1.8em;
+        }
+
+        .epic-banner {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+            border: 4px solid #8b0000;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .epic-banner h2 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .epic-banner p {
+            font-size: 1.3em;
+            margin: 15px 0 0 0;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .module-header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>🏆 Module 8: Capstone & Portfolio Defense</h1>
+    <p style="font-size: 1.3em; margin: 15px 0; font-weight: bold;">The final integration: Prove you're an ML professional + Process portfolio master</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 15-16</div>
+        <div class="meta-item">📊 Points: 175 total</div>
+        <div class="meta-item">🏃 Sprint #6 (FINAL)</div>
+        <div class="meta-item">🎯 ALL CLOs (CLO1-CLO5)</div>
+    </div>
+</div>
+
+<!-- Epic Banner -->
+<div class="epic-banner">
+    <h2>🎓 THIS IS IT: YOUR ML PROFESSIONAL AUDITION</h2>
+    <p>
+        Everything you've learned—k-NN in Week 1, your chaotic Sprint 1, the sprint where it finally clicked—culminates here.
+    </p>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🚀 Sprint 6: Prove You're an ML Professional</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>This isn't just a coding project—it's a PM showcase.</strong> The capstone proves you can build complex ML systems. The process portfolio proves you can MANAGE building ML systems. Employers hire for both.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🎯 What Makes Sprint 6 Different</h3>
+        <ul class="deliverable-list">
+            <li><strong>NO templates provided:</strong> You create your own sprint planning docs</li>
+            <li><strong>NO scaffolding:</strong> You design the project structure from scratch</li>
+            <li><strong>NO reminders:</strong> Full autonomous project management</li>
+            <li><strong>Process Portfolio required:</strong> Document your PM journey Sprint 1→6</li>
+            <li><strong>Integration challenge:</strong> Multiple ML techniques working together</li>
+            <li><strong>CTS-289 readiness:</strong> This portfolio proves you're ready for capstone</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.15em; margin: 20px 0; font-weight: bold; color: #b71c1c;">
+        Your process portfolio is 40% of the capstone grade. This is NOT optional. This is your PM resume.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 8.1:</strong> Integrate multiple ML techniques into cohesive production system</li>
+        <li><strong>MLO 8.2:</strong> Execute fully autonomous sprint with professional PM artifacts</li>
+        <li><strong>MLO 8.3:</strong> Demonstrate PM growth through process portfolio documentation</li>
+        <li><strong>MLO 8.4:</strong> Present technical work and PM journey in professional format</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> ALL (CLO1: Implementation, CLO2: Evaluation, CLO3: Ethical Analysis, CLO4: Communication, CLO5: PM Documentation)</p>
+</div>
+
+<!-- Process Portfolio Section -->
+<div class="portfolio-box">
+    <h3>📊 Your PM Journey: From Chaos to Competence</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">
+        <strong>The process portfolio is 40% of your capstone grade.</strong> This isn't busywork—it's proof that you can manage complex projects independently. Here's what you'll document:
+    </p>
+
+    <h4 style="color: #6a1b9a; margin-top: 20px;">Required Portfolio Components:</h4>
+    <ul style="line-height: 1.8;">
+        <li><strong>Velocity Evolution Chart:</strong> Show Sprint 1→6 velocity with trend line. Narrative: What changed?</li>
+        <li><strong>Estimation Accuracy Analysis:</strong> Compare estimated vs. actual story points. Show improvement over time.</li>
+        <li><strong>Retrospective Insights:</strong> 5-7 key insights from retros that actually changed your process</li>
+        <li><strong>Action Items Implemented:</strong> Evidence you acted on retrospective findings (with before/after examples)</li>
+        <li><strong>PM Skills Growth Narrative:</strong> 500-word reflection answering "What did I learn about managing ML projects?"</li>
+        <li><strong>Professional PM Artifacts:</strong> Your best sprint planning doc, burndown chart, retrospective (showing mastery)</li>
+        <li><strong>Future Application:</strong> How you'll apply PM skills in CTS-289 capstone (250 words)</li>
+    </ul>
+
+    <h4 style="color: #6a1b9a; margin-top: 20px;">What "Good" Looks Like:</h4>
+    <ul style="line-height: 1.8;">
+        <li>Velocity chart shows clear progression (not flat)</li>
+        <li>Honest reflection about Sprint 1 struggles + what you changed</li>
+        <li>Specific examples: "After Sprint 2 retro, I started breaking stories into smaller chunks (3-5 pts instead of 8-13), which improved completion rate by 40%"</li>
+        <li>Professional presentation suitable for job interview portfolio</li>
+        <li>Evidence of continuous improvement mindset</li>
+    </ul>
+
+    <p style="font-size: 1.1em; margin-top: 20px; font-weight: bold; color: #6a1b9a;">
+        This portfolio proves you're ready for CTS-289. Future employers will ask "Can you manage your own work?" This is your answer.
+    </p>
+</div>
+
+<!-- Journey Section -->
+<div class="journey-section">
+    <h3>🗺️ Your Semester Journey: Where You've Been</h3>
+    <p style="font-size: 1.05em; margin: 15px 0;">
+        Take a moment to appreciate how far you've come:
+    </p>
+    <ul style="line-height: 1.8; font-size: 1.05em;">
+        <li><strong>Week 1:</strong> You learned k-NN and thought "This is just math." (It's not just math.)</li>
+        <li><strong>Week 2:</strong> User stories felt forced. Now you write them naturally.</li>
+        <li><strong>Sprint 1:</strong> Chaotic. You over-committed, forgot standups, and your burndown was a mess.</li>
+        <li><strong>Sprint 2:</strong> Better. You learned from Sprint 1, adjusted your estimates.</li>
+        <li><strong>Sprint 3-5:</strong> The PM process became muscle memory. You focused more on ML.</li>
+        <li><strong>Sprint 6:</strong> You're managing complex integration projects without templates. That's growth.</li>
+    </ul>
+    <p style="font-size: 1.1em; margin-top: 20px; font-weight: bold; color: #0d47a1;">
+        Your process portfolio tells this story with data. Velocity charts, retrospectives, and growth narratives prove you're not the same student who started Week 1.
+    </p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint 6 Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build production-ready ML integration system + comprehensive process portfolio demonstrating PM mastery"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 15): Autonomous Sprint Planning</h4>
+                <p>NO template provided. Create your own sprint planning doc, define project scope, estimate stories, set realistic capacity, commit to sprint backlog. Begin process portfolio data collection.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-8</div>
+            <div class="timeline-content">
+                <h4>Days 2-8: Development & Portfolio Building</h4>
+                <p>Implement capstone project (multi-technique ML integration), log daily standups, maintain sprint board/burndown, compile process portfolio (velocity charts, retro insights, growth narrative). Work on both technical AND portfolio deliverables concurrently.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">9</div>
+            <div class="timeline-content">
+                <h4>Day 9 (Thursday, Week 16): Presentation Prep</h4>
+                <p>Finalize technical demo, complete process portfolio, prepare 15-minute presentation (7 min technical + 5 min PM journey + 2 min ethics + Q&A buffer)</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 16): Final Presentation & Defense</h4>
+                <p>Deliver presentation, defend technical decisions, showcase PM growth, answer questions, submit all artifacts. Sprint 6 velocity recorded. Celebrate semester completion!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (175 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 15-16: Capstone AI Project (Sprint #6)</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">100 points</span>
+            <span class="sprint-badge">Final Sprint</span>
+            <span class="capstone-badge">CAPSTONE</span>
+            <span class="pm-badge">Process Portfolio: 40%</span>
+        </div>
+
+        <h4>Technical Implementation (60 points):</h4>
+        <ul>
+            <li><strong>Multi-Technique Integration (25 pts):</strong> Combine 2+ ML approaches (classification + regression + neural nets OR vision + NLP). Techniques must work together cohesively.</li>
+            <li><strong>Code Quality & Architecture (15 pts):</strong> Production-ready structure, modular design, comprehensive documentation, follows best practices, runs without errors</li>
+            <li><strong>Model Evaluation (12 pts):</strong> Rigorous testing, comparison of approaches, justification of model selection, comprehensive metrics</li>
+            <li><strong>Ethical Analysis (8 pts):</strong> Identify limitations, discuss bias/fairness concerns, propose mitigation strategies, address real-world deployment considerations</li>
+        </ul>
+
+        <h4>Process Portfolio (40 points):</h4>
+        <ul>
+            <li><strong>Velocity Evolution (8 pts):</strong> Chart showing Sprint 1-6 with trend analysis and narrative explanation</li>
+            <li><strong>Estimation Accuracy (7 pts):</strong> Data comparing estimated vs. actual, evidence of improvement, lessons learned</li>
+            <li><strong>Retrospective Insights (8 pts):</strong> 5-7 key insights that changed your process, with specific examples</li>
+            <li><strong>Action Items Evidence (7 pts):</strong> Proof you implemented retro action items (before/after comparisons)</li>
+            <li><strong>PM Growth Narrative (6 pts):</strong> 500-word reflection on managing ML projects, honest and insightful</li>
+            <li><strong>Professional Artifacts (4 pts):</strong> Best examples of sprint planning, burndown, retrospective showing mastery</li>
+        </ul>
+
+        <p style="margin-top: 20px;"><strong>Submission Requirements:</strong></p>
+        <ul>
+            <li>Complete codebase with README (technical implementation)</li>
+            <li>Process portfolio document (PDF or Markdown)</li>
+            <li>Sprint artifacts (planning doc, burndown chart, standups log)</li>
+            <li>Demo video or comprehensive screenshots</li>
+            <li>Ethical analysis document</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Capstone Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Capstone Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Process Portfolio Template</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>Week 16: Final Presentation & Defense</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">75 points</span>
+            <span class="capstone-badge">PRESENTATION</span>
+        </div>
+
+        <h4>Presentation Structure (15 minutes total):</h4>
+        <ul>
+            <li><strong>Part 1: Technical Showcase (7 minutes, 35 pts):</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Problem statement and approach (2 min)</li>
+                    <li>Implementation and architecture (3 min)</li>
+                    <li>Results, evaluation, and model selection (2 min)</li>
+                </ul>
+            </li>
+            <li><strong>Part 2: PM Journey (5 minutes, 25 pts):</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Show velocity evolution chart (Sprint 1→6)</li>
+                    <li>Share 2-3 key retrospective insights that changed your process</li>
+                    <li>Demonstrate PM growth with specific examples</li>
+                    <li>Explain how you'll apply PM skills in CTS-289</li>
+                </ul>
+            </li>
+            <li><strong>Part 3: Ethical Analysis (2 minutes, 10 pts):</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Limitations and bias concerns</li>
+                    <li>Real-world deployment considerations</li>
+                </ul>
+            </li>
+            <li><strong>Part 4: Q&A Defense (5-10 minutes, included in scoring):</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Answer technical questions about implementation</li>
+                    <li>Defend design decisions</li>
+                    <li>Discuss alternative approaches considered</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Grading Breakdown:</h4>
+        <ul>
+            <li><strong>Technical Content (35 pts):</strong> Clarity, depth, accuracy, demonstrates mastery (47%)</li>
+            <li><strong>PM Journey (25 pts):</strong> Shows growth, uses data, actionable insights (33%)</li>
+            <li><strong>Presentation Skills (15 pts):</strong> Delivery, visuals, time management, professionalism (20%)</li>
+        </ul>
+
+        <p style="margin-top: 20px; font-weight: bold;">Presentation Format: Live (in-class) or recorded video. Slides required. Visual aids encouraged.</p>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Presentation Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Presentation Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Presentation Template</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🔬 Technical Requirements: Multi-Technique Integration</h2>
+    <p><strong>Your capstone must integrate 2+ ML techniques into a cohesive system. Examples:</strong></p>
+
+    <h4 style="color: #5e35b1; margin-top: 20px;">Option A: Classification + Regression + Neural Networks</h4>
+    <ul>
+        <li>Classification model to categorize data</li>
+        <li>Regression model to predict continuous values</li>
+        <li>Neural network for complex pattern recognition</li>
+        <li>Compare performance across techniques for shared task</li>
+    </ul>
+
+    <h4 style="color: #5e35b1; margin-top: 20px;">Option B: Computer Vision + NLP</h4>
+    <ul>
+        <li>Image classification/object detection system</li>
+        <li>Text analysis/sentiment analysis component</li>
+        <li>Integration: Multi-modal analysis (e.g., meme analysis, product reviews with images)</li>
+    </ul>
+
+    <h4 style="color: #5e35b1; margin-top: 20px;">Required Technical Components:</h4>
+    <ul>
+        <li><strong>End-to-End ML Pipeline:</strong> Data preprocessing, feature engineering, model training, evaluation, inference</li>
+        <li><strong>Model Comparison:</strong> Justify why you selected specific techniques over alternatives</li>
+        <li><strong>Production-Ready Code:</strong> Modular structure, error handling, documentation, reproducible results</li>
+        <li><strong>Comprehensive Evaluation:</strong> Multiple metrics, cross-validation, performance analysis</li>
+        <li><strong>Visualization:</strong> Charts showing model performance, feature importance, results</li>
+    </ul>
+
+    <p style="margin-top: 20px; font-weight: bold; color: #5e35b1;">
+        This is a capstone. Ambitious scope is expected. Show everything you've learned this semester.
+    </p>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Capstone Completion Checklist</h3>
+    <h4 style="color: #e65100;">Technical Deliverables:</h4>
+    <ul>
+        <li>Multi-technique ML system implemented and tested</li>
+        <li>All code runs without errors, well-documented</li>
+        <li>Comprehensive README with setup instructions</li>
+        <li>Model evaluation with multiple metrics</li>
+        <li>Ethical analysis document completed</li>
+        <li>Demo video or screenshots showing system in action</li>
+    </ul>
+
+    <h4 style="color: #e65100; margin-top: 20px;">Process Portfolio Deliverables:</h4>
+    <ul>
+        <li>Velocity evolution chart (Sprint 1-6) created</li>
+        <li>Estimation accuracy analysis completed</li>
+        <li>5-7 retrospective insights documented with examples</li>
+        <li>Evidence of action items implemented (before/after)</li>
+        <li>500-word PM growth narrative written</li>
+        <li>Professional PM artifacts compiled (planning, burndown, retro)</li>
+        <li>Future application essay (250 words) completed</li>
+    </ul>
+
+    <h4 style="color: #e65100; margin-top: 20px;">Sprint 6 Execution:</h4>
+    <ul>
+        <li>Sprint planning completed (autonomous, no template)</li>
+        <li>GitHub Issues created for all user stories</li>
+        <li>Sprint board maintained (To Do, In Progress, Done)</li>
+        <li>Burndown chart tracked throughout sprint</li>
+        <li>Daily standups logged (minimum 8 of 10 days)</li>
+        <li>Sprint velocity calculated and recorded</li>
+    </ul>
+
+    <h4 style="color: #e65100; margin-top: 20px;">Presentation:</h4>
+    <ul>
+        <li>Slides prepared (technical + PM journey + ethics)</li>
+        <li>Demo ready (live or video)</li>
+        <li>Velocity chart included in PM section</li>
+        <li>Practiced presentation (15-minute target)</li>
+        <li>Q&A preparation (anticipate technical questions)</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's Capstone Survival Guide</h4>
+    <ul style="line-height: 1.8;">
+        <li><strong>Start with scope definition:</strong> Define your problem clearly Day 1. Ambitious is good; impossible is bad.</li>
+        <li><strong>40% PM isn't optional:</strong> Budget 40% of your time on process portfolio. This isn't extra—it's core.</li>
+        <li><strong>Compile portfolio as you go:</strong> Don't wait until Day 9 to gather Sprint 1-5 data. Do it daily.</li>
+        <li><strong>Show honest growth:</strong> "Sprint 1 was chaos, here's what I changed" is BETTER than "I was perfect."</li>
+        <li><strong>Technical integration matters:</strong> Don't just run 3 unrelated models. They should work together meaningfully.</li>
+        <li><strong>Presentation velocity chart is required:</strong> This is the visual proof of your PM growth. Make it clear.</li>
+        <li><strong>Ethical analysis is NOT an afterthought:</strong> Real ML systems have real consequences. Address them.</li>
+        <li><strong>Practice your presentation:</strong> 15 minutes goes fast. Rehearse to avoid going over.</li>
+        <li><strong>Q&A is where you shine:</strong> Thoughtful answers to hard questions demonstrate deep understanding.</li>
+        <li><strong>This is your portfolio piece:</strong> You'll show this to employers. Make it professional.</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Capstone Pitfalls</h4>
+    <ul style="line-height: 1.8;">
+        <li><strong>Ignoring process portfolio until last day:</strong> It's 40% of grade! You'll fail if you skip it.</li>
+        <li><strong>Vague PM growth narrative:</strong> "I got better at PM" isn't enough. Use specific examples with data.</li>
+        <li><strong>Over-scoping the technical project:</strong> 10 days isn't enough for your dream ML system. Be realistic.</li>
+        <li><strong>Treating techniques as independent:</strong> "I ran k-NN, then I ran a neural net" isn't integration.</li>
+        <li><strong>Skipping ethical analysis:</strong> Required for full credit. "No ethical issues" is never true.</li>
+        <li><strong>Not practicing presentation:</strong> Fumbling through slides in front of class loses points.</li>
+        <li><strong>Fabricating velocity data:</strong> I have your Sprint 1-5 data. Use real numbers.</li>
+        <li><strong>Missing Q&A prep:</strong> "I don't know" is fine once. Ten times means you didn't understand your project.</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Final Pep Talk</h2>
+    <p style="font-size: 1.15em; line-height: 1.7;">
+        This is it. Everything you've learned—k-NN in Week 1, user stories in Week 2, your chaotic Sprint 1, the sprint where it finally clicked—culminates here.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7;">
+        <strong>The capstone proves you can build ML systems.</strong> The process portfolio proves you can MANAGE building ML systems. Employers hire for both. You need both.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7;">
+        Your presentation is your audition. <strong>Technical mastery gets you in the room. PM maturity gets you the job.</strong> Show both.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7;">
+        I've watched you grow from "What's a user story?" to autonomous sprint management. Your velocity chart will prove that growth with data. Be proud of that journey.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7;">
+        <strong>Week 15-16 will be intense.</strong> That's expected. Capstones are supposed to push you. But you've done five sprints already—you know how to execute under pressure.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7; font-weight: bold; color: #e65100;">
+        This is your moment to shine. Technical brilliance + PM maturity + professional presentation = You're ready for the industry. Make me proud.
+    </p>
+    <p style="font-size: 1.15em; line-height: 1.7; margin-top: 20px;">
+        If you're stuck or panicking: #module-08 on Discord, office hours, or email me. I want to see you succeed. Let's finish strong.
+    </p>
+</div>
+
+<!-- PM Integration Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚖️ Why Process Portfolio is 40% (Not 30%)</h2>
+    <p style="font-size: 1.05em;">This is your highest PM weighting yet. Here's the reasoning:</p>
+    <ul style="line-height: 1.8; font-size: 1.05em;">
+        <li><strong>CTS-289 capstone is 60% process:</strong> This portfolio proves you're ready for that challenge.</li>
+        <li><strong>Professional PM requires proof:</strong> "I'm good at project management" needs evidence. This is your evidence.</li>
+        <li><strong>Growth narrative demonstrates learning:</strong> Employers want people who improve continuously. Show them.</li>
+        <li><strong>Autonomous execution is the goal:</strong> Sprint 6 has no templates because you shouldn't need them anymore.</li>
+        <li><strong>Portfolio is reusable:</strong> You'll use this in job interviews and grad school applications.</li>
+    </ul>
+    <p style="font-size: 1.05em; margin-top: 20px;"><strong>The calculation:</strong> 100pt capstone = 60pts technical + 40pts portfolio. Weighted heavily because PM skills are transferable across all future projects.</p>
+</div>
+
+<!-- Presentation Tips -->
+<div class="content-section" style="background: #e8f5e9; border-left-color: #4caf50;">
+    <h2 style="color: #2e7d32;">🎤 Presentation Pro Tips</h2>
+
+    <h4 style="color: #2e7d32;">Part 1: Technical Showcase (7 min)</h4>
+    <ul style="line-height: 1.8;">
+        <li>Start with problem statement (30 sec): What are you solving and why?</li>
+        <li>Architecture overview (1 min): High-level diagram showing how techniques integrate</li>
+        <li>Implementation highlights (3 min): Show code snippets, explain key decisions</li>
+        <li>Results (2 min): Metrics, charts, comparisons. What worked? What didn't?</li>
+        <li>Don't read slides—explain them</li>
+    </ul>
+
+    <h4 style="color: #2e7d32; margin-top: 20px;">Part 2: PM Journey (5 min)</h4>
+    <ul style="line-height: 1.8;">
+        <li>Lead with velocity chart (1 min): "Sprint 1 velocity was 8pts. Sprint 6 is 22pts. Here's why."</li>
+        <li>Share 2-3 retro insights (2 min): Specific examples of what you changed</li>
+        <li>Show before/after evidence (1 min): "Sprint 1 estimation accuracy: 40%. Sprint 6: 85%."</li>
+        <li>Future application (1 min): How you'll use PM in CTS-289 capstone</li>
+        <li>Be honest about struggles—growth stories are compelling</li>
+    </ul>
+
+    <h4 style="color: #2e7d32; margin-top: 20px;">Part 3: Ethics (2 min)</h4>
+    <ul style="line-height: 1.8;">
+        <li>Identify 2-3 real limitations or bias concerns</li>
+        <li>Propose concrete mitigation strategies</li>
+        <li>Discuss deployment considerations</li>
+        <li>Show you've thought critically about real-world impact</li>
+    </ul>
+
+    <h4 style="color: #2e7d32; margin-top: 20px;">Q&A Defense</h4>
+    <ul style="line-height: 1.8;">
+        <li>"I don't know, but here's how I'd find out" is better than guessing</li>
+        <li>Defend decisions with reasoning: "I chose X over Y because..."</li>
+        <li>Acknowledge alternatives: "I considered Z, but..."</li>
+        <li>Show you understand trade-offs and limitations</li>
+    </ul>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #5e35b1 0%, #4527a0 100%); border-radius: 10px; text-align: center; color: white; border: 3px solid #311b92;">
+    <h3 style="margin-top: 0; font-size: 2em; color: white;">Ready to Prove You're an ML Professional?</h3>
+    <p style="font-size: 1.2em; margin: 20px 0;">
+        This is your moment. Technical mastery + PM maturity + professional presentation = Industry-ready ML developer.
+    </p>
+    <p style="font-size: 1.15em; margin: 20px 0;">
+        <strong>Sprint 6 starts Monday, Week 15. No templates. No scaffolding. Full autonomy.</strong>
+    </p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.3em; padding: 18px 35px; background: white; color: #5e35b1; margin: 10px;">View Capstone Assignment</a>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.3em; padding: 18px 35px; background: white; color: #5e35b1; margin: 10px;">View Presentation Assignment</a>
+    <p style="margin-top: 40px; font-style: italic; font-size: 1.1em;">
+        "The capstone isn't the end—it's proof you're ready for the beginning of your ML career." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>

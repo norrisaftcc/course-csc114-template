@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7: NLP & Text Processing - Sprint 5</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #d81b60 0%, #ad1457 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #d81b60;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #d81b60;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #d81b60;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #fce4ec;
+            border-left: 5px solid #e91e63;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+            color: #000;
+            border: 3px solid #ff9800;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2em;
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card h3 {
+            color: #d81b60;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #e91e63;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #d81b60;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #ad1457;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #d81b60;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #d81b60;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #d81b60;
+        }
+
+        .checklist {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #fce4ec;
+            border: 2px solid #e91e63;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #ad1457;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        .velocity-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .velocity-box h4 {
+            margin-top: 0;
+            color: #1565c0;
+            font-size: 1.3em;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>💬 Module 7: NLP & Text Processing - The Home Stretch</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">Natural language processing + Performance optimization</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 13-14</div>
+        <div class="meta-item">📊 Points: 75 total</div>
+        <div class="meta-item">🏃 Sprint #5</div>
+        <div class="meta-item">📅 Sprint Due: End of Week 14</div>
+    </div>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🏁 SPRINT 5: THE HOME STRETCH - OPTIMIZE EVERYTHING</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>You're 5 sprints deep—you're a Scrum veteran now.</strong> Sprint 5 is about optimization: not just your code, but your entire process. Your velocity curve should show stabilization. Your estimation accuracy should be at peak. You've had 4 sprints to learn, iterate, and refine. Now show mastery.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🎯 Sprint 5 Optimization Focus</h3>
+        <ul class="deliverable-list">
+            <li><strong>Velocity Stabilization:</strong> Sprint 1-5 trend should show predictable output</li>
+            <li><strong>Estimation Accuracy:</strong> Minimal carryovers, stories complete as planned</li>
+            <li><strong>Process Efficiency:</strong> Faster standups, focused retrospectives, streamlined workflow</li>
+            <li><strong>Technical Optimization:</strong> Model performance, code quality, runtime efficiency</li>
+            <li><strong>Autonomous PM:</strong> Less handholding, more self-direction</li>
+            <li><strong>Capstone Preparation:</strong> Final sprint before mega-sprint autonomous PM</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.1em; margin: 15px 0; font-weight: bold;">
+        Capstone (CTS-289) PM is autonomous—no templates, no reminders. If your standups are still sloppy or your burndown is an afterthought, fix it NOW. Sprint 5 is your last chance to dial in your process before the big show.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 7.1:</strong> Implement NLP text preprocessing (tokenization, cleaning, normalization)</li>
+        <li><strong>MLO 7.2:</strong> Build text classification models using Bag of Words and TF-IDF</li>
+        <li><strong>MLO 7.3:</strong> Apply sentiment analysis techniques to real-world text data</li>
+        <li><strong>MLO 7.4:</strong> Optimize model performance through tuning and evaluation</li>
+        <li><strong>MLO 7.5:</strong> Execute Sprint 5 with peak velocity and estimation accuracy</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> CLO1 (Implement ML solutions), CLO2 (Evaluate model performance)</p>
+</div>
+
+<!-- Velocity Analysis -->
+<div class="velocity-box">
+    <h4>📈 Analyze Your Sprint 1-5 Velocity Trend</h4>
+    <p>Before starting Sprint 5, review your velocity history:</p>
+    <ul>
+        <li><strong>Sprint 1:</strong> Learning the process (typically low, 10-15 pts)</li>
+        <li><strong>Sprint 2:</strong> Finding your rhythm (15-20 pts)</li>
+        <li><strong>Sprint 3:</strong> Building momentum (18-25 pts)</li>
+        <li><strong>Sprint 4:</strong> Peak or plateau? (20-25 pts)</li>
+        <li><strong>Sprint 5 Goal:</strong> Stable, predictable output (commit to realistic capacity)</li>
+    </ul>
+    <p><strong>What to look for:</strong> Your velocity should be relatively stable by Sprint 5. Wild swings indicate estimation problems. Consistent upward trend = good learning. Flat or declining = time to reassess capacity or process efficiency.</p>
+    <p><strong>Sprint 5 Optimization:</strong> Use your historical velocity data to commit to a realistic capacity. Focus on completing ALL committed stories with no carryover. Quality over quantity!</p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint 5 Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build optimized NLP text classification system demonstrating mastery of text processing and model tuning"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 13): Sprint Planning + Velocity Analysis</h4>
+                <p>Review Sprint 1-4 velocity trend, analyze estimation accuracy, set realistic Sprint 5 capacity based on historical data, commit to sprint backlog with optimization focus</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-9</div>
+            <div class="timeline-content">
+                <h4>Days 2-9: Daily Development & Standups</h4>
+                <p>Code NLP classification system, log daily standups (min 8 of 10 days), update sprint board, maintain burndown chart, optimize both code and process</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 14): Sprint Review & Retro</h4>
+                <p>Demo working NLP model, calculate velocity, analyze Sprint 1-5 trend, complete retrospective with focus on capstone preparation, submit all artifacts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (75 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 13-14: NLP Project Sprint 5</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">75 points</span>
+            <span class="sprint-badge">Sprint #5</span>
+            <span class="pm-badge">PM: 50%</span>
+        </div>
+
+        <h4>Technical Deliverable (37.5 points):</h4>
+        <ul>
+            <li><strong>Code Quality (12 pts):</strong> Clean, well-documented, optimized code</li>
+            <li><strong>Text Preprocessing (8 pts):</strong> Tokenization, cleaning, normalization implemented correctly</li>
+            <li><strong>Feature Engineering (8 pts):</strong> Bag of Words or TF-IDF with proper vectorization</li>
+            <li><strong>Model Implementation (7.5 pts):</strong> Text classification or sentiment analysis working correctly</li>
+            <li><strong>Performance Optimization (2 pts):</strong> Evidence of tuning, efficiency improvements</li>
+        </ul>
+
+        <h4>PM Execution (37.5 points):</h4>
+        <ul>
+            <li><strong>Sprint Planning (7 pts):</strong> Velocity-based capacity, realistic commitments, clear goal</li>
+            <li><strong>Daily Execution (12 pts):</strong> 8+ standups logged, sprint board updated, burndown maintained</li>
+            <li><strong>Sprint Artifacts (8 pts):</strong> GitHub Issues, planning doc, professional presentation</li>
+            <li><strong>Velocity Analysis (5.5 pts):</strong> Sprint 1-5 trend analyzed, insights documented</li>
+            <li><strong>Process Optimization (5 pts):</strong> Evidence of streamlined workflow, efficiency improvements</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Sprint 5 Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Sprint Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Velocity Analysis Template</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🔬 NLP Techniques You'll Implement</h2>
+    <ul>
+        <li><strong>Tokenization:</strong> Breaking text into words, sentences, or subwords</li>
+        <li><strong>Text Cleaning:</strong> Removing noise (HTML, punctuation, special characters)</li>
+        <li><strong>Normalization:</strong> Lowercasing, stemming, lemmatization</li>
+        <li><strong>Bag of Words (BoW):</strong> Count-based text representation</li>
+        <li><strong>TF-IDF:</strong> Term Frequency-Inverse Document Frequency weighting</li>
+        <li><strong>Word Embeddings (Concepts):</strong> Understanding Word2Vec approach (implementation optional)</li>
+        <li><strong>Sentiment Analysis:</strong> Positive/negative/neutral classification</li>
+        <li><strong>Text Classification:</strong> Multi-class document categorization</li>
+        <li><strong>Handling Imbalanced Text Data:</strong> Techniques for uneven class distributions</li>
+    </ul>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Sprint 5 Completion Checklist</h3>
+    <ul>
+        <li>Analyze Sprint 1-4 velocity trend and estimation accuracy</li>
+        <li>Complete sprint planning with velocity-based capacity</li>
+        <li>Create GitHub Issues for all user stories</li>
+        <li>Set up GitHub Project board (To Do, In Progress, Done)</li>
+        <li>Create burndown chart</li>
+        <li>Log daily standups (minimum 8 of 10 days)</li>
+        <li>Update sprint board as stories progress</li>
+        <li>Update burndown chart daily</li>
+        <li>Implement text preprocessing pipeline</li>
+        <li>Build text classification or sentiment analysis model</li>
+        <li>Optimize model performance (tuning, efficiency)</li>
+        <li>Write comprehensive analysis of results</li>
+        <li>Demo working NLP system</li>
+        <li>Calculate Sprint 5 velocity</li>
+        <li>Complete retrospective with capstone preparation focus</li>
+        <li>Submit all artifacts via PR</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's Sprint 5 Optimization Guide</h4>
+    <ul>
+        <li><strong>Use your velocity data:</strong> Don't guess capacity. Look at Sprint 2-4 average and commit to that.</li>
+        <li><strong>Estimation should be dialed in:</strong> If you're still wildly off on story points, revisit your reference estimates.</li>
+        <li><strong>Streamline your rituals:</strong> Sprint planning should take 30 min max. Standups: 2 minutes. Retro: 45 min.</li>
+        <li><strong>NLP text preprocessing is 80% of the work:</strong> Get tokenization and cleaning right, and the model is easy.</li>
+        <li><strong>"This movie was sick!":</strong> Context matters. NLP is harder than it looks because language is ambiguous.</li>
+        <li><strong>TF-IDF beats Bag of Words for most tasks:</strong> It downweights common words like "the" and "a".</li>
+        <li><strong>Start with simple sentiment analysis:</strong> Positive/negative classification is easier than multi-class.</li>
+        <li><strong>Optimize your process, not just your code:</strong> Faster commits, better documentation, cleaner PRs.</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Sprint 5 Pitfalls</h4>
+    <ul>
+        <li><strong>Overconfidence from Sprint 4 success:</strong> Don't over-commit. Stable velocity = realistic planning.</li>
+        <li><strong>Ignoring velocity trend:</strong> If your velocity has been declining, don't plan for peak output.</li>
+        <li><strong>Sloppy process because "you know this now":</strong> Capstone evaluates your autonomous PM. Practice professionalism.</li>
+        <li><strong>Underestimating text preprocessing:</strong> It's tedious and time-consuming. Plan accordingly.</li>
+        <li><strong>Confusing tokenization with cleaning:</strong> They're different steps. Tokenize AFTER cleaning.</li>
+        <li><strong>Using accuracy on imbalanced sentiment data:</strong> If 90% of reviews are positive, 90% accuracy is useless. Use F1!</li>
+        <li><strong>Not preparing for capstone PM:</strong> Sprint 5 retro should include "What will I do differently in autonomous PM?"</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Honest Talk About Sprint 5</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        <strong>NLP is both easier and harder than computer vision.</strong> Easier: text preprocessing is straightforward—there's a clear pipeline. Harder: language is ambiguous and contextual. "This movie was sick!" could be positive (slang) or negative (literal). Your model has to learn context, and that's tough.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        You're one sprint away from capstone. Use Sprint 5 to dial in your process. <strong>Capstone PM is autonomous—no templates, no reminders.</strong> If your standups are still sloppy or your burndown is an afterthought, fix it NOW. I won't be providing PM scaffolding in CTS-289. You'll be expected to self-manage like a professional.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        By Sprint 5, you should have a stable velocity. If you're still all over the map, that's a red flag. Look at your Sprint 1-4 data. What patterns do you see? Are you over-committing? Under-estimating? Not finishing stories? The retrospective is where you fix this.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        Sprint 5 is your dress rehearsal for capstone. Take it seriously. Optimize everything: your code, your process, your time management. Show me you're ready to work autonomously.
+    </p>
+</div>
+
+<!-- PM Integration Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">🎯 Sprint 5 PM Integration: Optimization Mindset</h2>
+    <p><strong>This sprint focuses on process optimization alongside technical optimization:</strong></p>
+    <ul>
+        <li><strong>Velocity Trend Analysis:</strong> Plot Sprint 1-5 velocity. Is it stable? Increasing? Declining? Why?</li>
+        <li><strong>Estimation Accuracy:</strong> Calculate % of stories completed as planned (no carryovers). Aim for 80%+ by Sprint 5.</li>
+        <li><strong>Streamlined Rituals:</strong> Time your standups. Are they 2 min or 20 min? Sprint planning should be quick and data-driven.</li>
+        <li><strong>Autonomous Preparation:</strong> Retrospective should include "What will I need to self-manage in capstone?" Create action items.</li>
+        <li><strong>Process Efficiency Metrics:</strong> Track: standup duration, planning time, retro actionability, carryover rate.</li>
+    </ul>
+    <p><strong>Capstone (CTS-289) PM expectations:</strong> You'll receive NO templates, no reminders, no scaffolding. You'll be expected to self-organize sprints, manage your own backlog, and deliver professional-quality PM artifacts without prompting. Sprint 5 is your last chance to practice with support.</p>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+    <h3 style="margin-top: 0;">Ready for Sprint 5: The Home Stretch?</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">Analyze your velocity trend, commit to realistic capacity, and optimize everything. One sprint before capstone autonomous PM!</p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.2em; padding: 15px 30px;">View Sprint 5 Assignment</a>
+    <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Download Velocity Analysis Template</a>
+    <p style="margin-top: 30px; font-style: italic; color: #666;">
+        "Sprint 5 is where veterans separate from novices. Show me you've learned." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>

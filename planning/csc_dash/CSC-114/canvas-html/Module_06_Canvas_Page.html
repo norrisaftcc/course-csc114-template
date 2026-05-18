@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Computer Vision - Ethics Meets Engineering</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #3949ab 0%, #283593 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #3949ab;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #3949ab;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #3949ab;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #e8eaf6;
+            border-left: 5px solid #3f51b5;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+            color: #000;
+            border: 3px solid #ff9800;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2em;
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .ethics-highlight {
+            background: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%);
+            color: white;
+            border: 3px solid #7b1fa2;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .ethics-highlight h2 {
+            margin-top: 0;
+            color: #f3e5f5;
+            font-size: 2em;
+        }
+
+        .ethics-highlight h3 {
+            color: #e1bee7;
+            margin-top: 15px;
+        }
+
+        .ethics-highlight ul {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .ethics-highlight li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card h3 {
+            color: #3949ab;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #3949ab;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #3949ab;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #283593;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #3949ab;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #3949ab;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #3949ab;
+        }
+
+        .checklist {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #e8eaf6;
+            border: 2px solid #3f51b5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #283593;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>👁️ Module 6: Computer Vision - Ethics Meets Engineering</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">CNNs and image classification + Ethical AI considerations</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 11-12</div>
+        <div class="meta-item">📊 Points: 75 total</div>
+        <div class="meta-item">🏃 Sprint #4</div>
+        <div class="meta-item">📅 Sprint Due: End of Week 12</div>
+    </div>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🚀 Sprint 4: Where Ethics Meets Engineering</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>This sprint adds a critical dimension to your work: ethical analysis.</strong> You're not just building a CNN for image classification—you're analyzing the ethical implications of computer vision models, bias in training datasets, and the real-world impact of your technical decisions.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🎯 What Makes Sprint 4 Different</h3>
+        <ul class="deliverable-list">
+            <li><strong>Ethics is integrated, not separate:</strong> Your sprint backlog includes BOTH technical AND ethical user stories</li>
+            <li><strong>Ethical analysis gets story points:</strong> "Analyze training data for bias" is real work, estimated like any technical task</li>
+            <li><strong>PM reflects ethics work:</strong> Daily standups include ethical analysis progress, retrospective asks "Did we consider implications?"</li>
+            <li><strong>Professional ML standard:</strong> This is how responsible AI teams actually work—ethics isn't an afterthought</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.1em; margin: 15px 0; font-weight: bold;">
+        By Sprint 4, you're experienced with the sprint process. Now we add complexity: integrating ethical considerations into your technical workflow. This is what separates hobbyists from professionals.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 6.1:</strong> Implement CNNs for image classification using transfer learning with pre-trained models</li>
+        <li><strong>MLO 6.2:</strong> Analyze ethical implications of computer vision systems, including dataset bias and real-world impact</li>
+        <li><strong>MLO 6.3:</strong> Integrate ethical analysis tasks into sprint planning and execution</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> CLO1 (Implement ML models), CLO4 (Analyze ethical implications)</p>
+</div>
+
+<!-- Ethics Highlight -->
+<div class="ethics-highlight">
+    <h2>⚖️ Ethical AI Isn't Optional</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>Computer vision models trained on biased datasets perpetuate and amplify that bias.</strong> This isn't theoretical—it's documented, measured, and actively causing harm in deployed systems.
+    </p>
+
+    <h3>Why This Matters (Evidence-Based)</h3>
+    <ul>
+        <li><strong>Face recognition fails more on darker skin tones:</strong> MIT Media Lab research shows commercial face recognition systems have error rates up to 34% higher for darker-skinned women vs. lighter-skinned men</li>
+        <li><strong>Image classification reinforces stereotypes:</strong> Models trained on biased datasets associate certain professions with specific genders or races</li>
+        <li><strong>Training data reflects historical bias:</strong> If your dataset over-represents certain groups, your model will perform worse on underrepresented groups</li>
+        <li><strong>Deployment has consequences:</strong> These systems are used for hiring, security, healthcare—contexts where bias causes real harm</li>
+    </ul>
+
+    <h3>Your Responsibility as a Developer</h3>
+    <ul>
+        <li><strong>Analyze your training data:</strong> What groups are represented? What's missing?</li>
+        <li><strong>Document limitations:</strong> Be explicit about where your model might fail or perform poorly</li>
+        <li><strong>Consider deployment context:</strong> How might this model be misused? Who could be harmed?</li>
+        <li><strong>Build transparency:</strong> Make your methods, data sources, and limitations visible</li>
+    </ul>
+
+    <p style="font-size: 1.1em; margin-top: 20px; font-weight: bold;">
+        If you deploy biased models without analysis or documentation, people get harmed. That's on you. This isn't fluffy philosophy—this is professional responsibility.
+    </p>
+</div>
+
+<!-- PM Integration -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">🔄 PM Integration: Ethics in Your Sprint</h2>
+    <p><strong>Sprint 4 integrates ethical analysis into your standard sprint workflow. Here's how:</strong></p>
+
+    <h3 style="color: #7b1fa2;">Sprint Planning Includes Ethics Stories</h3>
+    <ul>
+        <li><strong>Technical stories:</strong> "Implement CNN architecture," "Add data augmentation," "Train model on GPU"</li>
+        <li><strong>Ethical stories:</strong> "Analyze training dataset for demographic representation," "Document model limitations," "Test model performance across demographic groups"</li>
+        <li><strong>Estimation:</strong> Ethics stories get story points just like technical work (because it IS real work!)</li>
+    </ul>
+
+    <h3 style="color: #7b1fa2;">Daily Standups Include Ethics Work</h3>
+    <ul>
+        <li>"Yesterday: Implemented data augmentation and analyzed dataset demographics"</li>
+        <li>"Today: Will train initial model and document bias analysis findings"</li>
+        <li>"Blockers: Need to research best practices for evaluating fairness in image classification"</li>
+    </ul>
+
+    <h3 style="color: #7b1fa2;">Sprint Retrospective Adds Ethics Questions</h3>
+    <ul>
+        <li><strong>Standard retro questions:</strong> What went well? What didn't? How can we improve?</li>
+        <li><strong>Ethics-specific questions:</strong> Did we consider ethical implications early enough? What bias risks did we identify? How would we handle this in a production deployment?</li>
+    </ul>
+
+    <p style="font-weight: bold; margin-top: 15px;">
+        This prepares you for real ML teams, where responsible AI practices are integrated into sprint workflows, not treated as separate compliance exercises.
+    </p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build ethical image classification system with documented limitations and bias analysis"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 11): Sprint Planning with Ethics</h4>
+                <p>Review technical AND ethical user stories, estimate all tasks (including bias analysis), set sprint capacity, commit to backlog including ethics work</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-9</div>
+            <div class="timeline-content">
+                <h4>Days 2-9: Development + Ethical Analysis</h4>
+                <p>Implement CNN with transfer learning, analyze training data demographics, test for bias, document limitations, log daily standups (technical + ethics progress)</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 12): Sprint Review & Retro</h4>
+                <p>Demo working model AND bias analysis, discuss ethical findings, complete retrospective with ethics considerations, submit all artifacts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (75 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 11-12: Computer Vision Sprint 4</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">75 points</span>
+            <span class="sprint-badge">Sprint #4</span>
+            <span class="pm-badge">PM: 50%</span>
+        </div>
+
+        <h4>Technical Deliverable (25 points):</h4>
+        <ul>
+            <li><strong>CNN Implementation (12 pts):</strong> Working image classification model using transfer learning (VGG16, ResNet, or MobileNet), proper data preprocessing, training on GPU (Google Colab)</li>
+            <li><strong>Model Performance (8 pts):</strong> Achieves reasonable accuracy (>70%), includes data augmentation, demonstrates proper training/validation split</li>
+            <li><strong>Code Quality (5 pts):</strong> Well-commented, follows best practices, includes clear documentation</li>
+        </ul>
+
+        <h4>Ethical Analysis Deliverable (12 points):</h4>
+        <ul>
+            <li><strong>Dataset Analysis (5 pts):</strong> Documented analysis of training data demographics, identified potential sources of bias, discussion of representation gaps</li>
+            <li><strong>Limitations Documentation (4 pts):</strong> Clear statement of model limitations, contexts where model might fail, groups that might be underserved</li>
+            <li><strong>Impact Considerations (3 pts):</strong> Analysis of potential real-world deployment implications, discussion of how model could be misused or cause harm</li>
+        </ul>
+
+        <h4>PM Execution (25 points):</h4>
+        <ul>
+            <li><strong>Integrated Sprint Planning (6 pts):</strong> Backlog includes both technical AND ethical stories, all stories estimated with story points, capacity planning accounts for both types of work</li>
+            <li><strong>Daily Execution (10 pts):</strong> 8+ standups logged covering both technical and ethics work, sprint board tracks both story types, burndown maintained</li>
+            <li><strong>Sprint Artifacts (6 pts):</strong> GitHub Issues for all stories (technical + ethics), planning doc complete, professional presentation</li>
+            <li><strong>Retrospective (3 pts):</strong> Includes reflection on ethics integration, discusses effectiveness of combining technical and ethical work</li>
+        </ul>
+
+        <h4>Improvement Bonus (13 points):</h4>
+        <ul>
+            <li>Sprint completed on time with all stories done (5 pts)</li>
+            <li>Exceptional ethical analysis (3 pts)</li>
+            <li>Model performance exceeds 80% accuracy (3 pts)</li>
+            <li>Demonstrates velocity improvement from Sprint 3 (2 pts)</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Sprint Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Sprint Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Sprint Planning Template</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Ethics Analysis Template</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🔬 Technical Skills You'll Learn</h2>
+
+    <h3>Convolutional Neural Networks (CNNs)</h3>
+    <ul>
+        <li><strong>Convolutional layers:</strong> How filters extract features from images</li>
+        <li><strong>Pooling layers:</strong> Dimensionality reduction and spatial invariance</li>
+        <li><strong>CNN architectures:</strong> Understanding VGG, ResNet, MobileNet design patterns</li>
+        <li><strong>Transfer learning:</strong> Using pre-trained models instead of training from scratch</li>
+    </ul>
+
+    <h3>Image Processing & Training</h3>
+    <ul>
+        <li><strong>Image preprocessing:</strong> Resizing, normalization, converting formats</li>
+        <li><strong>Data augmentation:</strong> Rotation, flipping, zooming to increase training data diversity</li>
+        <li><strong>GPU training:</strong> Using Google Colab with GPU runtime for faster training</li>
+        <li><strong>Model evaluation:</strong> Accuracy, confusion matrix, classification report for image data</li>
+    </ul>
+
+    <h3>Transfer Learning Workflow</h3>
+    <ul>
+        <li><strong>Why not train from scratch:</strong> Pre-trained models on ImageNet already learned low-level features (edges, textures)</li>
+        <li><strong>Fine-tuning approach:</strong> Freeze early layers, train final layers on your specific dataset</li>
+        <li><strong>When to use which model:</strong> VGG (simple, large), ResNet (deeper, residual connections), MobileNet (lightweight, mobile-friendly)</li>
+    </ul>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Sprint Completion Checklist</h3>
+    <ul>
+        <li>Complete sprint planning with BOTH technical and ethical user stories</li>
+        <li>Estimate story points for all stories (technical + ethics)</li>
+        <li>Create GitHub Issues for technical and ethical stories</li>
+        <li>Set up sprint board tracking both story types</li>
+        <li>Implement CNN using transfer learning (VGG, ResNet, or MobileNet)</li>
+        <li>Preprocess image data and implement data augmentation</li>
+        <li>Train model on GPU using Google Colab</li>
+        <li>Analyze training dataset for demographic representation</li>
+        <li>Document model limitations and potential bias</li>
+        <li>Consider real-world deployment implications</li>
+        <li>Log daily standups (minimum 8 of 10 days) including ethics work</li>
+        <li>Update sprint board as technical AND ethical stories progress</li>
+        <li>Update burndown chart daily</li>
+        <li>Demo working model with performance metrics</li>
+        <li>Present ethical analysis findings</li>
+        <li>Complete retrospective including ethics reflection</li>
+        <li>Submit all artifacts via PR</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's Computer Vision + Ethics Survival Guide</h4>
+    <ul>
+        <li><strong>Transfer learning is your cheat code:</strong> Don't train CNNs from scratch. Use ImageNet pre-trained models. You'll save days of training time.</li>
+        <li><strong>Start with MobileNet:</strong> If you're new to this, MobileNet is smaller and trains faster than VGG or ResNet. Good for learning.</li>
+        <li><strong>Google Colab GPU is essential:</strong> Training CNNs on CPU takes forever. Enable GPU runtime in Colab (it's free!).</li>
+        <li><strong>Data augmentation matters:</strong> Rotation, flipping, and zooming help your model generalize better and reduce overfitting.</li>
+        <li><strong>Ethics analysis isn't busywork:</strong> Spend real time on dataset analysis. Look at the images. Notice what's missing. This matters.</li>
+        <li><strong>Document limitations honestly:</strong> "This model was trained on X dataset which over-represents Y" is professional, not weak.</li>
+        <li><strong>Estimate ethics stories properly:</strong> Dataset analysis takes 2-3 hours. Don't underestimate it at 1 point. Be realistic.</li>
+        <li><strong>CNN architecture feels like magic:</strong> How does stacking conv layers recognize cats? Math, mostly. Trust the process, study the papers later.</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Sprint 4 Pitfalls</h4>
+    <ul>
+        <li><strong>Treating ethics as an afterthought:</strong> Don't do all technical work Days 2-9, then rush ethics analysis on Day 10. Integrate it!</li>
+        <li><strong>Skipping dataset analysis:</strong> "I used a public dataset so it's fine" is not ethical analysis. Analyze what's IN the dataset.</li>
+        <li><strong>Training on CPU instead of GPU:</strong> You'll wait hours for training that could take minutes on GPU. Use Colab with GPU runtime!</li>
+        <li><strong>Not using transfer learning:</strong> Training CNNs from scratch requires massive datasets and compute. Use pre-trained models!</li>
+        <li><strong>Vague limitations documentation:</strong> "Model might have bias" isn't useful. Be specific: what kind of bias, affecting which groups, in what contexts?</li>
+        <li><strong>Ignoring data augmentation:</strong> Small datasets need augmentation to avoid overfitting. Don't skip this step!</li>
+        <li><strong>Not estimating ethics stories:</strong> If ethics work isn't in your backlog with story points, you won't make time for it.</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Honest Talk About Ethics in ML</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        CNNs feel like witchcraft. You stack some conv layers, pooling layers, throw in some ReLU activations, and suddenly it recognizes cats. <strong>How? Math, mostly.</strong> If the "how" confuses you, focus on the "what"—you'll understand the math deeper as you go.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Transfer learning is your cheat code. ImageNet already taught VGG/ResNet/MobileNet what edges, textures, and shapes look like. You're just teaching them YOUR specific classes. Don't train from scratch unless you have 10 million images and a month to waste.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        Now, the ethics part: <strong>This isn't fluffy philosophy. This is "your model might discriminate against protected groups."</strong>
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Face recognition systems fail more on darker skin tones—that's proven research (MIT Media Lab, Gender Shades study). Image classification models trained on biased datasets reinforce stereotypes. If you deploy these systems in hiring, security, or healthcare without documenting limitations, <strong>people get harmed. That's on you.</strong>
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Here's what responsible ML looks like: You document your dataset. You acknowledge limitations. You test across demographic groups. You say "this model performs worse on X because the training data under-represented Y." That's not weakness—that's professionalism.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        By Sprint 4, you know how sprints work. Now we're adding real-world responsibility. Build the model, analyze the bias, document the limitations, integrate it all into your sprint workflow. This is how ethical AI teams actually operate.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        If you're stuck on technical implementation or ethics analysis: #module-06 on Discord, office hours, email me. I'd rather help you succeed than watch you deploy biased models or struggle in silence.
+    </p>
+</div>
+
+<!-- Process Grading Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚖️ Why Ethics is Graded as Technical Work</h2>
+    <p>You'll notice ethical analysis is worth 12 points (part of the 50% technical grade). Here's why ethics gets technical credit:</p>
+    <ul>
+        <li><strong>It's real technical work:</strong> Dataset analysis requires code, statistical analysis, and domain knowledge—same skills as model building.</li>
+        <li><strong>Professional ML teams do this:</strong> Responsible AI isn't a separate compliance step. It's integrated into sprint workflows.</li>
+        <li><strong>Capstone requires this:</strong> CTS-289 expects ethical analysis in all AI projects. We're building that skill now.</li>
+        <li><strong>Employers care deeply:</strong> Companies face legal and reputational risk from biased models. Demonstrating ethics competency is a hiring advantage.</li>
+        <li><strong>It's harder than it looks:</strong> Good bias analysis requires critical thinking, research, and intellectual honesty—harder than copying CNN code from tutorials.</li>
+    </ul>
+    <p><strong>The expectation:</strong> Treat ethical analysis with the same rigor as technical implementation. Estimate it properly in planning, track it in standups, demo your findings in the review.</p>
+</div>
+
+<!-- Real-World Connection -->
+<div class="content-section">
+    <h2>🌍 Real-World Impact of Computer Vision Ethics</h2>
+
+    <h3>Documented Cases of Bias</h3>
+    <ul>
+        <li><strong>Gender Shades Study (MIT, 2018):</strong> Commercial face recognition systems had error rates up to 34% higher for darker-skinned women compared to lighter-skinned men</li>
+        <li><strong>Amazon Rekognition (ACLU, 2018):</strong> Incorrectly matched 28 members of Congress to mugshots, with higher error rates for people of color</li>
+        <li><strong>Google Photos (2015):</strong> Auto-tagging system labeled Black people as "gorillas"—trained on biased dataset with poor representation</li>
+        <li><strong>Healthcare imaging (2020):</strong> Diagnostic algorithms trained primarily on one demographic showed reduced accuracy for underrepresented groups</li>
+    </ul>
+
+    <h3>Why Bias Happens (Technical Causes)</h3>
+    <ul>
+        <li><strong>Training data imbalance:</strong> Datasets over-represent certain demographics, under-represent others</li>
+        <li><strong>Historical bias in data:</strong> Training on historical data perpetuates historical discrimination</li>
+        <li><strong>Label bias:</strong> Human labelers introduce subjective bias in annotations</li>
+        <li><strong>Measurement bias:</strong> Sensors/cameras perform differently across contexts (lighting, skin tones, etc.)</li>
+    </ul>
+
+    <h3>Your Role as a Developer</h3>
+    <ul>
+        <li><strong>Analyze before deploying:</strong> Understand your dataset composition and limitations</li>
+        <li><strong>Test across groups:</strong> Evaluate model performance on different demographic groups</li>
+        <li><strong>Document transparently:</strong> Make limitations visible to stakeholders and users</li>
+        <li><strong>Consider context:</strong> Think about how your model might be deployed and who it might impact</li>
+        <li><strong>Advocate for responsible practices:</strong> Speak up when you see bias being ignored</li>
+    </ul>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+    <h3 style="margin-top: 0;">Ready to Build Responsible Computer Vision?</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">Sprint 4 integrates technical excellence with ethical responsibility. Plan your stories, build your CNN, analyze your data, document your limitations.</p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.2em; padding: 15px 30px;">View Sprint Assignment</a>
+    <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Download Sprint Template</a>
+    <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Download Ethics Template</a>
+    <p style="margin-top: 30px; font-style: italic; color: #666;">
+        "Technical skill without ethical consideration is incomplete engineering." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>

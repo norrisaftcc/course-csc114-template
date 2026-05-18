@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Model Evaluation - First Sprint</title>
+    <style>
+        /* Canvas-compatible CSS */
+        .module-header {
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #43a047;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .content-section h2 {
+            color: #43a047;
+            margin-top: 0;
+            font-size: 1.8em;
+            border-bottom: 2px solid #43a047;
+            padding-bottom: 10px;
+        }
+
+        .learning-objectives {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .sprint-highlight {
+            background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+            color: #000;
+            border: 3px solid #ff9800;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .sprint-highlight h2 {
+            margin-top: 0;
+            color: #e65100;
+            font-size: 2em;
+        }
+
+        .sprint-deliverables {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .sprint-deliverables h3 {
+            color: #e65100;
+            margin-top: 0;
+        }
+
+        .deliverable-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .deliverable-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .deliverable-list li strong {
+            color: #e65100;
+        }
+
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card h3 {
+            color: #43a047;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: #4caf50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sprint-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .pm-badge {
+            background: #9c27b0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .button-primary {
+            background: #43a047;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-primary:hover {
+            background: #2e7d32;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .button-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .button-print {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .button-print:hover {
+            background: #546e7a;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #43a047;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #43a047;
+            flex-grow: 1;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: #43a047;
+        }
+
+        .checklist {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .tip-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            margin-top: 0;
+            color: #2e7d32;
+            font-size: 1.3em;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 1.3em;
+        }
+
+        @media print {
+            .button-primary, .button-secondary, .button-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <script>
+        function printModule() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+
+<div style="text-align: right; margin-bottom: 10px;">
+    <button onclick="printModule()" class="button-print">🖨️ Print/Copy for Canvas</button>
+</div>
+
+<div class="module-header">
+    <h1>📊 Module 3: Model Evaluation - YOUR FIRST SPRINT!</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">Comprehensive evaluation metrics + First complete sprint cycle</p>
+    <div class="module-meta">
+        <div class="meta-item">⏱️ Duration: Weeks 5-6</div>
+        <div class="meta-item">📊 Points: 75 total</div>
+        <div class="meta-item">🏃 Sprint #1</div>
+        <div class="meta-item">📅 Sprint Due: End of Week 6</div>
+    </div>
+</div>
+
+<!-- Sprint Highlight -->
+<div class="sprint-highlight">
+    <h2>🚀 THIS IS YOUR FIRST COMPLETE SPRINT!</h2>
+    <p style="font-size: 1.2em; margin: 15px 0;">
+        <strong>Everything changes in Module 3.</strong> You're no longer just completing assignments—you're managing a 2-week sprint with planning, daily standups, burndown tracking, and a retrospective. This is where the PM skills you've been learning (user stories in Week 2, estimation in Weeks 3-4) come together into the full Scrum cycle.
+    </p>
+    <div class="sprint-deliverables">
+        <h3>🎯 What "Sprint" Means</h3>
+        <ul class="deliverable-list">
+            <li><strong>Sprint Planning:</strong> Set a goal, estimate stories, commit to capacity</li>
+            <li><strong>Daily Standups:</strong> Log progress daily (what I did, what I'll do, blockers)</li>
+            <li><strong>Sprint Board:</strong> Manage GitHub Project board (To Do → In Progress → Done)</li>
+            <li><strong>Burndown Chart:</strong> Track story points completed each day</li>
+            <li><strong>Sprint Review:</strong> Demo your working model</li>
+            <li><strong>Retrospective:</strong> Reflect on what went well, what didn't, and how to improve</li>
+        </ul>
+    </div>
+    <p style="font-size: 1.1em; margin: 15px 0; font-weight: bold;">
+        Yes, this is more work than previous assignments. That's intentional. You're learning professional project management alongside ML. Trust the process—by Sprint 2, this will feel natural.
+    </p>
+</div>
+
+<!-- Learning Objectives -->
+<div class="learning-objectives">
+    <h2>🎯 Module Learning Outcomes</h2>
+    <p><strong>By the end of this module, you will be able to:</strong></p>
+    <ul>
+        <li><strong>MLO 3.1:</strong> Evaluate ML models using precision, recall, F1-score, and ROC curves</li>
+        <li><strong>MLO 3.2:</strong> Execute complete sprint cycle with planning, standups, and retrospective</li>
+    </ul>
+    <p><strong>CLOs Addressed:</strong> CLO2 (Evaluate AI model performance), CLO5 (Document process)</p>
+</div>
+
+<!-- Sprint Timeline -->
+<div class="content-section">
+    <h2>📅 Sprint Timeline (10 Days)</h2>
+    <p><strong>Sprint Goal:</strong> "Build comprehensive model evaluation system demonstrating mastery of ML metrics"</p>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker">1</div>
+            <div class="timeline-content">
+                <h4>Day 1 (Monday, Week 5): Sprint Planning</h4>
+                <p>Review sprint planning template, estimate user stories, set capacity (15 pts recommended for Sprint 1), commit to sprint backlog</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">2-9</div>
+            <div class="timeline-content">
+                <h4>Days 2-9: Daily Development & Standups</h4>
+                <p>Code ML evaluation system, log daily standups (min 8 of 10 days), update sprint board, maintain burndown chart</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker">10</div>
+            <div class="timeline-content">
+                <h4>Day 10 (Friday, Week 6): Sprint Review & Retro</h4>
+                <p>Demo working model, calculate velocity, complete retrospective, submit all sprint artifacts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments -->
+<div class="content-section">
+    <h2>📝 Deliverables (75 points total)</h2>
+
+    <div class="assignment-card">
+        <h3>Weeks 5-6: Model Evaluation Sprint</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">50 points</span>
+            <span class="sprint-badge">Sprint Assignment</span>
+            <span class="pm-badge">PM: 50%</span>
+        </div>
+
+        <h4>Technical Deliverable (25 points):</h4>
+        <ul>
+            <li><strong>Code Quality (10 pts):</strong> Runs without errors, well-commented, follows best practices</li>
+            <li><strong>Functionality (10 pts):</strong> All evaluation metrics implemented correctly (accuracy, precision, recall, F1, ROC curves, cross-validation)</li>
+            <li><strong>Analysis (5 pts):</strong> Results interpreted clearly, README updated, visualizations effective</li>
+        </ul>
+
+        <h4>PM Execution (20 points):</h4>
+        <ul>
+            <li><strong>Sprint Planning (5 pts):</strong> Clear goal, capacity-based estimates, proper user stories</li>
+            <li><strong>Daily Execution (8 pts):</strong> 8+ standups logged, sprint board updated, burndown maintained</li>
+            <li><strong>Sprint Artifacts (5 pts):</strong> GitHub Issues created, planning doc complete, professional presentation</li>
+            <li><strong>Velocity (2 pts):</strong> Velocity tracked accurately, evidence of learning</li>
+        </ul>
+
+        <h4>Improvement Bonus (5 points):</h4>
+        <ul>
+            <li>Sprint completed on time (2 pts)</li>
+            <li>All stories done, no carryover (2 pts)</li>
+            <li>Evidence of continuous improvement (1 pt)</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Sprint Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Download Sprint Rubric</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Sprint Planning Template</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>Week 6: Sprint 1 Retrospective</h3>
+        <div class="assignment-meta">
+            <span class="points-badge">25 points</span>
+            <span class="pm-badge">PM: 100%</span>
+        </div>
+
+        <p><strong>What you'll reflect on:</strong></p>
+        <ul>
+            <li><strong>What Went Well:</strong> 3-5 specific wins (technical + process)</li>
+            <li><strong>What Didn't Go Well:</strong> 3-5 challenges encountered</li>
+            <li><strong>Root Cause Analysis:</strong> Use "5 Whys" to dig deeper</li>
+            <li><strong>Action Items:</strong> Specific, measurable improvements for Sprint 2</li>
+            <li><strong>Start/Stop/Continue:</strong> Process changes to implement</li>
+            <li><strong>Estimation Learning:</strong> How accurate were your estimates? Adjust reference estimates</li>
+        </ul>
+
+        <p><strong>Grading (25 pts):</strong></p>
+        <ul>
+            <li>Honest Reflection (10 pts)</li>
+            <li>Actionable Improvements (8 pts)</li>
+            <li>Estimation Learning (4 pts)</li>
+            <li>Professionalism (3 pts)</li>
+        </ul>
+
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Retrospective Assignment</a>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">Retrospective Template</a>
+    </div>
+</div>
+
+<!-- Technical Content -->
+<div class="content-section">
+    <h2>🔬 ML Evaluation Metrics You'll Implement</h2>
+    <ul>
+        <li><strong>Accuracy:</strong> Overall correctness (but beware imbalanced datasets!)</li>
+        <li><strong>Precision:</strong> Of predicted positives, how many are actually positive?</li>
+        <li><strong>Recall:</strong> Of actual positives, how many did we catch?</li>
+        <li><strong>F1-Score:</strong> Harmonic mean of precision and recall</li>
+        <li><strong>ROC Curve & AUC:</strong> Visualize true positive vs. false positive rate</li>
+        <li><strong>Confusion Matrix:</strong> See all classification outcomes</li>
+        <li><strong>Cross-Validation:</strong> k-fold validation for robust evaluation</li>
+    </ul>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h3>✅ Sprint Completion Checklist</h3>
+    <ul>
+        <li>Complete sprint planning (goal, capacity, user stories estimated)</li>
+        <li>Create GitHub Issues for all user stories</li>
+        <li>Set up GitHub Project board (To Do, In Progress, Done)</li>
+        <li>Create burndown chart (spreadsheet or tool)</li>
+        <li>Log daily standups (minimum 8 of 10 days)</li>
+        <li>Update sprint board as stories progress</li>
+        <li>Update burndown chart daily</li>
+        <li>Implement all evaluation metrics</li>
+        <li>Write comprehensive analysis of results</li>
+        <li>Demo working model (screenshots or video)</li>
+        <li>Calculate sprint velocity</li>
+        <li>Complete retrospective with action items</li>
+        <li>Submit all artifacts via PR</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h4>💡 Drew's First Sprint Survival Guide</h4>
+    <ul>
+        <li><strong>Don't over-commit:</strong> Sprint 1 is about learning the process. 15 story points is plenty.</li>
+        <li><strong>Standups take 2 minutes:</strong> Keep them brief. "Yesterday I did X. Today I'll do Y. Blocked on Z (or nothing)."</li>
+        <li><strong>Burndown doesn't have to be perfect:</strong> It's a learning tool. Update it honestly, even if it looks messy.</li>
+        <li><strong>Start technical work Day 2:</strong> Don't spend all of Week 5 planning. Get coding early.</li>
+        <li><strong>Retrospective is sacred:</strong> This is where real learning happens. Be honest, not performative.</li>
+        <li><strong>ROC curves will confuse you at first:</strong> That's normal. Read the docs, try examples, ask questions.</li>
+        <li><strong>Your velocity will be low:</strong> Sprint 1 velocity is always low because you're learning. That's expected!</li>
+    </ul>
+</div>
+
+<!-- Warnings -->
+<div class="warning-box">
+    <h4>⚠️ Common Sprint 1 Pitfalls</h4>
+    <ul>
+        <li><strong>Ignoring PM deliverables until the last day:</strong> PM is 50% of your grade! Don't treat it as an afterthought.</li>
+        <li><strong>Not actually using the sprint board:</strong> I can tell if you updated it all at once on Day 10. Use it daily!</li>
+        <li><strong>Vague retrospectives:</strong> "Do better next time" isn't actionable. Be specific!</li>
+        <li><strong>Over-estimating your capacity:</strong> If in doubt, plan fewer stories. Better to finish early than carry over.</li>
+        <li><strong>Skipping standups:</strong> Need 8/10 for full credit. Set a phone reminder!</li>
+        <li><strong>Confusing accuracy with goodness:</strong> 90% accuracy on imbalanced data can be terrible. Use multiple metrics!</li>
+    </ul>
+</div>
+
+<!-- Drew's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">📣 Drew's Honest Talk About Sprint 1</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        This module is a step change in difficulty. You're learning TWO complex things simultaneously: ML model evaluation (already hard) and Scrum execution (unfamiliar and feels like busywork). <strong>Sprint 1 always feels overwhelming.</strong>
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Here's what will happen: You'll spend Week 5 thinking "this PM stuff is slowing me down." By Week 6, you'll realize the sprint structure is actually helping you stay organized. By Sprint 2, you'll wonder how you ever worked without it.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        <strong>Your first sprint will be messy. That's not failure—that's learning.</strong> The retrospective is where you identify what to fix. Every professional developer had a chaotic first sprint. You're in good company.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6; font-weight: bold;">
+        If you're stuck or overwhelmed: #module-03 on Discord, office hours, or email me. I'd rather help you succeed than watch you struggle in silence.
+    </p>
+</div>
+
+<!-- Process Grading Detail -->
+<div class="content-section" style="background: #f3e5f5; border-left-color: #9c27b0;">
+    <h2 style="color: #9c27b0;">⚖️ Why Sprint Grading is 50/50 (Technical/Process)</h2>
+    <p>You might notice sprint assignments are graded 50% on PM, compared to 30% for previous assignments. Here's why:</p>
+    <ul>
+        <li><strong>Sprints ARE the practice mode for PM:</strong> This is where you learn project management by doing it.</li>
+        <li><strong>Professional work requires both:</strong> You can be a brilliant coder who ships nothing because of poor planning.</li>
+        <li><strong>Capstone (CTS-289) is 60% process:</strong> We're building toward that. Sprint practice now = capstone success later.</li>
+        <li><strong>Employers care about this:</strong> "Can you manage your own work?" is a critical hiring question.</li>
+    </ul>
+    <p><strong>The good news:</strong> Process points are highly controllable. Follow the templates, log your standups, do your retro thoughtfully = full points!</p>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+    <h3 style="margin-top: 0;">Ready for Your First Sprint?</h3>
+    <p style="font-size: 1.1em; margin: 15px 0;">Start with the sprint planning template. Define your goal, estimate your stories, and commit to your first 2-week cycle!</p>
+    <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary" style="font-size: 1.2em; padding: 15px 30px;">View Sprint Assignment</a>
+    <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary" style="font-size: 1.2em; padding: 15px 30px;">Download Planning Template</a>
+    <p style="margin-top: 30px; font-style: italic; color: #666;">
+        "The sprint is the heartbeat of agile development. Learn to feel the rhythm." – Drew Norris
+    </p>
+</div>
+
+</body>
+</html>
