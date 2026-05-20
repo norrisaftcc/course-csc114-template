@@ -1,0 +1,16 @@
+I am a community college instructor and I have a summary of all the chapters of a textbook and as well as a potential module outline from our Course Creation Expert on campus. I want to integrate the documents so that I end up with 8 modules for the Canvas site that covers most relevant topics. The only section that I do not care to cover from the textbook is the very last one (the summary). I am going to provide you with the outline made by our [Course Creation Expert as well as the chapter summaries from the textbook, a first attempt at a crosswalk. The textbook is Deep Learning with Python, 3rd edition.
+For every module, I need an assignment (or document or activity) that meets each of these educational objectives: Learn, Practice, Apply, and Assess.
+
+The zip is from our Course Creation Expert and the screenshot is from the textbook itself. The crosswalk is its own file.
+
+1. Custom Agents & Local Models - Not in textbook
+2. Gentle Introduction to Deep Learning Chapters 1 & 2
+3. AI Frameworks in Python (Chapter 3) Keras Chapter 7
+4. Classification and Regression (Chapter 4) Image class - chapter 8
+5. Machine Learning Workflow*Chapter 6 & 7 - Project IDEA requirement here**
+6. Computer Vision Chapters 8-12 & 17 
+7. Natural Language Processing & LLMs Chapters 14-16
+8. Final Project
+
+"Exit Ticket" approach
+
