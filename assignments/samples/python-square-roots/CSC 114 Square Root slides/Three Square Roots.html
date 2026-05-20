@@ -1,0 +1,1310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Three ways to find a square root — CSC-113</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Fonts: keep JetBrains Mono for code/labels; use Space Grotesk for body + a
+     softer serif (Fraunces) for the deck's display headlines so we leave the
+     terminal/Bungee look on the door. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<script src="deck-stage.js"></script>
+
+<style>
+  :root {
+    /* Surfaces — kept from Teacherbot DS */
+    --ink-deep:   #0A1828;
+    --ink:        #0E1F33;
+    --ink-raised: #162A44;
+    --ink-elev:   #1D3554;
+    --ink-muted:  #3A4E68;
+    --ink-line:   #5A6E88;
+
+    /* Foreground cream ramp */
+    --cream:       #F4ECD2;
+    --cream-soft:  #E6DDC0;
+    --cream-muted: #B9B19A;
+    --cream-dim:   #8A8472;
+
+    /* Earthen ROYGB — used semantically per the deck's color grammar */
+    --rust:      #A23A2C;
+    --vermilion: #D8542E;
+    --amber:     #E08236;
+    --mustard:   #E5A93D;
+    --moss:      #7BA15A;
+    --teal:      #5DA9B4;
+
+    /* Algorithm-role colors (the deck's three "characters") */
+    --c-exhaustive: var(--cream-muted);          /* gray — uninformed */
+    --c-bisection:  #6BB672;                      /* brighter green than moss to read at projection */
+    --c-newton:     #A78BD9;                      /* lavender — the screenshot's purple */
+    --c-target:     var(--amber);                 /* √2 marker */
+
+    /* Typography */
+    --font-sans:    'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', 'Menlo', monospace;
+    --font-serif:   'Instrument Serif', 'Times New Roman', serif;
+
+    /* Slide-scale type — 1920×1080 */
+    --type-eyebrow:  24px;
+    --type-small:    26px;
+    --type-body:     32px;
+    --type-body-lg:  38px;
+    --type-sub:      44px;
+    --type-title:    72px;
+    --type-display:  120px;
+    --type-code:     26px;
+
+    /* Spacing on slide */
+    --pad-x:       96px;
+    --pad-top:     88px;
+    --pad-bottom:  88px;
+    --gap-title:   48px;
+    --gap-item:    28px;
+  }
+
+  html, body { background: #000; margin: 0; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--cream);
+  }
+
+  deck-stage {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--font-sans);
+  }
+
+  /* ───────────── slide chrome ───────────── */
+  section {
+    box-sizing: border-box;
+    background: var(--ink);
+    color: var(--cream);
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+
+  /* Subtle scan-line overlay — kept from the design system, but very dim and
+     non-distracting at projection scale. */
+  section::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 3px,
+      rgba(244, 236, 210, 0.02) 3px, rgba(244, 236, 210, 0.02) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Persistent corner chrome — eyebrow top-left + slide tag top-right */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--cream-muted);
+  }
+  .eyebrow .dash { color: var(--ink-line); margin: 0 .8em; }
+  .eyebrow .accent { color: var(--amber); }
+
+  /* ───────────── headings & body ───────────── */
+  h1.deck-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 156px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    margin: 0;
+    text-wrap: balance;
+  }
+  h2.slide-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--type-title);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    margin: 0 0 var(--gap-item);
+    text-wrap: balance;
+  }
+  h2.slide-title .accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--cream-soft); }
+  .subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--type-sub);
+    color: var(--cream-soft);
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  p.body {
+    font-size: var(--type-body);
+    line-height: 1.45;
+    color: var(--cream-soft);
+    margin: 0;
+    max-width: 1500px;
+    text-wrap: pretty;
+  }
+  p.body.lg { font-size: var(--type-body-lg); }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--cream-muted);
+  }
+
+  /* ───────────── code blocks ───────────── */
+  pre.code {
+    font-family: var(--font-mono);
+    font-size: var(--type-code);
+    line-height: 1.55;
+    color: var(--cream);
+    background: var(--ink-deep);
+    border: 1px solid var(--ink-muted);
+    padding: 28px 32px;
+    margin: 0;
+    overflow: visible;
+    white-space: pre;
+  }
+  pre.code .kw  { color: var(--teal); }
+  pre.code .fn  { color: var(--mustard); }
+  pre.code .num { color: #E5A93D; }
+  pre.code .str { color: var(--moss); }
+  pre.code .cmt { color: var(--cream-dim); font-style: italic; }
+  pre.code .op  { color: var(--cream-muted); }
+  pre.code .hi  { background: rgba(167, 139, 217, 0.16); display: inline-block; padding: 0 6px; margin: 0 -6px; }
+
+  /* role-tinted code accents (left border) */
+  pre.code.role-exh { border-left: 4px solid var(--c-exhaustive); }
+  pre.code.role-bis { border-left: 4px solid var(--c-bisection); }
+  pre.code.role-new { border-left: 4px solid var(--c-newton); }
+
+  /* ───────────── role chip ───────────── */
+  .chip {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--cream-muted);
+  }
+  .chip .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: currentColor;
+  }
+  .chip.role-exh { color: var(--c-exhaustive); }
+  .chip.role-bis { color: var(--c-bisection); }
+  .chip.role-new { color: var(--c-newton); }
+
+  /* ───────────── demand / cost panel ───────────── */
+  .panel {
+    border: 1px solid var(--ink-muted);
+    padding: 32px 36px;
+    background: rgba(22, 42, 68, 0.5);
+  }
+  .panel h4 {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--cream-muted);
+    margin: 0 0 16px;
+  }
+  .panel p {
+    font-size: var(--type-body);
+    line-height: 1.4;
+    color: var(--cream);
+    margin: 0;
+  }
+  .panel .demand-em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--cream);
+  }
+  .panel.role-exh { border-left: 4px solid var(--c-exhaustive); }
+  .panel.role-bis { border-left: 4px solid var(--c-bisection); }
+  .panel.role-new { border-left: 4px solid var(--c-newton); }
+
+  .cost-callout {
+    margin-top: 24px;
+    display: flex; align-items: baseline; gap: 18px;
+    font-family: var(--font-mono);
+  }
+  .cost-callout .num {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 96px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--cream);
+  }
+  .cost-callout .role-exh ~ .num,
+  .cost-callout.role-exh .num { color: var(--c-exhaustive); }
+  .cost-callout.role-bis .num { color: var(--c-bisection); }
+  .cost-callout.role-new .num { color: var(--c-newton); }
+  .cost-callout .lbl {
+    font-size: var(--type-small);
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+  }
+  .cost-callout .lbl em { color: var(--cream); font-style: normal; }
+
+  /* ───────────── number-line viz ───────────── */
+  .nl {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+  .nl .axis      { stroke: var(--ink-line); stroke-width: 1.4; }
+  .nl .tick      { stroke: var(--ink-line); stroke-width: 1.4; }
+  .nl .tick-label{
+    font-family: var(--font-mono);
+    font-size: 22px;
+    fill: var(--cream-muted);
+    letter-spacing: 0.04em;
+  }
+  .nl .target-line {
+    stroke: var(--c-target);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .nl .target-label {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    fill: var(--c-target);
+    text-anchor: middle;
+    letter-spacing: 0.04em;
+  }
+  .nl .row-title {
+    font-family: var(--font-sans);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .nl .row-sub {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    fill: var(--cream-muted);
+    letter-spacing: 0.02em;
+  }
+  .nl .row-title.role-exh { fill: var(--c-exhaustive); }
+  .nl .row-title.role-bis { fill: var(--c-bisection); }
+  .nl .row-title.role-new { fill: var(--c-newton); }
+
+  /* dots — visible by default (so they're never invisible if animation glitches);
+     animation runs on the active slide and uses `both` fill-mode so the delay
+     keeps them hidden until their cue. */
+  .nl .dot-exh  { fill: var(--c-exhaustive); }
+  .nl .dot-exh.terminal { fill: var(--c-bisection); }
+  .nl .dot-bis  { fill: var(--c-bisection); }
+  .nl .dot-new  { fill: var(--c-newton); }
+  .nl .bis-label, .nl .new-label {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    fill: var(--cream);
+    text-anchor: middle;
+  }
+  .nl .bis-label { fill: var(--c-bisection); }
+  .nl .new-label { fill: var(--c-newton); }
+  .nl .new-arrow {
+    fill: none;
+    stroke: var(--c-newton);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+
+  /* Entry animations — `both` fill-mode honours the FROM state during the
+     per-element delay (so each dot stays hidden until its cue) and holds the
+     TO state after. Driven by a `data-anim` attribute we toggle from JS on
+     slide-change so the animation re-plays each time the slide is opened. */
+  .nl [style*="--d"] {
+    opacity: 1; /* default visible — safe fallback */
+  }
+  .nl[data-anim] .dot-exh,
+  .nl[data-anim] .dot-bis,
+  .nl[data-anim] .dot-new,
+  .nl[data-anim] .bis-label,
+  .nl[data-anim] .new-label {
+    animation-name: dotIn;
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-delay: var(--d, 0s);
+    animation-fill-mode: both;
+  }
+  .nl[data-anim] .new-arrow {
+    animation-name: arrowIn;
+    animation-duration: 700ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-delay: var(--d, 0s);
+    animation-fill-mode: both;
+  }
+  @keyframes dotIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes arrowIn {
+    from { stroke-dasharray: 1000; stroke-dashoffset: 1000; opacity: 0; }
+    to   { stroke-dasharray: 1000; stroke-dashoffset: 0; opacity: 0.85; }
+  }
+
+  /* ───────────── slide-1: title ───────────── */
+  .slide-title-page {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    column-gap: 80px;
+    align-items: stretch;
+  }
+  .slide-title-page .doc-row {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--cream-muted);
+  }
+  .slide-title-page .hero {
+    align-self: center;
+    max-width: 1500px;
+  }
+  .slide-title-page .hero .deck-title {
+    margin-top: 32px;
+  }
+  .slide-title-page .hero .subtitle {
+    margin-top: 40px;
+    max-width: 1200px;
+  }
+  .slide-title-page .corner-mark {
+    align-self: end;
+    justify-self: end;
+    width: 240px; height: 240px;
+    opacity: 0.32;
+  }
+  .slide-title-page .footer-row {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--cream-dim);
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ───────────── slide-2: three questions ───────────── */
+  .questions-grid {
+    display: grid;
+    grid-template-columns: minmax(420px, 0.9fr) 1.6fr;
+    column-gap: 64px;
+    row-gap: 40px;
+    align-items: baseline;
+    margin-top: 60px;
+  }
+  .questions-grid .lhs {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 52px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .questions-grid .lhs.role-exh { color: var(--c-exhaustive); }
+  .questions-grid .lhs.role-bis { color: var(--c-bisection); }
+  .questions-grid .lhs.role-new { color: var(--c-newton); }
+  .questions-grid .rhs {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 52px;
+    line-height: 1.2;
+    color: var(--cream);
+  }
+  .questions-grid .rhs::before { content: "“"; color: var(--cream-muted); margin-right: 4px; }
+  .questions-grid .rhs::after  { content: "”"; color: var(--cream-muted); }
+  .questions-grid .divider {
+    grid-column: 1 / -1;
+    height: 1px; background: var(--ink-muted);
+  }
+
+  /* ───────────── algorithm slides (4, 5, 6) ───────────── */
+  .algo-slide {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    row-gap: 48px;
+  }
+  .algo-head {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .algo-head .title-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 40px;
+  }
+  .algo-body {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    column-gap: 64px;
+    align-items: stretch;
+  }
+  .algo-body > * { min-width: 0; }
+
+  /* ───────────── slide 7: cost comparison ───────────── */
+  .cost-grid {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: auto repeat(3, 1fr);
+    column-gap: 64px;
+    row-gap: 0;
+    align-items: end;
+  }
+  .cost-grid .col-head {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--cream-muted);
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--ink-muted);
+  }
+  .cost-grid .col-head.role-exh { color: var(--c-exhaustive); }
+  .cost-grid .col-head.role-bis { color: var(--c-bisection); }
+  .cost-grid .col-head.role-new { color: var(--c-newton); }
+  .cost-grid .row-label {
+    font-family: var(--font-mono);
+    font-size: var(--type-small);
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 36px 0 8px;
+    border-top: 1px solid var(--ink-muted);
+  }
+  .cost-grid .row-label.first { border-top: none; padding-top: 36px; }
+  .cost-grid .big {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 108px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    padding: 12px 0 16px;
+    border-top: 1px solid var(--ink-muted);
+  }
+  .cost-grid .big.first { border-top: none; }
+  .cost-grid .big.role-exh { color: var(--c-exhaustive); }
+  .cost-grid .big.role-bis { color: var(--c-bisection); }
+  .cost-grid .big.role-new { color: var(--c-newton); }
+  .cost-grid .big .unit {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-left: 10px;
+    font-weight: 500;
+  }
+
+  /* ───────────── slide 8: side by side functions ───────────── */
+  .compare-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 36px;
+    align-items: start;
+  }
+  .compare-grid .col {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .compare-grid .col .chip { margin-bottom: 4px; }
+  .compare-grid pre.code {
+    font-size: 22px;
+    padding: 22px 24px;
+    line-height: 1.55;
+  }
+
+  /* ───────────── slide 9: iterative-solver shape ───────────── */
+  .skeleton-card {
+    border: 1px solid var(--ink-muted);
+    background: var(--ink-deep);
+    padding: 36px 44px;
+    font-family: var(--font-mono);
+    font-size: 36px;
+    line-height: 1.7;
+    color: var(--cream);
+  }
+  .skeleton-card .slot {
+    background: rgba(93, 169, 180, 0.18);
+    color: var(--teal);
+    padding: 2px 12px;
+    border: 1px dashed rgba(93, 169, 180, 0.5);
+  }
+  .legend {
+    font-family: var(--font-mono);
+    font-size: var(--type-small);
+    color: var(--cream-muted);
+    margin-top: 12px;
+  }
+  .legend .slot-mini {
+    background: rgba(93, 169, 180, 0.18);
+    color: var(--teal);
+    padding: 0 8px;
+    border: 1px dashed rgba(93, 169, 180, 0.5);
+    font-family: var(--font-mono);
+  }
+  .skeleton-row {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 28px;
+  }
+  .skeleton-row .sk-card {
+    border: 1px solid var(--ink-muted);
+    background: rgba(22, 42, 68, 0.5);
+    padding: 24px 26px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .skeleton-row .sk-card.role-exh { border-left: 4px solid var(--c-exhaustive); }
+  .skeleton-row .sk-card.role-bis { border-left: 4px solid var(--c-bisection); }
+  .skeleton-row .sk-card.role-new { border-left: 4px solid var(--c-newton); }
+  .sk-card .sk-label {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--cream-muted);
+  }
+  .sk-card pre.sk-code {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--cream);
+    margin: 0;
+    white-space: pre;
+  }
+  .sk-card pre.sk-code .kw  { color: var(--teal); }
+  .sk-card pre.sk-code .num { color: var(--mustard); }
+  .sk-card .sk-cost {
+    margin-top: auto;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .sk-card.role-exh .sk-cost { color: var(--c-exhaustive); }
+  .sk-card.role-bis .sk-cost { color: var(--c-bisection); }
+  .sk-card.role-new .sk-cost { color: var(--c-newton); }
+  .sk-card .sk-cost .unit {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-left: 8px;
+    font-weight: 500;
+  }
+
+  /* ───────────── slide 10: shape has a name ───────────── */
+  .name-slide {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    align-items: center;
+  }
+  .name-slide .center-card {
+    align-self: center;
+    justify-self: center;
+    max-width: 1500px;
+    text-align: center;
+  }
+  .name-slide .center-card .kicker {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    margin-bottom: 28px;
+  }
+  .name-slide .center-card .name {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 108px;
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 48px;
+  }
+  .name-slide .center-card pre.skel {
+    display: inline-block;
+    text-align: left;
+    margin: 0 auto 48px;
+    font-family: var(--font-mono);
+    font-size: 38px;
+    line-height: 1.7;
+    color: var(--cream);
+    background: var(--ink-deep);
+    border: 1px solid var(--ink-muted);
+    padding: 36px 56px;
+  }
+  .name-slide .footnote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 36px;
+    color: var(--cream-soft);
+    text-wrap: pretty;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ───────────── slide 11: failure modes teaser ───────────── */
+  .teaser {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    row-gap: 64px;
+  }
+  .teaser .row {
+    display: grid;
+    grid-template-columns: minmax(360px, 0.7fr) 2fr;
+    column-gap: 56px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--ink-muted);
+    align-items: baseline;
+  }
+  .teaser .row:first-of-type { border-top: 1px solid var(--ink-muted); }
+  .teaser .row .name {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 44px;
+    letter-spacing: -0.01em;
+  }
+  .teaser .row.role-exh .name { color: var(--c-exhaustive); }
+  .teaser .row.role-bis .name { color: var(--c-bisection); }
+  .teaser .row.role-new .name { color: var(--c-newton); }
+  .teaser .row .desc {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 38px;
+    line-height: 1.35;
+    color: var(--cream);
+  }
+  .teaser .row .desc strong { font-style: normal; font-family: var(--font-sans); color: var(--cream); font-weight: 600; }
+  .teaser .bridge {
+    padding-top: 24px;
+    display: flex; align-items: baseline; gap: 24px;
+    font-family: var(--font-mono);
+    font-size: var(--type-body);
+    color: var(--cream-soft);
+  }
+  .teaser .bridge .arrow { color: var(--amber); font-size: 44px; line-height: 0.8; }
+  .teaser .bridge em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--type-body-lg);
+    color: var(--cream);
+  }
+
+</style>
+</head>
+
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ────────────────────────── 01 — Title ─────────────────────────── -->
+  <section data-label="01 Title" class="slide-title-page">
+    <div class="doc-row">
+      <span class="eyebrow">CSC&nbsp;113 <span class="dash">/</span> Module 03 <span class="dash">/</span> <span class="accent">Numerical methods</span></span>
+      <span class="eyebrow">Day 01</span>
+    </div>
+
+    <div class="hero">
+      <span class="label">Three programs · one answer</span>
+      <h1 class="deck-title">Three ways to find a square root.</h1>
+      <p class="subtitle">Same problem, very different amounts of work.</p>
+    </div>
+
+    <img class="corner-mark" src="assets/heptagram.svg" alt="" />
+
+    <div class="footer-row">
+      <span>After Guttag, ch. 3</span>
+      <span>—</span>
+      <span>Press → to begin</span>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 02 — Three questions ────────────────────────── -->
+  <section data-label="02 Three implicit questions">
+    <span class="eyebrow">02 <span class="dash">/</span> <span class="accent">Setup</span></span>
+    <h2 class="slide-title">Same problem. <span class="accent">Three different questions.</span></h2>
+    <p class="body lg">Each algorithm answers <em style="font-family:var(--font-serif);">“what's √x?”</em> &mdash; but each one asks a different implicit question about how it's allowed to think.</p>
+
+    <div class="questions-grid">
+      <div class="lhs role-exh">Exhaustive enumeration</div>
+      <div class="rhs">Can I just check every possibility?</div>
+      <div class="divider"></div>
+
+      <div class="lhs role-bis">Bisection search</div>
+      <div class="rhs">What can I rule out without checking?</div>
+      <div class="divider"></div>
+
+      <div class="lhs role-new">Newton-Raphson</div>
+      <div class="rhs">Given what I know, where <em style="font-family:inherit;">should</em> the answer be?</div>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 03 — Combined number-line viz ─────────────────────────── -->
+  <section data-label="03 Number-line comparison">
+    <span class="eyebrow">03 <span class="dash">/</span> <span class="accent">The story told by density</span></span>
+    <h2 class="slide-title" style="font-size:60px; margin-bottom:24px;">Three search strategies, finding <span style="font-family:var(--font-serif); font-style:italic;">√2</span> on a number line.</h2>
+
+    <svg class="nl" viewBox="0 0 1720 760" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <defs>
+        <!-- target marker tick — repeated per row -->
+      </defs>
+
+      <!-- Row 1: Exhaustive -->
+      <g transform="translate(0, 20)">
+        <text class="row-title role-exh" x="60" y="0">Exhaustive enumeration</text>
+        <text class="row-sub" x="60" y="36">Step 0.05 across [0, 2] — 28 tests until x² is within 0.05 of 2</text>
+
+        <!-- axis -->
+        <line class="axis" x1="80" y1="160" x2="1640" y2="160" />
+        <!-- ticks -->
+        <line class="tick" x1="80"   y1="156" x2="80"   y2="172" />
+        <line class="tick" x1="860"  y1="156" x2="860"  y2="172" />
+        <line class="tick" x1="1640" y1="156" x2="1640" y2="172" />
+        <text class="tick-label" x="80"   y="208" text-anchor="middle">0</text>
+        <text class="tick-label" x="860"  y="208" text-anchor="middle">1</text>
+        <text class="tick-label" x="1640" y="208" text-anchor="middle">2</text>
+
+        <!-- target line at √2 ≈ 1.4142 → x = 80 + 1.4142 * 780 = 1183.07 -->
+        <line class="target-line" x1="1183" y1="124" x2="1183" y2="196" />
+        <text class="target-label" x="1183" y="108">√2 ≈ 1.414</text>
+
+        <!-- 28 dots from val=0.0 step 0.05 ; last one green. Generated inline. -->
+        <!-- formula x = 80 + val * 780, dots at y=160, r=7 -->
+        <circle class="dot dot-exh" cx="80"    cy="160" r="7" style="--d: 0ms" />
+        <circle class="dot dot-exh" cx="119"   cy="160" r="7" style="--d: 30ms" />
+        <circle class="dot dot-exh" cx="158"   cy="160" r="7" style="--d: 60ms" />
+        <circle class="dot dot-exh" cx="197"   cy="160" r="7" style="--d: 90ms" />
+        <circle class="dot dot-exh" cx="236"   cy="160" r="7" style="--d: 120ms" />
+        <circle class="dot dot-exh" cx="275"   cy="160" r="7" style="--d: 150ms" />
+        <circle class="dot dot-exh" cx="314"   cy="160" r="7" style="--d: 180ms" />
+        <circle class="dot dot-exh" cx="353"   cy="160" r="7" style="--d: 210ms" />
+        <circle class="dot dot-exh" cx="392"   cy="160" r="7" style="--d: 240ms" />
+        <circle class="dot dot-exh" cx="431"   cy="160" r="7" style="--d: 270ms" />
+        <circle class="dot dot-exh" cx="470"   cy="160" r="7" style="--d: 300ms" />
+        <circle class="dot dot-exh" cx="509"   cy="160" r="7" style="--d: 330ms" />
+        <circle class="dot dot-exh" cx="548"   cy="160" r="7" style="--d: 360ms" />
+        <circle class="dot dot-exh" cx="587"   cy="160" r="7" style="--d: 390ms" />
+        <circle class="dot dot-exh" cx="626"   cy="160" r="7" style="--d: 420ms" />
+        <circle class="dot dot-exh" cx="665"   cy="160" r="7" style="--d: 450ms" />
+        <circle class="dot dot-exh" cx="704"   cy="160" r="7" style="--d: 480ms" />
+        <circle class="dot dot-exh" cx="743"   cy="160" r="7" style="--d: 510ms" />
+        <circle class="dot dot-exh" cx="782"   cy="160" r="7" style="--d: 540ms" />
+        <circle class="dot dot-exh" cx="821"   cy="160" r="7" style="--d: 570ms" />
+        <circle class="dot dot-exh" cx="860"   cy="160" r="7" style="--d: 600ms" />
+        <circle class="dot dot-exh" cx="899"   cy="160" r="7" style="--d: 630ms" />
+        <circle class="dot dot-exh" cx="938"   cy="160" r="7" style="--d: 660ms" />
+        <circle class="dot dot-exh" cx="977"   cy="160" r="7" style="--d: 690ms" />
+        <circle class="dot dot-exh" cx="1016"  cy="160" r="7" style="--d: 720ms" />
+        <circle class="dot dot-exh" cx="1055"  cy="160" r="7" style="--d: 750ms" />
+        <circle class="dot dot-exh" cx="1094"  cy="160" r="7" style="--d: 780ms" />
+        <circle class="dot dot-exh" cx="1133"  cy="160" r="7" style="--d: 810ms" />
+        <!-- terminal "green" dot near √2 -->
+        <circle class="dot dot-exh terminal" cx="1172" cy="160" r="11" style="--d: 880ms" />
+      </g>
+
+      <!-- Row 2: Bisection -->
+      <g transform="translate(0, 290)">
+        <text class="row-title role-bis" x="60" y="0">Bisection search</text>
+        <text class="row-sub" x="60" y="36">Halve the range each step. 4 midpoints cluster around √2.</text>
+
+        <line class="axis" x1="80" y1="160" x2="1640" y2="160" />
+        <line class="tick" x1="80"   y1="156" x2="80"   y2="172" />
+        <line class="tick" x1="860"  y1="156" x2="860"  y2="172" />
+        <line class="tick" x1="1640" y1="156" x2="1640" y2="172" />
+        <text class="tick-label" x="80"   y="208" text-anchor="middle">0</text>
+        <text class="tick-label" x="860"  y="208" text-anchor="middle">1</text>
+        <text class="tick-label" x="1640" y="208" text-anchor="middle">2</text>
+
+        <line class="target-line" x1="1183" y1="124" x2="1183" y2="196" />
+        <text class="target-label" x="1183" y="108">√2 ≈ 1.414</text>
+
+        <!-- bisection midpoints in test order: 1, 2, 3, 4
+             x = 80 + val * 780
+             #1 val=1.0    → 860     (label "1")
+             #2 val=1.5    → 1250    (label "2")
+             #3 val=1.25   → 1055    (label "3")
+             #4 val=1.375  → 1153    (label "4")  -->
+        <!-- step 1: appear at 1.0 -->
+        <circle class="dot dot-bis" cx="860"  cy="160" r="11" style="--d: 0ms" />
+        <text   class="bis-label"   x="860"  y="124" style="--d: 60ms">1</text>
+        <!-- step 2: appear at 1.5 -->
+        <circle class="dot dot-bis" cx="1250" cy="160" r="11" style="--d: 420ms" />
+        <text   class="bis-label"   x="1250" y="124" style="--d: 480ms">2</text>
+        <!-- step 3: appear at 1.25 -->
+        <circle class="dot dot-bis" cx="1055" cy="160" r="11" style="--d: 840ms" />
+        <text   class="bis-label"   x="1055" y="124" style="--d: 900ms">3</text>
+        <!-- step 4: appear at 1.375 -->
+        <circle class="dot dot-bis" cx="1153" cy="160" r="11" style="--d: 1260ms" />
+        <text   class="bis-label"   x="1153" y="124" style="--d: 1320ms">4</text>
+      </g>
+
+      <!-- Row 3: Newton-Raphson -->
+      <g transform="translate(0, 560)">
+        <text class="row-title role-new" x="60" y="0">Newton-Raphson</text>
+        <text class="row-sub" x="60" y="36">Use the slope to predict. After 4 iterations, x₃ matches √2 to machine precision.</text>
+
+        <line class="axis" x1="80" y1="160" x2="1640" y2="160" />
+        <line class="tick" x1="80"   y1="156" x2="80"   y2="172" />
+        <line class="tick" x1="860"  y1="156" x2="860"  y2="172" />
+        <line class="tick" x1="1640" y1="156" x2="1640" y2="172" />
+        <text class="tick-label" x="80"   y="208" text-anchor="middle">0</text>
+        <text class="tick-label" x="860"  y="208" text-anchor="middle">1</text>
+        <text class="tick-label" x="1640" y="208" text-anchor="middle">2</text>
+
+        <line class="target-line" x1="1183" y1="124" x2="1183" y2="196" />
+        <text class="target-label" x="1183" y="108" style="text-anchor:start; transform:translateX(8px);">x₂, x₃ ≈ √2</text>
+
+        <!-- Newton iterations:
+             x₀ = 1.0   → 860
+             x₁ = 1.5   → 1250
+             x₂ ≈ 1.4167 → 1185 (essentially on the target)
+             arrow 1: 860 → 1250
+             arrow 2: 1250 → 1185 -->
+        <!-- arrow paths (curve up then arrowhead) -->
+        <path class="new-arrow" d="M 860 152 C 950 88, 1160 88, 1247 152" style="--d: 200ms" />
+        <path class="new-arrow" d="M 1250 152 C 1230 110, 1200 110, 1186 152" style="--d: 1000ms" />
+        <!-- arrowheads as little chevrons -->
+        <path class="new-arrow" d="M 1240 144 L 1250 152 L 1244 158" style="--d: 700ms; stroke-dasharray:30;" />
+        <path class="new-arrow" d="M 1180 144 L 1186 152 L 1192 144" style="--d: 1500ms; stroke-dasharray:30;" />
+
+        <circle class="dot dot-new" cx="860"  cy="160" r="11" style="--d: 0ms" />
+        <text class="new-label"     x="860"  y="200" style="--d: 60ms; fill:var(--c-newton);">x₀ = 1.0</text>
+
+        <circle class="dot dot-new" cx="1250" cy="160" r="11" style="--d: 800ms" />
+        <text class="new-label"     x="1250" y="200" style="--d: 860ms;">x₁ = 1.5</text>
+
+        <circle class="dot dot-new" cx="1186" cy="160" r="11" style="--d: 1600ms" />
+      </g>
+    </svg>
+  </section>
+
+
+  <!-- ────────────────────────── 04 — Exhaustive ─────────────────────────── -->
+  <section data-label="04 Exhaustive enumeration" class="algo-slide">
+    <div class="algo-head">
+      <span class="chip role-exh"><span class="dot"></span>01 · Exhaustive enumeration</span>
+      <div class="title-row">
+        <h2 class="slide-title">Try every value, in order, from zero up.</h2>
+      </div>
+    </div>
+
+    <!-- inline animated number line — small version -->
+    <svg class="nl" viewBox="0 0 1720 200" preserveAspectRatio="xMidYMid meet" style="height:160px;">
+      <line class="axis" x1="80" y1="100" x2="1640" y2="100" />
+      <line class="tick" x1="80"   y1="94" x2="80"   y2="112" />
+      <line class="tick" x1="860"  y1="94" x2="860"  y2="112" />
+      <line class="tick" x1="1640" y1="94" x2="1640" y2="112" />
+      <text class="tick-label" x="80"   y="148" text-anchor="middle">0</text>
+      <text class="tick-label" x="860"  y="148" text-anchor="middle">1</text>
+      <text class="tick-label" x="1640" y="148" text-anchor="middle">2</text>
+      <line class="target-line" x1="1183" y1="64" x2="1183" y2="136" />
+      <text class="target-label" x="1183" y="48">√2 ≈ 1.414</text>
+      <!-- 28 dots, same coords as slide 3 row 1 but y=100 -->
+      <circle class="dot dot-exh" cx="80"   cy="100" r="6" style="--d: 0ms" />
+      <circle class="dot dot-exh" cx="119"  cy="100" r="6" style="--d: 30ms" />
+      <circle class="dot dot-exh" cx="158"  cy="100" r="6" style="--d: 60ms" />
+      <circle class="dot dot-exh" cx="197"  cy="100" r="6" style="--d: 90ms" />
+      <circle class="dot dot-exh" cx="236"  cy="100" r="6" style="--d: 120ms" />
+      <circle class="dot dot-exh" cx="275"  cy="100" r="6" style="--d: 150ms" />
+      <circle class="dot dot-exh" cx="314"  cy="100" r="6" style="--d: 180ms" />
+      <circle class="dot dot-exh" cx="353"  cy="100" r="6" style="--d: 210ms" />
+      <circle class="dot dot-exh" cx="392"  cy="100" r="6" style="--d: 240ms" />
+      <circle class="dot dot-exh" cx="431"  cy="100" r="6" style="--d: 270ms" />
+      <circle class="dot dot-exh" cx="470"  cy="100" r="6" style="--d: 300ms" />
+      <circle class="dot dot-exh" cx="509"  cy="100" r="6" style="--d: 330ms" />
+      <circle class="dot dot-exh" cx="548"  cy="100" r="6" style="--d: 360ms" />
+      <circle class="dot dot-exh" cx="587"  cy="100" r="6" style="--d: 390ms" />
+      <circle class="dot dot-exh" cx="626"  cy="100" r="6" style="--d: 420ms" />
+      <circle class="dot dot-exh" cx="665"  cy="100" r="6" style="--d: 450ms" />
+      <circle class="dot dot-exh" cx="704"  cy="100" r="6" style="--d: 480ms" />
+      <circle class="dot dot-exh" cx="743"  cy="100" r="6" style="--d: 510ms" />
+      <circle class="dot dot-exh" cx="782"  cy="100" r="6" style="--d: 540ms" />
+      <circle class="dot dot-exh" cx="821"  cy="100" r="6" style="--d: 570ms" />
+      <circle class="dot dot-exh" cx="860"  cy="100" r="6" style="--d: 600ms" />
+      <circle class="dot dot-exh" cx="899"  cy="100" r="6" style="--d: 630ms" />
+      <circle class="dot dot-exh" cx="938"  cy="100" r="6" style="--d: 660ms" />
+      <circle class="dot dot-exh" cx="977"  cy="100" r="6" style="--d: 690ms" />
+      <circle class="dot dot-exh" cx="1016" cy="100" r="6" style="--d: 720ms" />
+      <circle class="dot dot-exh" cx="1055" cy="100" r="6" style="--d: 750ms" />
+      <circle class="dot dot-exh" cx="1094" cy="100" r="6" style="--d: 780ms" />
+      <circle class="dot dot-exh" cx="1133" cy="100" r="6" style="--d: 810ms" />
+      <circle class="dot dot-exh terminal" cx="1172" cy="100" r="10" style="--d: 880ms" />
+    </svg>
+
+    <div class="algo-body">
+      <pre class="code role-exh"><span class="kw">def</span> <span class="fn">sqrt_exhaustive</span>(target, epsilon=<span class="num">0.01</span>, step=<span class="num">0.001</span>):
+    guess = <span class="num">0.0</span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        guess += step
+    <span class="kw">return</span> guess</pre>
+
+      <div class="panel role-exh">
+        <h4>What it demands from the problem</h4>
+        <p><span class="demand-em">Almost nothing.</span> Evaluate <code style="font-size:0.85em; background:transparent; color:var(--mustard); border:0; padding:0;">f(x)</code> at a point. Compare it to a target. That's the only prerequisite — it will work on any function, however ugly.</p>
+        <div class="cost-callout role-exh">
+          <span class="num">1,411</span>
+          <span class="lbl">iterations<br/><em>ε = 0.01, target = 2</em></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 05 — Bisection ─────────────────────────── -->
+  <section data-label="05 Bisection search" class="algo-slide">
+    <div class="algo-head">
+      <span class="chip role-bis"><span class="dot"></span>02 · Bisection search</span>
+      <div class="title-row">
+        <h2 class="slide-title">Throw away half the space, every step.</h2>
+      </div>
+    </div>
+
+    <svg class="nl" viewBox="0 0 1720 200" preserveAspectRatio="xMidYMid meet" style="height:160px;">
+      <line class="axis" x1="80" y1="100" x2="1640" y2="100" />
+      <line class="tick" x1="80"   y1="94" x2="80"   y2="112" />
+      <line class="tick" x1="860"  y1="94" x2="860"  y2="112" />
+      <line class="tick" x1="1640" y1="94" x2="1640" y2="112" />
+      <text class="tick-label" x="80"   y="148" text-anchor="middle">0</text>
+      <text class="tick-label" x="860"  y="148" text-anchor="middle">1</text>
+      <text class="tick-label" x="1640" y="148" text-anchor="middle">2</text>
+      <line class="target-line" x1="1183" y1="64" x2="1183" y2="136" />
+      <text class="target-label" x="1183" y="48">√2 ≈ 1.414</text>
+
+      <!-- 4 numbered midpoints, in test order -->
+      <circle class="dot dot-bis" cx="860"  cy="100" r="11" style="--d: 0ms" />
+      <text class="bis-label"     x="860"  y="64" style="--d: 60ms">1</text>
+      <circle class="dot dot-bis" cx="1250" cy="100" r="11" style="--d: 420ms" />
+      <text class="bis-label"     x="1250" y="64" style="--d: 480ms">2</text>
+      <circle class="dot dot-bis" cx="1055" cy="100" r="11" style="--d: 840ms" />
+      <text class="bis-label"     x="1055" y="64" style="--d: 900ms">3</text>
+      <circle class="dot dot-bis" cx="1153" cy="100" r="11" style="--d: 1260ms" />
+      <text class="bis-label"     x="1153" y="64" style="--d: 1320ms">4</text>
+    </svg>
+
+    <div class="algo-body">
+      <pre class="code role-bis"><span class="kw">def</span> <span class="fn">sqrt_bisection</span>(target, epsilon=<span class="num">0.01</span>):
+    low, high = <span class="num">0.0</span>, <span class="fn">max</span>(<span class="num">1.0</span>, target)
+    guess = (low + high) / <span class="num">2</span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        <span class="kw">if</span> guess**<span class="num">2</span> &lt; target:
+            low = guess
+        <span class="kw">else</span>:
+            high = guess
+        guess = (low + high) / <span class="num">2</span>
+    <span class="kw">return</span> guess</pre>
+
+      <div class="panel role-bis">
+        <h4>What it demands from the problem</h4>
+        <p>The function must be <span class="demand-em">monotonic</span> on the interval — always going up, or always going down. Without that, we can't safely throw half the space away.</p>
+        <div class="cost-callout role-bis">
+          <span class="num">7</span>
+          <span class="lbl">iterations<br/><em>ε = 0.01, target = 2</em></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 06 — Newton-Raphson ─────────────────────────── -->
+  <section data-label="06 Newton-Raphson" class="algo-slide">
+    <div class="algo-head">
+      <span class="chip role-new"><span class="dot"></span>03 · Newton-Raphson</span>
+      <div class="title-row">
+        <h2 class="slide-title">Use the slope to predict where the answer is.</h2>
+      </div>
+    </div>
+
+    <svg class="nl" viewBox="0 0 1720 200" preserveAspectRatio="xMidYMid meet" style="height:160px;">
+      <line class="axis" x1="80" y1="100" x2="1640" y2="100" />
+      <line class="tick" x1="80"   y1="94" x2="80"   y2="112" />
+      <line class="tick" x1="860"  y1="94" x2="860"  y2="112" />
+      <line class="tick" x1="1640" y1="94" x2="1640" y2="112" />
+      <text class="tick-label" x="80"   y="148" text-anchor="middle">0</text>
+      <text class="tick-label" x="860"  y="148" text-anchor="middle">1</text>
+      <text class="tick-label" x="1640" y="148" text-anchor="middle">2</text>
+      <line class="target-line" x1="1183" y1="64" x2="1183" y2="136" />
+      <text class="target-label" x="1183" y="48" style="text-anchor:start; transform:translateX(8px);">x₂, x₃ ≈ √2</text>
+
+      <!-- arrows then dots -->
+      <path class="new-arrow" d="M 860 92 C 950 28, 1160 28, 1247 92" style="--d: 200ms" />
+      <path class="new-arrow" d="M 1240 84 L 1250 92 L 1244 98" style="--d: 700ms; stroke-dasharray:30;" />
+      <path class="new-arrow" d="M 1250 92 C 1230 50, 1200 50, 1186 92" style="--d: 1000ms" />
+      <path class="new-arrow" d="M 1180 84 L 1186 92 L 1192 84" style="--d: 1500ms; stroke-dasharray:30;" />
+
+      <circle class="dot dot-new" cx="860"  cy="100" r="11" style="--d: 0ms" />
+      <text class="new-label"     x="860"  y="140" style="--d: 60ms">x₀ = 1.0</text>
+      <circle class="dot dot-new" cx="1250" cy="100" r="11" style="--d: 800ms" />
+      <text class="new-label"     x="1250" y="140" style="--d: 860ms">x₁ = 1.5</text>
+      <circle class="dot dot-new" cx="1186" cy="100" r="11" style="--d: 1600ms" />
+    </svg>
+
+    <div class="algo-body">
+      <pre class="code role-new"><span class="kw">def</span> <span class="fn">sqrt_newton</span>(target, epsilon=<span class="num">0.01</span>):
+    guess = target / <span class="num">2</span> <span class="kw">if</span> target &gt; <span class="num">1</span> <span class="kw">else</span> <span class="num">1.0</span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        guess -= (guess**<span class="num">2</span> - target) / (<span class="num">2</span> * guess)
+    <span class="kw">return</span> guess</pre>
+
+      <div class="panel role-new">
+        <h4>What it demands from the problem</h4>
+        <p>A <span class="demand-em">derivative</span> (the slope), and a <span class="demand-em">starting guess</span> in the right basin. Newton can diverge, oscillate, or land on the wrong root when either is off.</p>
+        <div class="cost-callout role-new">
+          <span class="num">2</span>
+          <span class="lbl">iterations<br/><em>ε = 0.01, target = 2</em></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 07 — Cost comparison ─────────────────────────── -->
+  <section data-label="07 Cost comparison">
+    <span class="eyebrow">07 <span class="dash">/</span> <span class="accent">The numbers</span></span>
+    <h2 class="slide-title">Same problem. Same answer. Three orders of magnitude apart.</h2>
+
+    <div class="cost-grid">
+      <div></div>
+      <div class="col-head role-exh">Exhaustive</div>
+      <div class="col-head role-bis">Bisection</div>
+      <div class="col-head role-new">Newton</div>
+
+      <div class="row-label first">ε = 0.01</div>
+      <div class="big first role-exh">1,411 <span class="unit">iter</span></div>
+      <div class="big first role-bis">7 <span class="unit">iter</span></div>
+      <div class="big first role-new">2 <span class="unit">iter</span></div>
+
+      <div class="row-label">ε = 10⁻⁶</div>
+      <div class="big role-exh">~14M <span class="unit">iter</span></div>
+      <div class="big role-bis">22 <span class="unit">iter</span></div>
+      <div class="big role-new">4 <span class="unit">iter</span></div>
+    </div>
+
+    <p class="body lg" style="margin-top:64px; max-width:1500px;">At tight precision the gap widens to <em style="font-family:var(--font-serif);">six</em> orders of magnitude. What's actually changing between the three programs to make this happen?</p>
+  </section>
+
+
+  <!-- ────────────────────────── 08 — What stays the same, what changes ─────────────────────────── -->
+  <section data-label="08 What stays, what changes">
+    <span class="eyebrow">08 <span class="dash">/</span> <span class="accent">Anatomy</span></span>
+    <h2 class="slide-title" style="font-size:60px;">What stays the same, <span class="accent">what changes.</span></h2>
+    <p class="body" style="margin-bottom:8px;">Same signature, same convergence test, same return. The only thing that varies is <em style="font-family:var(--font-serif);">how each algorithm uses what it knows</em> — the setup, and the update rule.</p>
+
+    <div class="compare-grid">
+      <div class="col">
+        <span class="chip role-exh"><span class="dot"></span>Exhaustive</span>
+<pre class="code role-exh"><span class="kw">def</span> <span class="fn">sqrt_exhaustive</span>(target, epsilon):
+    <span class="hi">guess = <span class="num">0.0</span></span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        <span class="hi">guess += step</span>
+    <span class="kw">return</span> guess</pre>
+      </div>
+
+      <div class="col">
+        <span class="chip role-bis"><span class="dot"></span>Bisection</span>
+<pre class="code role-bis"><span class="kw">def</span> <span class="fn">sqrt_bisection</span>(target, epsilon):
+    <span class="hi">low, high = <span class="num">0.0</span>, <span class="fn">max</span>(<span class="num">1.0</span>, target)
+    guess = (low + high) / <span class="num">2</span></span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        <span class="hi"><span class="kw">if</span> guess**<span class="num">2</span> &lt; target: low = guess
+        <span class="kw">else</span>: high = guess
+        guess = (low + high) / <span class="num">2</span></span>
+    <span class="kw">return</span> guess</pre>
+      </div>
+
+      <div class="col">
+        <span class="chip role-new"><span class="dot"></span>Newton-Raphson</span>
+<pre class="code role-new"><span class="kw">def</span> <span class="fn">sqrt_newton</span>(target, epsilon):
+    <span class="hi">guess = target / <span class="num">2</span></span>
+    <span class="kw">while</span> <span class="fn">abs</span>(guess**<span class="num">2</span> - target) &gt;= epsilon:
+        <span class="hi">err = guess**<span class="num">2</span> - target
+        guess -= err / (<span class="num">2</span> * guess)</span>
+    <span class="kw">return</span> guess</pre>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:36px; color:var(--cream-muted);"><span style="background:rgba(167,139,217,0.16); color:var(--c-newton); padding:2px 10px; border:1px dashed rgba(167,139,217,0.5); font-family:var(--font-mono);">highlighted</span>&nbsp;&nbsp;lines are where the algorithm's <em style="font-family:var(--font-serif); color:var(--cream);">knowledge of the problem</em> lives.</p>
+  </section>
+
+
+  <!-- ────────────────────────── 09 — Iterative-solver shape (visual) ─────────────────────────── -->
+  <section data-label="09 The iterative-solver shape">
+    <span class="eyebrow">09 <span class="dash">/</span> <span class="accent">Pattern</span></span>
+    <h2 class="slide-title" style="font-size:56px; margin-bottom:24px;">Same skeleton. Three different fillings.</h2>
+
+    <div class="skeleton-card">
+<span class="slot">[setup state]</span>
+<span class="kw" style="color:var(--teal);">while</span> <span style="color:var(--mustard);">abs</span>(guess**2 - target) &gt;= epsilon:
+    <span class="slot">[update state]</span>
+<span class="kw" style="color:var(--teal);">return</span> guess
+    </div>
+    <p class="legend"><span class="slot-mini">highlighted slots</span> vary between algorithms. Everything else is identical.</p>
+
+    <div class="skeleton-row">
+      <div class="sk-card role-exh">
+        <span class="chip role-exh"><span class="dot"></span>Exhaustive</span>
+        <div>
+          <div class="sk-label">setup</div>
+<pre class="sk-code">guess = <span class="num">0.0</span></pre>
+        </div>
+        <div>
+          <div class="sk-label">update</div>
+<pre class="sk-code">guess += step</pre>
+        </div>
+        <div class="sk-cost">1,411<span class="unit">iter</span></div>
+      </div>
+
+      <div class="sk-card role-bis">
+        <span class="chip role-bis"><span class="dot"></span>Bisection</span>
+        <div>
+          <div class="sk-label">setup</div>
+<pre class="sk-code">low, high = <span class="num">0</span>, <span class="num">2</span>
+guess = (low + high)/<span class="num">2</span></pre>
+        </div>
+        <div>
+          <div class="sk-label">update</div>
+<pre class="sk-code"><span class="kw">if</span> guess**<span class="num">2</span> &lt; target:
+    low = guess
+<span class="kw">else</span>:
+    high = guess
+guess = (low+high)/<span class="num">2</span></pre>
+        </div>
+        <div class="sk-cost">7<span class="unit">iter</span></div>
+      </div>
+
+      <div class="sk-card role-new">
+        <span class="chip role-new"><span class="dot"></span>Newton-Raphson</span>
+        <div>
+          <div class="sk-label">setup</div>
+<pre class="sk-code">guess = target / <span class="num">2</span></pre>
+        </div>
+        <div>
+          <div class="sk-label">update</div>
+<pre class="sk-code">err = guess**<span class="num">2</span> - target
+guess -= err / (<span class="num">2</span>*guess)</pre>
+        </div>
+        <div class="sk-cost">2<span class="unit">iter</span></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 10 — The shape has a name ─────────────────────────── -->
+  <section data-label="10 The shape has a name" class="name-slide">
+    <span class="eyebrow">10 <span class="dash">/</span> <span class="accent">Pin it</span></span>
+    <div class="center-card">
+      <div class="kicker">The pattern</div>
+      <div class="name">The iterative-solver shape.</div>
+<pre class="skel"><span style="color:var(--teal);">initialize</span> state
+<span style="color:var(--teal);">while</span> <span style="color:var(--mustard);">not close enough</span>:
+    <span style="color:var(--teal);">update</span> state
+<span style="color:var(--teal);">return</span> result</pre>
+      <p class="footnote">Every numerical algorithm we'll meet in this course sits on this skeleton. The outer shape stays the same. The update rule is where the algorithm's knowledge of the problem goes.</p>
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────── 11 — Failure-modes teaser ─────────────────────────── -->
+  <section data-label="11 Coming next" class="teaser">
+    <div>
+      <span class="eyebrow">11 <span class="dash">/</span> <span class="accent">Coming next</span></span>
+      <h2 class="slide-title" style="font-size:60px;">The smartest algorithm has the worst failure modes.</h2>
+    </div>
+
+    <div>
+      <div class="row role-exh">
+        <div class="name">Exhaustive</div>
+        <div class="desc">Slow. <strong>Almost impossible to break.</strong></div>
+      </div>
+      <div class="row role-bis">
+        <div class="name">Bisection</div>
+        <div class="desc">Fast. Needs monotonicity. <strong>Fails silently</strong> on the wrong interval.</div>
+      </div>
+      <div class="row role-new">
+        <div class="name">Newton-Raphson</div>
+        <div class="desc">Fastest. Needs a derivative and a good starting guess. <strong>Fails spectacularly</strong> — it can diverge, oscillate, or land on the wrong root.</div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <span class="arrow">→</span>
+      <span>Next session: <em>we break Newton on purpose, watch it explode, and talk about why faster isn't always safer.</em></span>
+    </div>
+  </section>
+
+</deck-stage>
+
+
+<!-- Replay number-line entry animations whenever a slide becomes active. -->
+<script>
+  (function () {
+    const stage = document.querySelector('deck-stage');
+    if (!stage) return;
+    function replay(slide) {
+      if (!slide) return;
+      slide.querySelectorAll('svg.nl').forEach((svg) => {
+        svg.removeAttribute('data-anim');
+        // force a reflow so the next attribute set restarts the animation
+        void svg.getBoundingClientRect();
+        svg.setAttribute('data-anim', '');
+      });
+    }
+    stage.addEventListener('slidechange', (e) => replay(e.detail && e.detail.slide));
+    // initial replay (deck-stage fires `slidechange` on init too, but belt+braces)
+    requestAnimationFrame(() => {
+      const active = document.querySelector('section[data-deck-active]');
+      replay(active);
+    });
+  })();
+</script>
+
+
+<!-- Speaker notes (positional — one per slide) -->
+<script type="application/json" id="speaker-notes">
+[
+"Welcome — set up the day. We're going to look at three algorithms that all answer the same question: what's the square root of x. Each one is dramatically faster than the last. But the point isn't the algorithms themselves — it's what changes between them. That's the way of thinking I want you to leave with.",
+
+"This is the whole module in one slide. Same problem, three different implicit questions. Checking, ruling out, predicting. That progression is the spine of computational thinking. Don't dwell on the details yet — just plant the question and move to the visual.",
+
+"Watch the density. Row one is a sea of dots — exhaustive testing roughly twenty-eight values across the line. Row two is four dots, numbered in the order they're tested, clustering toward the target. Row three is effectively two distinct positions, with arrows showing how each guess jumps to the next. Same target, same precision, dramatically different amount of work. Don't explain how each one works yet — just let students see the asymmetry. The next three slides do the explaining.",
+
+"Exhaustive enumeration. Try every value, in order, from zero up, until x squared is close enough to the target. The trade-off to surface here: this is the most generally applicable algorithm we'll see today, and also the slowest. Generality has a price. The cost callout — fourteen hundred and eleven iterations at epsilon equals one percent — is the baseline we'll measure the next two against.",
+
+"Bisection search. At each step, throw away half the space. Watch the animation — four numbered guesses zero in on the target. Fourteen hundred iterations down to seven, which is roughly a two hundred times speedup. But bisection knows something exhaustive didn't. It knows x squared is monotonic on this interval. That prerequisite is not free. If a student tried to bisect-search for x where sine of x equals one-half, they'd silently get the wrong answer — sine isn't monotonic. The lesson: knowledge buys speed.",
+
+"Newton-Raphson. Use the slope at your current guess to predict where the answer is, and jump there. Two iterations. The animation shows it — one point oh, then leap to one point five, then a tiny correction back to root two. Newton has roughly quadratic convergence — the number of correct digits doubles every iteration once you're near the root. But it demands a derivative, and a starting guess in the right basin. Foreshadow the failure modes, but don't open that door yet — slide eleven is where we set up that session.",
+
+"The numbers. At moderate precision — three orders of magnitude between exhaustive and Newton. At tight precision, six orders of magnitude. Don't editorialize. Let the table land. Then ask the leading question for the next slide: what's actually changing between these three programs to make this happen?",
+
+"This slide is the hinge of the module. Look at what's identical across all three functions — the signature, the convergence test, the return statement. Now look at what changes — the setup, and the highlighted update lines. That's it. The update rule is where the algorithm's knowledge of the problem lives. Read it slow. Take a beat. The next slide names the pattern.",
+
+"Here's the pattern, laid out. Same outer skeleton at the top — initialize, loop until close enough, update, return. Three different fillings underneath. Spend time here. Point at the highlighted slots. Ask the room: which card would you pick if you didn't know whether f was monotonic? Which would you pick if you didn't know the derivative? That's the question the rest of computational thinking turns on.",
+
+"Name the pattern out loud — the iterative-solver shape. Every numerical algorithm we'll meet in this course sits on this skeleton. We're not yet claiming this generalizes beyond numerical methods — that's a later conversation. But when you see another iterative algorithm in week six or week nine, I want to be able to say 'remember the iterative-solver shape?' and have something to point at. This is the pin.",
+
+"Bridge to next session. Exhaustive — slow, almost impossible to break. Bisection — faster, fails silently when monotonicity is wrong. Newton — fastest, fails spectacularly. The smartest tool has the worst failure modes when assumptions are wrong. That lesson is going to come back when we talk about how you use AI tools later in the course — but I'll save that connection until you've actually watched Newton explode. See you next session."
+]
+</script>
+
+</body>
+</html>
