@@ -3,23 +3,24 @@
 **Version:** 0.4
 **Companion to:** Charter v0.4, Crosswalk
 **Date:** 2026-05-20 (T-6 days from launch)
+**Last updated:** 2026-05-21 (Weeks 1–3 content ✅; Section A issues filed on GitHub)
 
 ---
 
 ## A. Pre-launch structural work (must be 🟢 by 2026-05-25)
 
-| # | Work package | Owner | Status | Est. hrs | Notes |
-|---|---|---|---|---|---|
-| A1 | Student-facing syllabus document | | | | Pulls topic structure from crosswalk; published to Canvas + students |
-| A2 | Assessment structure | | | | **Locked:** 16 graded artifacts (2/week): one lab from P or A, one Assess. Sunday-night deadlines. **Late policy: zero after 2 weeks past deadline; no partial penalty within window.** **Working weights:** 40% labs (8 × 5%), 50% homework (5 × 10% — weeks 1/2/3/4/6 Assess), 10% project (weeks 5/7/8 Assess as project milestones). **Open:** weight bucket confirmation, exact Sunday deadline time. |
-| A3 | Course policies — populated into Canvas | | | | **AI use is required and integral.** Pedagogical framing: students load assignment context into their agent (or use the class agent which already has it); appropriate assistance follows from loaded context. No separate "AI permitted/prohibited" rule. Also: academic integrity, attendance/participation, late policy (per A2). |
-| A4 | Canvas shell + L/P/A/A page template | | | | Reusable per-week page structure |
-| A5 | GitHub org / class repo setup | | | | Issue templates, branch protection, drop folder for Prompt Masters |
-| A6 | Two-track onboarding doc for students | | | | Explains the two tracks; how to choose |
-| A7 | Sacred Flow quick-start (Code Builders) | | | | Repurposed from csc_dash Module 01 Git basics block |
-| A8 | Drop-submission quick-start (Prompt Masters) | | | | GitHub Desktop / web upload path |
-| A9 | Vision-vs-NLP fork communication for students | | | | One-pager explaining the two paths and how to choose. Decision is per-student, during Week 5 proposal. |
-| A10 | LLM access plan for students | | | | Confirm students have working AI access for tutorials and context-loaded Assess work |
+| # | Work package | Owner | Status | Est. hrs | GH issue | Notes |
+|---|---|---|---|---|---|---|
+| A1 | Student-facing syllabus document | | | | #7 | Pulls topic structure from crosswalk; published to Canvas + students |
+| A2 | Assessment structure | | | | #8 | **Locked:** 16 graded artifacts (2/week): one lab from P or A, one Assess. Sunday-night deadlines. **Late policy: zero after 2 weeks past deadline; no partial penalty within window.** **Working weights:** 40% labs (8 × 5%), 50% homework (5 × 10% — weeks 1/2/3/4/6 Assess), 10% project (weeks 5/7/8 Assess as project milestones). **Open:** weight bucket confirmation, exact Sunday deadline time. |
+| A3 | Course policies — populated into Canvas | | | | #9 | **AI use is required and integral.** Pedagogical framing: students load assignment context into their agent (or use the class agent which already has it); appropriate assistance follows from loaded context. No separate "AI permitted/prohibited" rule. Also: academic integrity, attendance/participation, late policy (per A2). |
+| A4 | Canvas shell + L/P/A/A page template | | | | #10 | Reusable per-week page structure |
+| A5 | GitHub org / class repo setup | | | | #11 | Issue templates, branch protection, drop folder for Prompt Masters |
+| A6 | Two-track onboarding doc for students | | | | #12 | Explains the two tracks; how to choose |
+| A7 | Sacred Flow quick-start (Code Builders) | | | | #13 | Repurposed from csc_dash Module 01 Git basics block |
+| A8 | Drop-submission quick-start (Prompt Masters) | | | | #14 | GitHub Desktop / web upload path |
+| A9 | Vision-vs-NLP fork communication for students | | | | #15 | One-pager explaining the two paths and how to choose. Decision is per-student, during Week 5 proposal. |
+| A10 | LLM access plan for students | | | | #16 | Confirm students have working AI access for tutorials and context-loaded Assess work |
 
 ## B. Per-week content (the template, applied 8x)
 
@@ -43,10 +44,10 @@
 
 | Week | Topic | L/P/A format | P or A → lab? | B1 | B2 | B3 | B4 | B5a | B5b | B6 | B7 | B8 | B9 | B10 | Status |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | Cloud Agents | TBD | TBD | | | | | | | | | | | | 🛠️ |
-| 2 | Keras hello world | TBD | TBD | | | | | | | | | | | | 🛠️ |
-| 3 | Math + optimization (Ch 2) | TBD | TBD | | | | | | | | | | | | ⏭️ |
-| 4 | Frameworks + Keras fluency (Ch 3, 7) | TBD | TBD | | | | | | | | | | | | ⏭️ |
+| 1 | Cloud Agents | Reading + lab packet | Apply (graded) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 2 | Keras hello world | Notebook + lab | Apply (graded) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3 | Math + optimization (Ch 2) | Reading + walkthrough | Apply (graded) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 4 | Frameworks + Keras fluency (Ch 3, 7) | TBD | TBD | | | | | | | | | | | | 🛠️ |
 | 5 | ML fundamentals + workflow (Ch 5, 6) — **proposal due (project milestone)** | TBD | TBD | | | | | | | | | | | | ⏭️ |
 | 6 | Vision (Ch 8, 9) | TBD | TBD | | | | | | | | | | | | ⏭️ |
 | 7 | Interp + project check-in (project milestone) | TBD | TBD | | | | | | | | | | | | ⏭️ |
@@ -88,6 +89,7 @@ Both instructors riff off the starter doc collaboratively rather than formal per
 3. **Shared materials location** — for bus-factor mitigation
 4. **LLM access plan for students** (A10)
 5. **First-pass format selection per week** — biggest unused leverage; converts WBS to build-hour estimate
+6. **Co-instructor variant chapter→module mapping** (`planning/mallory/planning_notes_5_20.txt`, 2026-05-20). Specific divergences: Ch 4 paired with Ch 8 in M4 (current crosswalk splits these across W2 and W6); Ch 6 vs Ch 5 placement in M5; "Exit Ticket" pedagogical idea not yet incorporated. **Resolve over coffee** with co-instructor; not blocking launch.
 
 ## Settled this round
 
