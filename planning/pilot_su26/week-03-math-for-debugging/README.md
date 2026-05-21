@@ -42,7 +42,9 @@ Same as Week 2.
 
 | Track | Submit by | Process artifacts |
 |---|---|---|
-| Code Builders | Issue (`Week 3 sweep: <variable>`) → branch `week3-yourname` → commit notebook + write-up → PR → retro in PR description → merge after review. | Issue + branch + PR + retro |
+| Code Builders | Issue (`Week 3 sweep: <variable>`) → branch `week3-<experiment>` (e.g., `week3-lr-sweep` or `week3-batch-sweep`) → commit notebook + write-up → PR → retro in PR description → merge after review. | Issue + branch + PR + retro |
+
+**Branch naming note:** Week 2 used `week2-yourname`. Starting Week 3 the convention shifts — the branch name encodes the **experiment**, not the person. Same crosswalk row. This is on purpose: from now on we're varying things to find out what happens, and the branch name should tell anyone (including future-you) which experiment they're looking at.
 | Prompt Masters | Add notebook + write-up to your repo via GitHub Desktop or the web "add file" button. | None — just the artifact |
 
 Both tracks earn identical points on the artifact. Code Builders earn process credit on top.

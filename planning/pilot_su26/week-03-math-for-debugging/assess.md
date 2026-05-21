@@ -22,7 +22,7 @@ That's the artifact. Both tracks get graded identically on it.
 By Week 3 this should be becoming muscle memory.
 
 1. **Open an issue** titled `Week 3 sweep: <variable>` (e.g., `Week 3 sweep: learning rate`). Body: which variable, the values you'll try, and your one-sentence hypothesis ("I expect LR=1.0 to explode and LR=1e-4 to barely move"). *Before* you run the sweep.
-2. **Branch** `week3-yourname`.
+2. **Branch** `week3-<experiment>` — e.g., `week3-lr-sweep` or `week3-batch-sweep`. (The naming convention shifts from Week 2's `week2-yourname` to experiment-encoded names starting this week; see the README for why.)
 3. **Commit** as you go. Recommended commit progression:
    - `add Ch 2 walkthrough notebook`
    - `add reflection cells through §2.4`
@@ -56,7 +56,7 @@ If you'd like to *try* opening an issue or a PR this week without committing to 
 
 | Component | Weight | Both tracks |
 |---|---|---|
-| Walkthrough notebook ran cleanly, all cells visible | 15% | ✓ |
+| Walkthrough notebook ran cleanly, all cells visible (or skipped cells documented in an adjacent markdown cell per [practice.md](practice.md)) | 15% | ✓ |
 | At least 6 reflection cells of your own writing | 15% | ✓ |
 | "Mapping back to my Week 2 model" cell with specifics | 10% | ✓ |
 | Sweep notebook has **fresh model on every iteration** | 15% | ✓ |
@@ -81,7 +81,7 @@ If you'd like to *try* opening an issue or a PR this week without committing to 
 If your sweep finished fast and you want to push:
 
 - Run **the same sweep with a different random seed** and check whether the differences you saw are real or within run-to-run noise. (`keras.utils.set_random_seed(...)`.) Bonus paragraph in your report.
-- After picking your "best" value from the sweep, **set the optimizer to `keras.optimizers.legacy.SGD` instead of `Adam`** with the same learning rate. Compare. Does Adam's effective LR matter as much as plain-SGD's? (Spoiler: no — and the *why* is what Manning Ch 2 §4 is preparing you to see.)
+- After picking your "best" value from the sweep, **set the optimizer to `keras.optimizers.SGD(learning_rate=...)` instead of `Adam`** with the same learning rate. Compare. Does Adam's effective LR matter as much as plain-SGD's? (Spoiler: no — and the *why* is what Manning Ch 2 §4 is preparing you to see.)
 
 Not required. Welcomed.
 

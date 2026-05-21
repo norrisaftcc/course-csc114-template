@@ -88,7 +88,7 @@ This is the deliverable shape that proves you got it. Don't write essay paragrap
 |---|---|---|
 | `ModuleNotFoundError: No module named 'tensorflow'` | Wrong Python env | Activate your Week 2 `ml-env` first. |
 | The from-scratch training loop is slow on your laptop | It's intentionally educational, not optimized | Either let it run or reduce the number of epochs in that cell. Doesn't need to be fast — it needs to teach. |
-| You hit a cell with `K.fit()` or similar that errors out | Notebook drift between Chollet's Keras 3 version and your installed Keras 2 | Either upgrade Keras (`pip install --upgrade keras`) or read the cell without running. The point is the math, not the API. |
+| You hit a cell with `K.fit()` or similar that errors out | Notebook drift between Chollet's Keras 3 version and your installed Keras 2 | **First** try upgrading Keras (`pip install --upgrade keras`) — that fixes most drift. **If a single cell still won't run** after upgrading, leave it in place, add a markdown cell directly above it that says `Skipped: <cell> errors against installed Keras version <X>; reproduced concept in next cell` (or similar), and move on. That documentation is enough to keep full credit under the assess.md rubric — what loses points is *unexplained* missing outputs. Do not silently delete the cell. |
 | You can't tell which cells are "Chollet's" vs "yours" | Insufficient marking | Prefix your markdown cells with **`📝 My note:`** or similar. Standardize for yourself so PR review can tell at a glance. |
 | You feel like you don't understand any of it | Normal | Reread the relevant Manning section. Reread §5 in particular — it puts everything back together. |
 

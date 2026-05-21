@@ -54,7 +54,11 @@ results = {}
 for value in sweep_values:
     print(f"\n=== Training with {variable_name}={value} ===")
     model = build_fresh_model()                # IMPORTANT: fresh model each time
-    model.compile(...)                          # set the swept variable here
+    # For an LR sweep, the swept value goes in the optimizer:
+    #   model.compile(optimizer=keras.optimizers.Adam(learning_rate=value), ...)
+    # For a batch-size sweep, the swept value goes in model.fit(...) below:
+    #   model.fit(..., batch_size=value, ...)
+    model.compile(...)
     history = model.fit(x_train, y_train,
                         epochs=10,
                         validation_split=0.1,
@@ -63,6 +67,8 @@ for value in sweep_values:
 ```
 
 The phrase **"build fresh model each time"** is non-negotiable. If you `model.fit` twice on the same model object, the second run is continuing from where the first left off, which is **not** what you're testing.
+
+Heads up: an LR sweep sets the value in `model.compile(...)` (on the optimizer); a batch-size sweep sets it in `model.fit(...)`. If you pick batch size and forget to pass `batch_size=value` to `fit`, every iteration runs at Keras' default (32) and your "sweep" is one value five times.
 
 3. **Plot all the runs on shared axes:**
 
@@ -114,9 +120,12 @@ Describe the pattern across the sweep. Did the loss explode at the high end?
 Plateau at the low end? Did training time scale with the swept variable in a
 predictable way? Pick ONE specific observation and dig into it: name the
 mechanism, not just the symptom. ("Loss exploded to NaN at LR=1.0 because
-the gradient updates overshot the loss surface, sending weights to large
-positive or negative values that produced unbounded softmax outputs."
-is what we're looking for. "It didn't work" is not.)
+the gradient updates overshot the loss surface; the weights blew up,
+which made the **pre-softmax logits** enormous, and once one logit dominates
+the softmax pins the true-class probability at ~0, so `log(0)` in
+cross-entropy returns inf/NaN." is what we're looking for. "It didn't
+work" is not. Note: softmax *outputs* are bounded probabilities — the
+unbounded thing is the logits feeding into it.)
 
 ## What value would I use, and why?
 One sentence. The "best" value isn't always the one with the highest
