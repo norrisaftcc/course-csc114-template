@@ -53,6 +53,7 @@ The `.zip` is rebuilt from the `.md`. The `.md` is the source of truth; if you f
 If you edit `knowledge-check.md` (fixing a typo, swapping a question, rewording an explanation), regenerate the zip:
 
 ```bash
+# Run from the repo root:
 cd planning/pilot_su26/week-02-keras-hello-world
 ../../../.venv/bin/text2qti knowledge-check.md
 ```
@@ -63,6 +64,7 @@ Outputs:
 If you'd also like a human-readable answer key for proofreading, add `--solutions`:
 
 ```bash
+# Run from inside the week-02 folder (after the cd above), or from the repo root prefixed by `cd planning/pilot_su26/week-02-keras-hello-world &&`:
 ../../../.venv/bin/text2qti --solutions knowledge-check.md
 ```
 
@@ -84,9 +86,9 @@ When you re-import the zip into Canvas, Canvas treats it as a **new quiz** by de
 text2qti is a Python package that requires pandoc on PATH. We install it into a project-local virtual environment so it doesn't conflict with any system Python.
 
 ```bash
-# pandoc (one time, system-wide)
-brew install pandoc           # macOS
-# sudo apt-get install pandoc # Linux
+# pandoc (one time, system-wide) — use whichever applies to your OS:
+brew install pandoc                # macOS
+sudo apt-get install pandoc        # Linux (Debian/Ubuntu)
 
 # Project venv + text2qti (from the repo root)
 python3 -m venv .venv
