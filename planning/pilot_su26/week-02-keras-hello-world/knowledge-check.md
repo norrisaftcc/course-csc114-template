@@ -52,7 +52,7 @@ d)  Deep learning runs on GPUs while traditional ML runs on CPUs.
 
 7.  The first model you build in Keras uses MNIST. What is MNIST, and why is it the "hello world" of deep learning?
 a)  A library that ships with TensorFlow.
-*b) A small dataset of handwritten digit images, simple enough that a tiny network reaches >97% accuracy in seconds — making it ideal for sanity-checking that your training loop works.
+*b) A small dataset of handwritten digit images, simple enough that a tiny network reaches >97% accuracy with minimal setup — making it ideal for sanity-checking that your training loop works.
 c)  A benchmark for large language models.
 d)  A new optimizer that replaces SGD.
 ... MNIST is 70,000 28x28 grayscale images of handwritten digits 0–9. It's small enough to fit in memory, simple enough that even a 2-layer dense network does well, and famous enough that you can compare your numbers against published baselines. Nobody runs MNIST to ship a product — they run it to confirm their environment, code, and intuitions all work before tackling a real problem.
@@ -68,7 +68,7 @@ d)  It allocates GPU memory for the model's weights.
 
 9.  In CSC-114, students are split into two tracks: Code Builders and Prompt Masters. What's the difference between them?
 a)  Code Builders write code; Prompt Masters only use natural-language prompts and never run code.
-*b) Both tracks build the same artifacts, but Code Builders use full Sacred Flow (Issue → Branch → PR → Merge), while Prompt Masters submit by adding files to the repo via GitHub Desktop or the web upload button.
+*b) Both tracks build the same artifacts, but Code Builders use full Sacred Flow (Issue → Branch → Commit → PR → Merge), while Prompt Masters submit by adding files to the repo via GitHub Desktop or the web upload button.
 c)  Code Builders use Python; Prompt Masters use no-code tools.
 d)  Code Builders are graded harder than Prompt Masters.
 ... The two tracks earn identical points on the artifact — the notebook, the write-up, whatever the deliverable is. The difference is in how they submit. Code Builders practice the professional workflow (issue, branch, PR, retro) and earn process credit on top. Prompt Masters keep the friction low and focus on the AI craft. Both are valid success paths in this course.
@@ -94,7 +94,7 @@ d)  It replaces the technical write-up.
 a)  Canvas requires the issue to be created on a specific date.
 b)  The issue counts toward the points only if it has the earliest timestamp.
 *c) The issue is supposed to state what you intend to try and why — writing it after the work already happened turns it into a status report, not a plan, and skips the thinking step the workflow is designed to create.
-d)  You can't open a branch until an issue exists.
+d)  Opening the issue after you're done saves time because you already know what you built.
 ... The issue is your statement of intent. "I'm going to swap the optimizer from SGD to Adam because I want to see if it converges faster" is a hypothesis you can test. Writing that same sentence after the work is already finished is just narration — you've skipped the part where you decided what to learn. This question is most relevant to Code Builders; Prompt Masters skip Sacred Flow entirely.
 
 
