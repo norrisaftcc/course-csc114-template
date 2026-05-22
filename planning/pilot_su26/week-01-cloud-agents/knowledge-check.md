@@ -42,7 +42,7 @@ d)  Other models would refuse to follow course instructions.
 ... Multiple Claude models are available (Haiku, Sonnet, Opus, different generations) — each with different tradeoffs in speed, capability, and cost per token. For a class where students compare results, debug each other's agents, and build a shared mental model, fixing the model removes a confounding variable. Once you're comfortable, exploring different models is a great extension exercise — but during the structured part of the course, consistency is the goal.
 
 
-6.  In the 5-section system prompt template (Identity → Behavioral Constraints → Domain Knowledge → Output Format → Context), what's the job of the *Identity and Role* section?
+6.  In the 5-section system prompt template (Identity and Role → Behavioral Constraints → Domain Knowledge → Output Format → Context), what's the job of the *Identity and Role* section?
 a)  It lists every tool the agent can use.
 *b) It tells the agent what it is and who it serves — e.g., "You are a helpful information assistant for the Math department at FTCC."
 c)  It records what tests have been run on the agent.
@@ -90,7 +90,7 @@ d)  Disabled tools make the agent's responses longer.
 ... "Least privilege" is the principle: give the agent exactly the tools it needs to do its job, nothing more. If your info bot doesn't need to run code, code execution is just a way for it to surprise you. The fewer tools, the smaller the space of things the agent can do — which means easier debugging, more predictable behavior, and fewer ways for things to go wrong. (Cost is real but secondary; the main reason is predictability.)
 
 
-12. An agent has every Console tool enabled by default — web search, code execution, file access, image generation, the lot. What's the most likely failure mode?
+12. An agent has every Console tool enabled by default — web search, code execution, file read/write, shell access, the lot. What's the most likely failure mode?
 a)  The agent runs out of memory.
 *b) The agent answers off-topic questions (because it has the tools to do so), takes unintended actions, or invents elaborate solutions when a simple "I don't know" would have been correct.
 c)  The agent refuses to answer any questions at all.
@@ -98,7 +98,7 @@ d)  The agent shuts itself down for safety.
 ... When an agent has every tool, every user request looks like a problem it can solve — even if it shouldn't. Asked about the weather? It'll search the web. Asked to write code? It'll fire up code execution. The result is an agent that drifts from its purpose, takes actions you didn't expect, and gives confident answers in domains it has no business addressing. Scoping tools deliberately is a guardrail.
 
 
-13. This Knowledge Check (and others like it in CSC-114) allows unlimited attempts. What's the main reason for that?
+13. This Knowledge Check (and others like it) allows unlimited attempts. What's the main reason for that?
 a)  To make grades higher than they otherwise would be.
 b)  Because the quiz is easy and one attempt is enough.
 *c) To make the quiz a learning tool — you can try, read the explanation when you miss something, look it up, and try again — rather than a one-shot assessment.
