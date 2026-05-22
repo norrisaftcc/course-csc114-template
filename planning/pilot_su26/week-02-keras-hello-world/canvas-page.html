@@ -35,7 +35,7 @@
             padding: 20px;
             margin: 20px 0;
         }
-        .two-track-box h4 { margin-top: 0; color: #7b1fa2; font-size: 1.3em; }
+        .two-track-box h3 { margin-top: 0; color: #7b1fa2; font-size: 1.3em; }
         .two-track-box table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .two-track-box th, .two-track-box td { padding: 10px; text-align: left; border-bottom: 1px solid #ce93d8; vertical-align: top; }
         .two-track-box th { background: #ce93d8; color: #4a148c; }
@@ -58,12 +58,12 @@
             text-decoration: none; display: inline-block; margin: 10px 10px 10px 0; font-weight: bold;
         }
         .checklist { background: #fff3e0; border-left: 5px solid #ff9800; padding: 20px; margin: 20px 0; }
-        .checklist h3 { margin-top: 0; color: #e65100; }
+        .checklist h2 { margin-top: 0; color: #e65100; font-size: 1.5em; }
         .checklist ul { list-style: none; padding-left: 0; }
         .checklist li { padding: 8px 0; border-bottom: 1px solid #ffcc80; }
         .checklist li:before { content: "☐ "; font-size: 1.2em; margin-right: 10px; color: #ff9800; }
         .tip-box { background: #e8f5e9; border: 2px solid #4caf50; border-radius: 8px; padding: 20px; margin: 20px 0; }
-        .tip-box h4 { margin-top: 0; color: #2e7d32; font-size: 1.3em; }
+        .tip-box h2 { margin-top: 0; color: #2e7d32; font-size: 1.3em; }
         @media print {
             .button-primary, .button-secondary { display: none; }
             .module-header, .assignment-card { break-inside: avoid; }
@@ -107,7 +107,7 @@
 
 <!-- Two-Track Expectations -->
 <div class="two-track-box">
-    <h4>Two-Track Expectations This Week</h4>
+    <h3>Two-Track Expectations This Week</h3>
     <p>Same artifact, two paths. Both tracks earn identical points on the artifact. Code Builders earn process credit for the issue/PR/retro on top.</p>
     <table>
         <thead>
@@ -167,8 +167,7 @@
 <div class="content-section">
     <h2>Week 2 Code Preview</h2>
     <p>Here's what your first Keras model will look like:</p>
-    <pre style="background: #263238; color: #aed581; padding: 20px; border-radius: 5px; overflow-x: auto;">
-<code>from tensorflow import keras
+    <pre style="background: #263238; color: #aed581; padding: 20px; border-radius: 5px; overflow-x: auto;"><code>from tensorflow import keras
 from tensorflow.keras import layers
 
 # Load MNIST: 60k training images, 10k test images, 28x28 grayscale digits 0-9
@@ -199,7 +198,7 @@ print(f"Test accuracy: {test_acc:.3f}")</code>
 
 <!-- Checklist -->
 <div class="checklist">
-    <h3>Week 2 Completion Checklist</h3>
+    <h2>Week 2 Completion Checklist</h2>
     <ul>
         <li>Read Manning Ch 1 before Meeting A</li>
         <li>Read Manning Ch 4 §1–2 before Meeting B</li>
@@ -214,7 +213,7 @@ print(f"Test accuracy: {test_acc:.3f}")</code>
 
 <!-- Tips -->
 <div class="tip-box">
-    <h4>Senpai's Tips for Week 2</h4>
+    <h2>Senpai's Tips for Week 2</h2>
     <ul>
         <li><strong>If your environment isn't ready, fix that first.</strong> Don't try to learn Keras and fight pip at the same time. The Sacred Flow Lab from CSC-113 has detailed setup instructions.</li>
         <li><strong>Google Colab is a legitimate path.</strong> Free GPU, zero local setup, Keras pre-installed. Use it if your laptop is fighting you.</li>
