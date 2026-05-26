@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>What Even Is an Agent? — CSC-114 Module 01</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<script>
+class DeckStage extends HTMLElement {
+  connectedCallback() {
+    // Defer until children are parsed into the DOM
+    setTimeout(() => this._init(), 0);
+  }
+
+  _init() {
+    this._slides = [...this.querySelectorAll('section')];
+    this._idx    = 0;
+    this._W      = parseInt(this.getAttribute('width')  || 1920);
+    this._H      = parseInt(this.getAttribute('height') || 1080);
+    Object.assign(this.style, { display:'block', position:'fixed', inset:'0', background:'#000', overflow:'hidden' });
+    this._slides.forEach((s, i) => Object.assign(s.style, {
+      position:'absolute', top:'0', left:'0',
+      width: this._W+'px', height: this._H+'px',
+      transformOrigin:'top left', display: i===0 ? 'block' : 'none'
+    }));
+    this._rescale();
+    window.addEventListener('resize', () => this._rescale());
+    document.addEventListener('keydown', e => {
+      if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); this._go(1); }
+      if (e.key==='ArrowLeft'||e.key==='Backspace') { e.preventDefault(); this._go(-1); }
+    });
+    this.addEventListener('click', e => this._go(e.clientX < window.innerWidth*.25 ? -1 : 1));
+    this._syncCounter();
+  }
+  _rescale() {
+    const s = Math.min(window.innerWidth/this._W, window.innerHeight/this._H);
+    const ox = (window.innerWidth  - this._W*s)/2;
+    const oy = (window.innerHeight - this._H*s)/2;
+    this._slides.forEach(sl => { sl.style.transform = `translate(${ox}px,${oy}px) scale(${s})`; });
+  }
+  _go(d) {
+    const n = Math.max(0, Math.min(this._slides.length-1, this._idx+d));
+    if (n===this._idx) return;
+    this._slides[this._idx].style.display = 'none';
+    this._idx = n;
+    this._slides[this._idx].style.display = 'block';
+    this._syncCounter();
+  }
+  _syncCounter() {
+    const el = document.getElementById('slide-counter');
+    if (el) el.textContent = `${this._idx+1} / ${this._slides.length}`;
+  }
+}
+customElements.define('deck-stage', DeckStage);
+</script>
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   TEACHERBOT DS — CSC-114 MODULE 01
+   Same design system as Three Square Roots (CSC-113) and
+   the AlgoCratic Futures orientation deck.
+   Color grammar carries: gray / green / lavender
+   = chatbot / assistant / agent
+   = exhaustive / bisection / Newton-Raphson
+══════════════════════════════════════════════════════════ */
+
+:root {
+  --ink-deep:   #0A1828;
+  --ink:        #0E1F33;
+  --ink-raised: #162A44;
+  --ink-elev:   #1D3554;
+  --ink-muted:  #3A4E68;
+  --ink-line:   #5A6E88;
+
+  --cream:       #F4ECD2;
+  --cream-soft:  #E6DDC0;
+  --cream-muted: #B9B19A;
+  --cream-dim:   #8A8472;
+
+  --amber:     #E08236;
+  --mustard:   #E5A93D;
+  --moss:      #7BA15A;
+  --teal:      #5DA9B4;
+
+  /* The three roles — same grammar as CSC-113 */
+  --c-chatbot:   #B9B19A;   /* gray    — uninformed, no tools */
+  --c-assistant: #6BB672;   /* green   — knows to ask */
+  --c-agent:     #A78BD9;   /* lavender — predicts, loops, acts */
+
+  /* Clearance alias for UV moments */
+  --c-uv: #A78BD9;
+
+  --font-sans:  'Space Grotesk', system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+
+  --type-eyebrow: 24px;
+  --type-small:   26px;
+  --type-body:    32px;
+  --type-body-lg: 38px;
+  --type-sub:     44px;
+  --type-title:   72px;
+  --type-code:    24px;
+
+  --pad-x:      96px;
+  --pad-top:    80px;
+  --pad-bottom: 80px;
+  --gap-item:   28px;
+}
+
+html, body { background:#000; margin:0; }
+body { font-family: var(--font-sans); color: var(--cream); }
+
+section {
+  box-sizing: border-box;
+  background: var(--ink);
+  color: var(--cream);
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+section::before {
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(244,236,210,.018) 3px,rgba(244,236,210,.018) 4px);
+  pointer-events:none; z-index:0;
+}
+section > * { position:relative; z-index:1; }
+
+/* ── Chrome ── */
+.eyebrow {
+  display:block;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  color: var(--cream-muted);
+}
+.eyebrow .dash   { color:var(--ink-line); margin:0 .75em; }
+.eyebrow .accent { color:var(--amber); }
+.eyebrow .cl-uv  { color:var(--c-uv); }
+
+/* ── Type ── */
+h1.deck-title {
+  font-family: var(--font-serif);
+  font-style:italic; font-weight:400;
+  font-size:148px; line-height:.93;
+  letter-spacing:-.02em;
+  color: var(--cream); margin:0;
+  text-wrap:balance;
+}
+h2.slide-title {
+  font-family: var(--font-sans);
+  font-weight:600;
+  font-size: var(--type-title);
+  line-height:1.06; letter-spacing:-.02em;
+  color: var(--cream); margin:0 0 var(--gap-item);
+  text-wrap:balance;
+}
+h2.slide-title .accent {
+  font-family: var(--font-serif);
+  font-style:italic; font-weight:400;
+  color: var(--cream-soft);
+}
+.subtitle {
+  font-family: var(--font-serif);
+  font-style:italic;
+  font-size: var(--type-sub);
+  color: var(--cream-soft); line-height:1.2; margin:0;
+}
+p.body {
+  font-size: var(--type-body); line-height:1.45;
+  color: var(--cream-soft); margin:0;
+  max-width:1500px; text-wrap:pretty;
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow); font-weight:600;
+  text-transform:uppercase; letter-spacing:.16em;
+  color: var(--cream-muted);
+}
+blockquote { margin:0; padding:0; }
+
+/* ── Role chip ── */
+.chip {
+  display:inline-flex; align-items:center; gap:12px;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  text-transform:uppercase; letter-spacing:.16em;
+  color: var(--cream-muted);
+}
+.chip .dot { width:14px; height:14px; border-radius:50%; background:currentColor; }
+.chip.role-chat { color:var(--c-chatbot); }
+.chip.role-asst { color:var(--c-assistant); }
+.chip.role-agnt { color:var(--c-agent); }
+
+/* ── Panel ── */
+.panel {
+  border:1px solid var(--ink-muted);
+  padding:28px 32px;
+  background:rgba(22,42,68,.5);
+}
+.panel h4 {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow); font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em;
+  color: var(--cream-muted); margin:0 0 14px;
+}
+.panel p {
+  font-size: var(--type-body); line-height:1.45;
+  color: var(--cream-soft); margin:0;
+}
+.panel p em { font-family:var(--font-serif); font-style:italic; color:var(--cream); }
+.panel.role-chat { border-left:4px solid var(--c-chatbot); }
+.panel.role-asst { border-left:4px solid var(--c-assistant); }
+.panel.role-agnt { border-left:4px solid var(--c-agent); }
+.panel.cl-uv     { border-left:4px solid var(--c-uv); }
+
+/* ── Code / skeleton ── */
+pre.code {
+  font-family: var(--font-mono);
+  font-size: var(--type-code); line-height:1.6;
+  color: var(--cream);
+  background: var(--ink-deep);
+  border:1px solid var(--ink-muted);
+  padding:28px 32px; margin:0;
+  white-space:pre; overflow:visible;
+}
+pre.code .kw  { color:var(--teal); }
+pre.code .fn  { color:var(--mustard); }
+pre.code .hi  { background:rgba(167,139,217,.18); display:inline-block; padding:0 6px; margin:0 -6px; }
+pre.code .cmt { color:var(--cream-dim); font-style:italic; }
+
+/* ── Counter ── */
+#slide-counter {
+  position:fixed; bottom:24px; right:32px;
+  font-family:var(--font-mono); font-size:18px;
+  color:var(--ink-muted); letter-spacing:.1em;
+  z-index:200; pointer-events:none; user-select:none;
+}
+
+/* ══════════════════════════════════════════════════
+   SLIDE LAYOUTS
+══════════════════════════════════════════════════ */
+
+/* S01 — Title */
+.s-title {
+  display:grid; grid-template-rows:auto 1fr auto;
+  height:100%; box-sizing:border-box;
+}
+.s-title .doc-row {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.s-title .hero { align-self:center; }
+.s-title .hero .label { display:block; margin-bottom:12px; }
+.s-title .hero h1 { margin-top:16px; }
+.s-title .hero .subtitle { margin-top:36px; max-width:1240px; }
+.s-title .footer-row {
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--font-mono); font-size:var(--type-eyebrow);
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--cream-dim);
+}
+
+/* S02 — The Spectrum */
+.s-spectrum {
+  display:grid; grid-template-rows:auto auto 1fr;
+  row-gap:0; height:100%; box-sizing:border-box;
+}
+.s-spectrum h2.slide-title { margin-top:28px; margin-bottom:40px; }
+
+.spectrum-table {
+  display:grid;
+  grid-template-columns: 320px repeat(3, 1fr);
+  border-top:1px solid var(--ink-muted);
+}
+.st-cell {
+  padding:26px 28px;
+  border-bottom:1px solid var(--ink-muted);
+  border-right:1px solid var(--ink-muted);
+}
+.st-cell:last-child, .st-cell:nth-child(4n) { border-right:none; }
+
+.st-head {
+  font-family:var(--font-mono); font-size:var(--type-eyebrow);
+  font-weight:700; text-transform:uppercase; letter-spacing:.16em;
+}
+.st-head.role-chat { color:var(--c-chatbot); }
+.st-head.role-asst { color:var(--c-assistant); }
+.st-head.role-agnt { color:var(--c-agent); }
+
+.st-row-label {
+  font-family:var(--font-mono); font-size:var(--type-small);
+  text-transform:uppercase; letter-spacing:.12em;
+  color:var(--cream-muted);
+  display:flex; align-items:center;
+}
+.st-value {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:var(--type-body); line-height:1.35;
+  color:var(--cream-soft);
+  display:flex; align-items:center;
+}
+.st-value.role-chat { color:var(--c-chatbot); }
+.st-value.role-asst { color:var(--c-assistant); }
+.st-value.role-agnt { color:var(--c-agent); }
+.st-value.em { color:var(--cream); font-style:normal; font-family:var(--font-sans); font-weight:600; }
+
+/* S03 — Five Objects */
+.s-objects {
+  display:grid; grid-template-rows:auto auto 1fr;
+  row-gap:0; height:100%; box-sizing:border-box;
+}
+.s-objects h2.slide-title { margin-top:28px; margin-bottom:36px; }
+
+.objects-grid {
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  align-items:stretch;
+}
+.obj-row {
+  display:contents;
+}
+.obj-name {
+  font-family:var(--font-mono); font-weight:700;
+  font-size:36px; text-transform:uppercase;
+  letter-spacing:.12em;
+  padding:22px 32px 22px 0;
+  border-bottom:1px solid var(--ink-muted);
+  display:flex; align-items:center;
+  color:var(--teal);
+}
+.obj-row:last-child .obj-name,
+.obj-row:last-child .obj-def { border-bottom:none; }
+.obj-def {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:36px; line-height:1.35;
+  color:var(--cream-soft);
+  padding:22px 0 22px 40px;
+  border-bottom:1px solid var(--ink-muted);
+  border-left:1px solid var(--ink-muted);
+  display:flex; align-items:center;
+}
+.obj-def strong {
+  font-style:normal; font-family:var(--font-sans);
+  font-weight:600; color:var(--cream);
+}
+
+/* S04 — The Constitution */
+.s-constitution {
+  display:grid; grid-template-rows:auto auto 1fr;
+  row-gap:44px; height:100%; box-sizing:border-box;
+}
+.const-body {
+  display:grid; grid-template-columns:1.1fr .9fr;
+  column-gap:64px; align-items:start;
+}
+.pull-quote {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:52px; line-height:1.22;
+  color:var(--cream);
+  border-left:4px solid var(--c-uv);
+  padding-left:40px; margin:0;
+}
+.pull-quote .ql { color:var(--cream-dim); }
+
+.five-sections { display:flex; flex-direction:column; gap:0; }
+.section-row {
+  display:grid; grid-template-columns:60px 1fr;
+  column-gap:20px;
+  padding:16px 0;
+  border-bottom:1px solid var(--ink-muted);
+  align-items:baseline;
+}
+.section-row:first-child { border-top:1px solid var(--ink-muted); }
+.section-num {
+  font-family:var(--font-mono); font-weight:700;
+  font-size:var(--type-eyebrow);
+  color:var(--c-uv); letter-spacing:.1em;
+}
+.section-name {
+  font-family:var(--font-sans); font-weight:600;
+  font-size:var(--type-body); color:var(--cream);
+}
+.section-name span {
+  font-family:var(--font-serif); font-style:italic;
+  font-weight:400; font-size:var(--type-body);
+  color:var(--cream-muted); margin-left:12px;
+}
+
+/* S05 — One-Change-Rule */
+.s-ocr {
+  display:grid; grid-template-rows:auto auto 1fr auto;
+  row-gap:0; height:100%; box-sizing:border-box;
+}
+.s-ocr h2.slide-title { margin-top:28px; margin-bottom:36px; }
+
+.skel-card {
+  border:1px solid var(--ink-muted);
+  background:var(--ink-deep);
+  padding:32px 40px;
+  font-family:var(--font-mono);
+  font-size:32px; line-height:1.7;
+  color:var(--cream);
+  margin-bottom:36px;
+}
+.skel-card .slot {
+  background:rgba(93,169,180,.18); color:var(--teal);
+  padding:2px 12px;
+  border:1px dashed rgba(93,169,180,.5);
+}
+
+.variant-row {
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  column-gap:32px;
+}
+.variant-card {
+  border:1px solid var(--ink-muted);
+  background:rgba(22,42,68,.5);
+  padding:24px 28px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.variant-card.role-chat { border-top:3px solid var(--c-chatbot); }
+.variant-card.role-asst { border-top:3px solid var(--c-assistant); }
+.variant-card.role-agnt { border-top:3px solid var(--c-agent); }
+
+.vc-label {
+  font-family:var(--font-mono); font-size:20px;
+  text-transform:uppercase; letter-spacing:.14em;
+  color:var(--cream-muted);
+}
+.vc-label.role-chat { color:var(--c-chatbot); }
+.vc-label.role-asst { color:var(--c-assistant); }
+.vc-label.role-agnt { color:var(--c-agent); }
+.vc-update {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:30px; line-height:1.4;
+  color:var(--cream-soft);
+}
+.vc-cost {
+  font-family:var(--font-sans); font-weight:600;
+  font-size:52px; line-height:1;
+  letter-spacing:-.03em; margin-top:auto;
+}
+.vc-cost .unit {
+  font-family:var(--font-mono); font-size:20px;
+  color:var(--cream-muted); text-transform:uppercase;
+  letter-spacing:.1em; margin-left:8px; font-weight:500;
+}
+.variant-card.role-chat .vc-cost { color:var(--c-chatbot); }
+.variant-card.role-asst .vc-cost { color:var(--c-assistant); }
+.variant-card.role-agnt .vc-cost { color:var(--c-agent); }
+
+.s-ocr .bridge {
+  margin-top:32px;
+  font-family:var(--font-serif); font-style:italic;
+  font-size:var(--type-body-lg); color:var(--cream-soft);
+}
+.s-ocr .bridge em { font-style:normal; color:var(--amber); }
+
+/* S06 — Close */
+.s-close {
+  display:grid; grid-template-rows:auto 1fr auto;
+  height:100%; box-sizing:border-box;
+}
+.s-close .center-card {
+  align-self:center; justify-self:center;
+  text-align:center; max-width:1500px;
+}
+.s-close .big-line {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:156px; line-height:.92;
+  color:var(--cream); margin:0 0 52px;
+}
+.s-close .three-lines {
+  display:flex; flex-direction:column; gap:0;
+  margin:0 auto; max-width:1200px;
+}
+.s-close .tl-row {
+  display:grid; grid-template-columns:56px 1fr;
+  column-gap:24px;
+  padding:20px 0;
+  border-bottom:1px solid var(--ink-muted);
+  align-items:baseline;
+  text-align:left;
+}
+.s-close .tl-row:first-child { border-top:1px solid var(--ink-muted); }
+.s-close .tl-num {
+  font-family:var(--font-mono); font-size:var(--type-eyebrow);
+  color:var(--cream-dim); letter-spacing:.1em; font-weight:500;
+}
+.s-close .tl-text {
+  font-family:var(--font-serif); font-style:italic;
+  font-size:var(--type-body-lg); color:var(--cream-soft); line-height:1.4;
+}
+.s-close .tl-text strong {
+  font-style:normal; font-family:var(--font-sans);
+  font-weight:600; color:var(--cream);
+}
+.s-close .footer-row {
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--font-mono); font-size:var(--type-eyebrow);
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--cream-dim);
+}
+
+</style>
+</head>
+<body>
+
+<div id="slide-counter">1 / 6</div>
+
+<deck-stage width="1920" height="1080">
+
+<!-- ══════════════════════════════════════════════════════════════
+     01 — TITLE
+══════════════════════════════════════════════════════════════ -->
+<section data-label="01 Title">
+<div class="s-title">
+
+  <div class="doc-row">
+    <span class="eyebrow">
+      CSC-114
+      <span class="dash">/</span>
+      Module 01
+      <span class="dash">/</span>
+      <span class="accent">Building Cloud-Based LLM Agents</span>
+    </span>
+    <span class="eyebrow">AlgoCratic Futures™ · Meeting 1</span>
+  </div>
+
+  <div class="hero">
+    <span class="label">Claude Console · claude-sonnet-4-6 · platform.claude.com</span>
+    <h1 class="deck-title">What Even<br>Is an Agent?</h1>
+    <p class="subtitle">Same answer. Three very different amounts of autonomy.</p>
+  </div>
+
+  <div class="footer-row">
+    <span>After CSC-113 AI Fundamentals</span>
+    <span>Press → to begin</span>
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     02 — THE SPECTRUM
+══════════════════════════════════════════════════════════════ -->
+<section data-label="02 The Spectrum">
+<div class="s-spectrum">
+
+  <span class="eyebrow">02 <span class="dash">/</span> <span class="accent">The Spectrum</span></span>
+
+  <h2 class="slide-title">They're all AI. <span class="accent">What's different?</span></h2>
+
+  <div class="spectrum-table">
+
+    <!-- header row -->
+    <div class="st-cell" style="border-top:none;"></div>
+    <div class="st-cell" style="border-top:none;">
+      <span class="st-head role-chat">Chatbot</span>
+    </div>
+    <div class="st-cell" style="border-top:none;">
+      <span class="st-head role-asst">Assistant</span>
+    </div>
+    <div class="st-cell" style="border-top:none;">
+      <span class="st-head role-agnt">Agent</span>
+    </div>
+
+    <!-- row 1 -->
+    <div class="st-cell"><span class="st-row-label">Tools?</span></div>
+    <div class="st-cell"><span class="st-value role-chat">No</span></div>
+    <div class="st-cell"><span class="st-value role-asst">Yes, when asked</span></div>
+    <div class="st-cell"><span class="st-value role-agnt em">Yes, autonomously</span></div>
+
+    <!-- row 2 -->
+    <div class="st-cell"><span class="st-row-label">Loops?</span></div>
+    <div class="st-cell"><span class="st-value role-chat">Single turn</span></div>
+    <div class="st-cell"><span class="st-value role-asst">Multi-turn, human-driven</span></div>
+    <div class="st-cell"><span class="st-value role-agnt em">Multi-turn, self-driven</span></div>
+
+    <!-- row 3 -->
+    <div class="st-cell"><span class="st-row-label">Decides next step?</span></div>
+    <div class="st-cell"><span class="st-value role-chat">Never</span></div>
+    <div class="st-cell"><span class="st-value role-asst">Sometimes</span></div>
+    <div class="st-cell"><span class="st-value role-agnt em">Always</span></div>
+
+    <!-- row 4 -->
+    <div class="st-cell"><span class="st-row-label">Runs unsupervised?</span></div>
+    <div class="st-cell"><span class="st-value role-chat">No</span></div>
+    <div class="st-cell"><span class="st-value role-asst">Briefly</span></div>
+    <div class="st-cell"><span class="st-value role-agnt em">For extended periods</span></div>
+
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     03 — FIVE CONSOLE OBJECTS
+══════════════════════════════════════════════════════════════ -->
+<section data-label="03 Five Console Objects">
+<div class="s-objects">
+
+  <span class="eyebrow">03 <span class="dash">/</span> <span class="accent">The Console Map</span></span>
+
+  <h2 class="slide-title">Five objects. <span class="accent">One physical analogy each.</span></h2>
+
+  <div class="objects-grid">
+    <div class="obj-row">
+      <div class="obj-name">Agent</div>
+      <div class="obj-def">A <strong>job description.</strong> What the employee knows, what tools they can use, what resources they've been trained on.</div>
+    </div>
+    <div class="obj-row">
+      <div class="obj-name">Environment</div>
+      <div class="obj-def">The <strong>office.</strong> What software is installed, what the network policy is, whether outside calls are allowed.</div>
+    </div>
+    <div class="obj-row">
+      <div class="obj-name">Session</div>
+      <div class="obj-def">A <strong>workday.</strong> One agent, one environment, one task. When it ends, the desk is cleared. The next session starts fresh.</div>
+    </div>
+    <div class="obj-row">
+      <div class="obj-name">Vault</div>
+      <div class="obj-def">The <strong>key cabinet.</strong> API tokens and credentials go here. The agent never sees the raw key — the proxy handles it.</div>
+    </div>
+    <div class="obj-row">
+      <div class="obj-name">Skill</div>
+      <div class="obj-def">A <strong>reference manual on the shelf.</strong> A folder with a SKILL.md and supporting scripts that teach a specific capability.</div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     04 — THE CONSTITUTION
+══════════════════════════════════════════════════════════════ -->
+<section data-label="04 The System Prompt Is the Product">
+<div class="s-constitution">
+
+  <span class="eyebrow">04 <span class="dash">/</span> <span class="cl-uv">Ultraviolet</span> <span class="dash">/</span> The System Prompt Is the Product</span>
+
+  <h2 class="slide-title">You're not asking a question. <span class="accent">You're writing a constitution.</span></h2>
+
+  <div class="const-body">
+
+    <blockquote class="pull-quote">
+      <span class="ql">"</span>The permanent rules this agent will follow in every conversation it ever has, with every user, forever — or until you change it and increment the version number.<span class="ql">"</span>
+    </blockquote>
+
+    <div class="five-sections">
+      <div class="section-row">
+        <span class="section-num">§1</span>
+        <span class="section-name">Identity and Role <span>Who it is. What it's NOT.</span></span>
+      </div>
+      <div class="section-row">
+        <span class="section-num">§2</span>
+        <span class="section-name">Behavioral Constraints <span>The guardrails. Explicit refusals.</span></span>
+      </div>
+      <div class="section-row">
+        <span class="section-num">§3</span>
+        <span class="section-name">Domain Knowledge <span>Inline facts, or a mounted file path.</span></span>
+      </div>
+      <div class="section-row">
+        <span class="section-num">§4</span>
+        <span class="section-name">Output Format <span>Define the structure. Every time.</span></span>
+      </div>
+      <div class="section-row">
+        <span class="section-num">§5</span>
+        <span class="section-name">Context <span>Today's date. Who's using it. Where.</span></span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     05 — THE ONE-CHANGE-RULE
+══════════════════════════════════════════════════════════════ -->
+<section data-label="05 The One-Change-Rule">
+<div class="s-ocr">
+
+  <span class="eyebrow">05 <span class="dash">/</span> <span class="accent">The One-Change-Rule</span></span>
+
+  <h2 class="slide-title">Same outer skeleton. <span class="accent">Three different update rules.</span></h2>
+
+  <pre class="code"><span class="hi">[initialize: v1 system prompt]</span>
+<span class="kw">while</span> agent not performing adequately:
+    <span class="hi">[update: change ONE thing — save as new version]</span>
+<span class="kw">return</span> working agent</pre>
+
+  <div class="variant-row">
+
+    <div class="variant-card role-chat">
+      <div class="vc-label role-chat">What most people do</div>
+      <div class="vc-update">Rewrite the entire prompt after the first failure. Change five things at once.</div>
+      <div class="vc-cost">∅<span class="unit">learned</span></div>
+    </div>
+
+    <div class="variant-card role-asst">
+      <div class="vc-label role-asst">What the rule requires</div>
+      <div class="vc-update">Identify the ONE thing most broken. Change that. Test again. Repeat.</div>
+      <div class="vc-cost">5×<span class="unit">iterations</span></div>
+    </div>
+
+    <div class="variant-card role-agnt">
+      <div class="vc-label role-agnt">What it teaches</div>
+      <div class="vc-update">Causality in complex systems. Which change fixed it — and why.</div>
+      <div class="vc-cost">∞<span class="unit">transfers</span></div>
+    </div>
+
+  </div>
+
+  <p class="bridge">You have seen this shape before. <em>You will see it everywhere.</em></p>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     06 — CLOSE
+══════════════════════════════════════════════════════════════ -->
+<section data-label="06 Close">
+<div class="s-close">
+
+  <span class="eyebrow">06 <span class="dash">/</span> <span class="accent">You Are Already Building</span></span>
+
+  <div class="center-card">
+    <p class="big-line">You are already building.</p>
+    <div class="three-lines">
+      <div class="tl-row">
+        <span class="tl-num">01</span>
+        <span class="tl-text">The <strong>system prompt</strong> is the engineering artifact.</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-num">02</span>
+        <span class="tl-text">The <strong>testing log</strong> is the proof of work.</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-num">03</span>
+        <span class="tl-text">The <strong>commit history</strong> is the timeline of your thinking.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-row">
+    <span>← review</span>
+    <span>Next: Lab 01 — Deploy your first agent</span>
+  </div>
+
+</div>
+</section>
+
+
+</deck-stage>
+</body>
+</html>
