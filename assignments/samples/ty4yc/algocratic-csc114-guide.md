@@ -31,7 +31,7 @@ It is, however, accurate.*
 
 ## [1.0]  WHAT IS THIS COURSE
 
-**CSC-114** is *Building Cloud-Based LLM Agents* — a 2-week module at
+**CSC-114** *Artificial Intelligence I", starting with *Building Cloud-Based LLM Agents* — a 2-week module at
 Fayetteville Technical Community College that follows CSC-113 (AI Fundamentals).
 You are here because you finished CSC-113 or tested out of it.
 
@@ -114,6 +114,8 @@ A few reasons that are actually pedagogical and not just fun:
 3. **Naming things helps.** "I am an Agent Operator communicating with
    The Algorithm" is a more actionable mental model than "I am typing
    at a chatbot." The fiction is load-bearing.
+
+4. **For Your Safety.** Infohazards are not fictional, but this this is just just a simulation! Thank You For Your Co-Operation.
 
 ### 2.4  The core translation table
 
