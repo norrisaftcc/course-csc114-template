@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1: Cloud Agents</title>
+    <style>
+        /* BEGIN CANVAS_STYLES */
+        /* Canvas-compatible CSS — inline only, no external stylesheets */
+        /* SOURCE OF TRUTH: planning/pilot_su26/canvas-shared-styles.css */
+        /* SYNC: run `python3 planning/pilot_su26/sync_canvas_styles.py` after editing */
+        .module-header {
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .module-header h1 { margin: 0 0 10px 0; font-size: 2.5em; font-weight: bold; }
+        .module-meta { display: flex; gap: 20px; margin-top: 15px; font-size: 0.95em; flex-wrap: wrap; }
+        .meta-item { background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 5px; }
+        .content-section {
+            background: #f8f9fa;
+            border-left: 5px solid #1e88e5;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        .content-section h2 { color: #1e88e5; margin-top: 0; font-size: 1.8em; border-bottom: 2px solid #1e88e5; padding-bottom: 10px; }
+        .learning-objectives { background: #e3f2fd; border-left: 5px solid #2196F3; padding: 20px; margin: 20px 0; }
+        .learning-objectives ul { margin: 10px 0; padding-left: 25px; }
+        .learning-objectives li { margin: 10px 0; line-height: 1.6; }
+        .two-track-box {
+            background: #f3e5f5;
+            border: 2px solid #9c27b0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .two-track-box h3 { margin-top: 0; color: #7b1fa2; font-size: 1.3em; }
+        .two-track-box table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .two-track-box th, .two-track-box td { padding: 10px; text-align: left; border-bottom: 1px solid #ce93d8; vertical-align: top; }
+        .two-track-box th { background: #ce93d8; color: #4a148c; }
+        .assignment-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .assignment-card h3 { color: #1e88e5; margin-top: 0; font-size: 1.4em; }
+        .button-primary {
+            background: #1e88e5; color: white; padding: 12px 25px; border-radius: 6px;
+            text-decoration: none; display: inline-block; margin: 10px 10px 10px 0; font-weight: bold;
+        }
+        .button-primary:hover { background: #1565c0; color: white; text-decoration: none; }
+        .button-secondary {
+            background: #6c757d; color: white; padding: 12px 25px; border-radius: 6px;
+            text-decoration: none; display: inline-block; margin: 10px 10px 10px 0; font-weight: bold;
+        }
+        .checklist { background: #fff3e0; border-left: 5px solid #ff9800; padding: 20px; margin: 20px 0; }
+        .checklist h2 { margin-top: 0; color: #e65100; font-size: 1.5em; }
+        .checklist ul { list-style: none; padding-left: 0; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #ffcc80; }
+        .checklist li:before { content: "☐ "; font-size: 1.2em; margin-right: 10px; color: #ff9800; }
+        .tip-box { background: #e8f5e9; border: 2px solid #4caf50; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .tip-box h2 { margin-top: 0; color: #2e7d32; font-size: 1.3em; }
+        @media print {
+            .button-primary, .button-secondary { display: none; }
+            .module-header, .assignment-card { break-inside: avoid; }
+        }
+        /* END CANVAS_STYLES */
+    </style>
+</head>
+<body>
+
+<div class="module-header">
+    <h1>Week 1: Cloud Agents</h1>
+    <p style="font-size: 1.2em; margin: 10px 0;">Before we touch the textbook, you build something. By Friday you have a working AI agent of your own design in the Claude Console.</p>
+    <div class="module-meta">
+        <div class="meta-item">Duration: 1 week</div>
+        <div class="meta-item">No textbook reading — content lives in learn.md</div>
+        <div class="meta-item">Due: End of Week 1, before Monday of Week 2</div>
+    </div>
+</div>
+
+<!-- Learning Outcomes -->
+<div class="learning-objectives">
+    <h2>Learning Outcomes</h2>
+    <p><strong>By Friday of Week 1, you can:</strong></p>
+    <ul>
+        <li><strong>Explain</strong> the chatbot → assistant → agent spectrum and where Claude Managed Agents sits on it.</li>
+        <li><strong>Create</strong> a Claude Managed Agent in the Console, including model selection and system prompt.</li>
+        <li><strong>Design</strong> a domain-specific system prompt using the five-section template.</li>
+        <li><strong>Test</strong> an agent using the one-change-rule and document what happened.</li>
+        <li><strong>Decide intentionally</strong> which tools your agent gets and write down why.</li>
+    </ul>
+</div>
+
+<!-- Why this is Week 1 -->
+<div class="content-section">
+    <h2>Why this is Week 1, not later</h2>
+    <p>Two reasons. First, you learn faster when you've already built something — Week 2 (Keras hello-world) lands differently if you've spent a week thinking about what an AI system actually <em>is</em>. Second, some of you will keep iterating on your agent the whole term as your real project. <strong>That's allowed.</strong> The textbook track and the agent track both count, as long as you build something real.</p>
+    <p>This week is also where the class gets its <strong>GitHub home base</strong> set up. You need an account, you need to be in the course org, and you need to have committed at least one file.</p>
+</div>
+
+<!-- Submission expectations this week -->
+<div class="two-track-box">
+    <h3>Submission This Week — Universal Drop</h3>
+    <p><strong>Both tracks submit identically this week.</strong> Screenshot of your agent answering correctly + 1-paragraph reflection, added to your repo via GitHub Desktop, the GitHub web UI's "add file" button, or <code>git</code> — your choice.</p>
+    <p>No issues, no branches, no PRs required. Sacred Flow (Issue → Branch → Commit → PR → Merge) starts <strong>Week 2</strong> for the Code Builders track. This week your only GitHub job is <em>get into the course org and put a file in your repo.</em></p>
+</div>
+
+<!-- What you do this week -->
+<div class="content-section">
+    <h2>What You Do This Week</h2>
+
+    <div class="assignment-card">
+        <h3>1. Learn — What is an agent, really?</h3>
+        <p>Concepts only — no Console yet. The chatbot → assistant → agent spectrum, what tools mean for an agent, what a system prompt is for. Read first.</p>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">View learn.md</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>2. Practice — Console warm-up: Campus Info Bot</h3>
+        <p>Retry-OK. Create a trivially simple "Campus Info Bot" in the Console to learn the mechanics — agent creation, model selection, the basic system prompt, your first test session. Not your real project, just the warm-up.</p>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">View practice.md</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>3. Apply — Build your domain agent v1</h3>
+        <p>This is the real work. Pick a domain you actually know about. Write a five-section system prompt (Identity → Behavioral Constraints → Domain Knowledge → Output Format → Context). Decide which tools your agent gets and write down why. Run tests using the one-change-rule.</p>
+        <a href="/courses/[COURSE_ID]/files/[FILE_ID]" class="button-secondary">View apply.md</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>4. Assess — What you submit</h3>
+        <p>Screenshot of your agent answering correctly + 1-paragraph reflection. Both tracks submit the same way this week — see "Universal Drop" above.</p>
+        <a href="/courses/[COURSE_ID]/assignments/[ASSIGNMENT_ID]" class="button-primary">View Assess Details</a>
+    </div>
+
+    <div class="assignment-card">
+        <h3>5. Knowledge Check — Vocabulary calibration</h3>
+        <p>13-question multiple choice quiz on agent vocabulary, Console mechanics, the five-section system prompt, testing discipline, and tool rationale. <strong>Unlimited attempts.</strong> Use it as a learning tool — try, read the explanation, retry.</p>
+        <a href="/courses/[COURSE_ID]/quizzes/[QUIZ_ID]" class="button-primary">Take the Knowledge Check</a>
+    </div>
+</div>
+
+<!-- Code Preview -->
+<div class="content-section">
+    <h2>Week 1 System Prompt Preview</h2>
+    <p>Here's what your domain agent's system prompt will look like — the five sections you'll fill in:</p>
+    <pre style="background: #263238; color: #aed581; padding: 20px; border-radius: 5px; overflow-x: auto;"><code># Section 1: Identity and Role
+You are a helpful information assistant for the [Department Name]
+at [College Name]. The current date is [today's date].
+
+# Section 2: Behavioral Constraints
+- Only answer questions using the information below.
+- If someone asks something you don't know, say:
+  "I don't have that information. Please contact [office] at [contact]."
+- Never make up information. Never guess.
+- Be friendly and professional.
+
+# Section 3: Domain Knowledge
+- The office is located in [Building], Room [Number].
+- Office hours are [days] from [time] to [time].
+- The chair is [Name]. Contact: [email or phone].
+- [Add more specific facts about your domain.]
+
+# Section 4: Output Format
+- Answer in 1-3 sentences unless asked for more detail.
+- When relevant, include the contact info from Section 3.
+- Use a friendly, professional tone.
+
+# Section 5: Context
+- You are a learning project for CSC-114 at FTCC.
+- Some users may be testing you — answer truthfully and consistently.</code></pre>
+    <p><strong>What you'll do in Apply:</strong> swap the placeholders for your real domain (a department you know, a club, a course you've taken, a hobby) and iterate using the one-change-rule until the agent behaves the way you want.</p>
+</div>
+
+<!-- Want to keep going? -->
+<div class="content-section" style="background: #e0f7fa; border-left-color: #00838f;">
+    <h2 style="color: #00838f;">Want to Keep Going?</h2>
+    <p>There are two ways to go deeper with your agent — both are valid success paths in this course.</p>
+    <p><strong>Path 1: The deeper module.</strong> The original CSC-113 Cloud Agents module was 2 weeks. We compressed it to 1 week for the pilot, but Meetings 3 and 4 are still available as self-directed extensions:</p>
+    <ul>
+        <li>Mounting files into your agent's environment</li>
+        <li>Connecting to MCP (Model Context Protocol) servers</li>
+        <li>Security testing — prompt injection, role escape, system prompt extraction</li>
+        <li>Cost calculation and prompt caching</li>
+        <li>Structured peer review</li>
+    </ul>
+    <p>Source: <code>planning/legacy_csc113/CSC-114_Module_Cloud_Agents_Student_Lab_Packet.md</code>, Meetings 3–4. Not required, but rewarding if Week 1 hooked you.</p>
+    <p><strong>Path 2: The keep-iterating path.</strong> Some of you will spend the rest of the term improving your agent instead of switching to the textbook track in Week 2. <strong>That counts.</strong> The textbook track (Keras → deep learning) and the agent track both lead to a real final project. Pick the path that fits the work you actually want to do.</p>
+</div>
+
+<!-- Checklist -->
+<div class="checklist">
+    <h2>Week 1 Completion Checklist</h2>
+    <ul>
+        <li>Anthropic Console account ready (verified phone for $5 trial credits if no API key)</li>
+        <li>GitHub account, accepted invite to the course org, repo cloned or initialized</li>
+        <li>Read learn.md before Meeting A</li>
+        <li>Create the Campus Info Bot warm-up in the Console (Practice)</li>
+        <li>Pick your domain and write a five-section system prompt v1 (Apply)</li>
+        <li>Run at least one test session and one variant using the one-change-rule</li>
+        <li>Drop your screenshot + reflection into your repo (Assess)</li>
+        <li>Take the Knowledge Check (unlimited attempts — use it as a learning tool)</li>
+    </ul>
+</div>
+
+<!-- Tips -->
+<div class="tip-box">
+    <h2>Senpai's Tips for Week 1</h2>
+    <ul>
+        <li><strong>Pick a domain you actually know about.</strong> If you can't list 5 facts off the top of your head, your agent can't either. A math department, a club you're in, a video game you've played, a TV show you watch — anything where you can write authoritative Domain Knowledge.</li>
+        <li><strong>The one-change-rule is the most useful habit you'll build this term.</strong> Change one thing per test. Write down what changed. Compare to the last test. It's tedious for two days and then it's automatic.</li>
+        <li><strong>$5 of trial credit is enough for Week 1.</strong> Don't burn it on infinite "hello" tests. Plan your test sessions so each one actually teaches you something.</li>
+        <li><strong>Behavioral Constraints do more work than Domain Knowledge.</strong> "Never make up information" is worth more than 10 extra facts.</li>
+        <li><strong>If your agent is doing too much, scope down its tools.</strong> An agent with every tool enabled is an agent that will surprise you. Disable what it doesn't need and watch the behavior get more predictable.</li>
+    </ul>
+</div>
+
+<!-- Senpai's Note -->
+<div class="content-section" style="background: #fff8e1; border-left-color: #fbc02d;">
+    <h2 style="color: #f57f17;">Senpai's Note</h2>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        You learn faster when you've built something first. That's why this is Week 1 — before any textbook, before Keras, before the math. By Friday you'll have a working AI agent that does something specific, designed by you, with deliberate choices about what it knows and what it can do. That experience will reshape how you read every chapter that comes after.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        Don't aim for impressive this week. Aim for <em>specific</em>. A bot that answers 5 questions about your hobby with consistent, accurate, in-character responses is worth more than a flashy bot that tries to do everything and trips over its own feet.
+    </p>
+    <p style="font-size: 1.1em; line-height: 1.6;">
+        And if you find this so much more interesting than the textbook track that you want to keep iterating on your agent for the rest of the term — that's a real option. We'll talk about how to scope a Week-8-worthy agent project when you get there.
+    </p>
+</div>
+
+</body>
+</html>
