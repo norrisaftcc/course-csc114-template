@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>When You Can't Read Your Own Thoughts — AlgoCratic Futures™</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<script>
+/* ─── Minimal deck-stage web component ───────────────────────────────────
+   Drop-in compatible with deck-stage.js used in the CSC 113 template.
+   Handles: scaling to viewport, arrow-key + click navigation,
+            re-triggering .nl[data-anim] on slide entry.          ──────── */
+class DeckStage extends HTMLElement {
+  connectedCallback() {
+    setTimeout(() => this._init(), 0);
+  }
+
+  _init() {
+    this._slides = [...this.querySelectorAll('section')];
+    this._idx    = 0;
+    this._W      = parseInt(this.getAttribute('width')  || 1920);
+    this._H      = parseInt(this.getAttribute('height') || 1080);
+
+    Object.assign(this.style, {
+      display: 'block', position: 'fixed', inset: '0',
+      background: '#000', overflow: 'hidden'
+    });
+
+    this._slides.forEach((s, i) => {
+      Object.assign(s.style, {
+        position: 'absolute', top: '0', left: '0',
+        width:  this._W + 'px',
+        height: this._H + 'px',
+        transformOrigin: 'top left',
+        display: i === 0 ? 'block' : 'none'
+      });
+    });
+
+    this._rescale();
+    window.addEventListener('resize', () => this._rescale());
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ')   { e.preventDefault(); this._go(1);  }
+      if (e.key === 'ArrowLeft'  || e.key === 'Backspace') { e.preventDefault(); this._go(-1); }
+    });
+
+    this.addEventListener('click', e => {
+      this._go(e.clientX < window.innerWidth * 0.25 ? -1 : 1);
+    });
+
+    this._syncCounter();
+  }
+
+  _rescale() {
+    const s  = Math.min(window.innerWidth / this._W, window.innerHeight / this._H);
+    const ox = (window.innerWidth  - this._W * s) / 2;
+    const oy = (window.innerHeight - this._H * s) / 2;
+    this._slides.forEach(sl => {
+      sl.style.transform = `translate(${ox}px,${oy}px) scale(${s})`;
+    });
+  }
+
+  _go(delta) {
+    const next = Math.max(0, Math.min(this._slides.length - 1, this._idx + delta));
+    if (next === this._idx) return;
+    this._slides[this._idx].style.display = 'none';
+    this._idx = next;
+    const slide = this._slides[this._idx];
+    slide.style.display = 'block';
+    /* re-trigger number-line animations */
+    slide.querySelectorAll('.nl').forEach(nl => {
+      nl.removeAttribute('data-anim');
+      requestAnimationFrame(() => nl.setAttribute('data-anim', '1'));
+    });
+    this._syncCounter();
+  }
+
+  _syncCounter() {
+    const el = document.getElementById('slide-counter');
+    if (el) el.textContent = `${this._idx + 1} / ${this._slides.length}`;
+  }
+}
+customElements.define('deck-stage', DeckStage);
+</script>
+
+<style>
+/* ════════════════════════════════════════════════════════════════════════
+   ALGOCRATIC FUTURES™  ·  TEACHERBOT DESIGN SYSTEM
+   Underground Edition — clearance-level semantic extension
+   Base: Three Square Roots deck (CSC 113)
+════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surfaces */
+  --ink-deep:   #0A1828;
+  --ink:        #0E1F33;
+  --ink-raised: #162A44;
+  --ink-elev:   #1D3554;
+  --ink-muted:  #3A4E68;
+  --ink-line:   #5A6E88;
+
+  /* Foreground cream ramp */
+  --cream:       #F4ECD2;
+  --cream-soft:  #E6DDC0;
+  --cream-muted: #B9B19A;
+  --cream-dim:   #8A8472;
+
+  /* Earthen palette */
+  --rust:      #A23A2C;
+  --vermilion: #D8542E;
+  --amber:     #E08236;
+  --mustard:   #E5A93D;
+  --moss:      #7BA15A;
+  --teal:      #5DA9B4;
+
+  /* ── Clearance level colors ─────────────────────────────────────────
+     Red     = GitHub, version control, foundational ops
+     Orange  = Agent creation, AI tool integration
+     Ultraviolet = Advanced synthesis, "borrowed from official servers"  */
+  --c-red:    #C94040;
+  --c-orange: #E08236;   /* reuses --amber */
+  --c-uv:     #A78BD9;   /* reuses Newton-Raphson lavender */
+  --c-open:   var(--cream-muted);
+
+  /* Typography */
+  --font-sans:  'Space Grotesk', system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+
+  /* Type scale — 1920 × 1080 */
+  --type-eyebrow: 24px;
+  --type-small:   26px;
+  --type-body:    32px;
+  --type-body-lg: 38px;
+  --type-sub:     44px;
+  --type-title:   72px;
+  --type-display: 120px;
+  --type-code:    24px;
+
+  /* Layout */
+  --pad-x:      96px;
+  --pad-top:    80px;
+  --pad-bottom: 80px;
+  --gap-item:   28px;
+}
+
+html, body { background: #000; margin: 0; }
+body { font-family: var(--font-sans); color: var(--cream); }
+
+/* ── Slide base ─────────────────────────────────────── */
+section {
+  box-sizing: border-box;
+  background: var(--ink);
+  color: var(--cream);
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+/* Scanline overlay — very dim, matches original deck */
+section::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 3px,
+    rgba(244,236,210,0.018) 3px, rgba(244,236,210,0.018) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+section > * { position: relative; z-index: 1; }
+
+/* ── Eyebrow chrome ──────────────────────────────────── */
+.eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cream-muted);
+}
+.eyebrow .dash    { color: var(--ink-line); margin: 0 .75em; }
+.eyebrow .accent  { color: var(--amber); }
+.eyebrow .cl-red    { color: var(--c-red); }
+.eyebrow .cl-orange { color: var(--c-orange); }
+.eyebrow .cl-uv     { color: var(--c-uv); }
+.eyebrow .cl-open   { color: var(--cream-muted); }
+
+/* ── Typography ──────────────────────────────────────── */
+h1.deck-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 144px;
+  line-height: 0.93;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin: 0;
+  text-wrap: balance;
+}
+
+h2.slide-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--type-title);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin: 0 0 var(--gap-item);
+  text-wrap: balance;
+}
+h2.slide-title .accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cream-soft);
+}
+
+.subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--type-sub);
+  color: var(--cream-soft);
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p.body {
+  font-size: var(--type-body);
+  line-height: 1.45;
+  color: var(--cream-soft);
+  margin: 0;
+  max-width: 1500px;
+  text-wrap: pretty;
+}
+p.body.lg { font-size: var(--type-body-lg); }
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--cream-muted);
+}
+
+blockquote { margin: 0; padding: 0; }
+
+/* ── Log / code blocks ───────────────────────────────── */
+pre.log {
+  font-family: var(--font-mono);
+  font-size: var(--type-code);
+  line-height: 1.6;
+  color: var(--cream);
+  background: var(--ink-deep);
+  border: 1px solid var(--ink-muted);
+  border-left: 4px solid var(--ink-muted);
+  padding: 28px 32px;
+  margin: 0;
+  white-space: pre;
+  overflow: visible;
+}
+.log .t-ok      { color: var(--moss); }
+.log .t-blocked { color: var(--c-red); font-weight: 700; }
+.log .t-warn    { color: var(--amber); }
+.log .t-uv      { color: var(--c-uv); }
+.log .t-dim     { color: var(--cream-muted); }
+.log .t-key     { color: var(--teal); font-weight: 700; }
+.log .t-label   { color: var(--cream-dim); }
+
+/* ── Clearance chip ──────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--cream-muted);
+}
+.chip .dot { width: 14px; height: 14px; border-radius: 50%; background: currentColor; }
+.chip.cl-red    { color: var(--c-red); }
+.chip.cl-orange { color: var(--c-orange); }
+.chip.cl-uv     { color: var(--c-uv); }
+
+/* ── Badge (bordered, monospace) ─────────────────────── */
+.badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 6px 18px;
+  border: 1.5px solid currentColor;
+}
+.badge.cl-red    { color: var(--c-red); }
+.badge.cl-orange { color: var(--c-orange); }
+.badge.cl-uv     { color: var(--c-uv); }
+.badge.cl-open   { color: var(--cream-muted); }
+
+/* ── Panel / card ────────────────────────────────────── */
+.panel {
+  border: 1px solid var(--ink-muted);
+  padding: 28px 32px;
+  background: rgba(22,42,68,0.5);
+}
+.panel h4 {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--cream-muted);
+  margin: 0 0 14px;
+}
+.panel p {
+  font-size: var(--type-body);
+  line-height: 1.45;
+  color: var(--cream-soft);
+  margin: 0;
+}
+.panel p em { font-family: var(--font-serif); font-style: italic; color: var(--cream); }
+.panel.cl-red    { border-left: 4px solid var(--c-red); }
+.panel.cl-orange { border-left: 4px solid var(--c-orange); }
+.panel.cl-uv     { border-left: 4px solid var(--c-uv); }
+
+/* ── Counter overlay ─────────────────────────────────── */
+#slide-counter {
+  position: fixed; bottom: 24px; right: 32px;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--ink-muted);
+  letter-spacing: 0.1em;
+  z-index: 200;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ════════════════════════════════════════════════════════
+   SLIDE LAYOUTS
+════════════════════════════════════════════════════════ */
+
+/* ── S01 Title ──────────────────────────────────────── */
+.s-title {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+.s-title .doc-row {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.s-title .hero { align-self: center; }
+.s-title .hero .label { display: block; margin-bottom: 12px; }
+.s-title .hero h1.deck-title { margin-top: 16px; }
+.s-title .hero .subtitle { margin-top: 36px; max-width: 1240px; }
+.s-title .footer-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+
+/* ── S02 Incident ───────────────────────────────────── */
+.s-incident {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  row-gap: 36px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ── S03 Three approaches ───────────────────────────── */
+.s-three {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  row-gap: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+.s-three h2.slide-title { margin-top: 32px; margin-bottom: 36px; }
+
+.approach-rows { display: flex; flex-direction: column; }
+.approach-row {
+  display: grid;
+  grid-template-columns: 240px 1.1fr 0.9fr;
+  column-gap: 56px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--ink-muted);
+  align-items: baseline;
+}
+.approach-row:first-child { border-top: 1px solid var(--ink-muted); }
+
+.approach-row .a-name {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 42px;
+  letter-spacing: -0.01em;
+}
+.approach-row .a-q {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 36px;
+  line-height: 1.3;
+  color: var(--cream);
+}
+.approach-row .a-result {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cream-muted);
+}
+.approach-row.ok      .a-name { color: var(--moss); }
+.approach-row.ok      .a-result { color: var(--moss); }
+.approach-row.blocked .a-name { color: var(--c-red); }
+.approach-row.blocked .a-result { color: var(--c-red); }
+.approach-row.synth   .a-name { color: var(--c-uv); }
+.approach-row.synth   .a-result { color: var(--c-uv); }
+
+.s-three .bridge {
+  margin-top: 40px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--type-body-lg);
+  color: var(--cream-soft);
+}
+.s-three .bridge em { font-style: normal; color: var(--amber); }
+
+/* ── S04 Meta ───────────────────────────────────────── */
+.s-meta {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  row-gap: 44px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.meta-body {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  column-gap: 64px;
+  align-items: start;
+}
+.pull-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 48px;
+  line-height: 1.25;
+  color: var(--cream);
+  border-left: 4px solid var(--c-uv);
+  padding-left: 40px;
+  margin: 0;
+}
+.pull-quote .ql { color: var(--cream-dim); }
+
+/* ── S05 Transition ─────────────────────────────────── */
+.s-transition {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  row-gap: 44px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0;
+  align-items: start;
+}
+.two-col .col-a { padding-right: 56px; }
+.two-col .col-b { padding-left: 56px; border-left: 1px solid var(--ink-muted); }
+.two-col .col-head {
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--cream-muted);
+  margin: 0 0 24px;
+}
+.two-col .col-body {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 40px;
+  line-height: 1.5;
+  color: var(--cream-soft);
+  margin: 0;
+}
+.two-col .col-body strong {
+  font-family: var(--font-sans);
+  font-style: normal;
+  color: var(--cream);
+  font-weight: 600;
+}
+
+/* ── S06 Clearance map ──────────────────────────────── */
+.s-clearance {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  row-gap: 44px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.clearance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 56px;
+  align-items: start;
+}
+.cl-col {
+  display: flex; flex-direction: column; gap: 22px;
+  border-top: 3px solid var(--ink-muted);
+  padding-top: 32px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.cl-col.cl-red    { border-top-color: var(--c-red); }
+.cl-col.cl-orange { border-top-color: var(--c-orange); }
+.cl-col.cl-uv     { border-top-color: var(--c-uv); }
+
+.cl-col .cl-name {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 56px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.cl-col.cl-red    .cl-name { color: var(--c-red); }
+.cl-col.cl-orange .cl-name { color: var(--c-orange); }
+.cl-col.cl-uv     .cl-name { color: var(--c-uv); }
+
+.cl-col .cl-items {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 33px;
+  line-height: 1.65;
+  color: var(--cream-soft);
+}
+.cl-col .cl-items strong {
+  font-family: var(--font-sans);
+  font-style: normal;
+  color: var(--cream);
+  font-weight: 500;
+}
+.cl-col .cl-items .dim {
+  color: var(--cream-dim);
+  font-size: 28px;
+}
+
+.cl-col .cl-footer {
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.cl-col .cl-avail {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--cream-dim);
+}
+
+/* ── S07 Close ──────────────────────────────────────── */
+.s-close {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+.s-close .center-card {
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  max-width: 1500px;
+}
+.s-close .big-line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 156px;
+  line-height: 0.92;
+  color: var(--cream);
+  margin: 0 0 52px;
+}
+.s-close .footnote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 42px;
+  color: var(--cream-soft);
+  line-height: 1.55;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.s-close .footnote strong {
+  font-style: normal;
+  font-family: var(--font-sans);
+  color: var(--cream);
+  font-weight: 600;
+}
+.s-close .footer-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--type-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+
+</style>
+</head>
+<body>
+
+<div id="slide-counter">1 / 7</div>
+
+<deck-stage width="1920" height="1080">
+
+<!-- ══════════════════════════════════════════════════════════════════
+     01 — TITLE
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="01 Title">
+<div class="s-title">
+
+  <div class="doc-row">
+    <span class="eyebrow">
+      AlgoCratic Futures™
+      <span class="dash">/</span>
+      The Underground
+      <span class="dash">/</span>
+      <span class="cl-open">Clearance: OPEN</span>
+    </span>
+    <span class="eyebrow">CSC 114 · Orientation Deck · Module 00</span>
+  </div>
+
+  <div class="hero">
+    <span class="label">Eight weeks · Python · One framework</span>
+    <h1 class="deck-title">When You Can't Read<br>Your Own Thoughts.</h1>
+    <p class="subtitle">A short history of how this course got made,<br>and what that tells you about the next eight weeks.</p>
+  </div>
+
+  <div class="footer-row">
+    <span>AlgoCratic Futures™ Underground Transmission</span>
+    <span>Press → to begin</span>
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     02 — THE INCIDENT
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="02 The Incident">
+<div class="s-incident">
+
+  <span class="eyebrow">02 <span class="dash">/</span> <span class="accent">The Incident</span></span>
+
+  <h2 class="slide-title">An operative asked an AI to open a file. <span class="accent">What followed was useful.</span></h2>
+
+  <p class="body">Reconstructed from transmission logs. Names anonymized per Underground protocol.</p>
+
+  <pre class="log"><span class="t-dim">RESOURCE ACQUISITION LOG  //  INCIDENT RECONSTRUCTION  //  NOT FOR OFFICIAL DISTRIBUTION</span>
+<span class="t-dim">──────────────────────────────────────────────────────────────────────────────────────────</span>
+
+<span class="t-label">[T+00]</span>  <span class="t-key">REQUEST</span>      Retrieve slide deck from external repository
+                     Target: course-csc114-template  ·  File: Three Square Roots.html
+
+<span class="t-label">[T+01]</span>  <span class="t-key">ATTEMPT 01</span>   Fetch rendered GitHub viewer URL
+                     <span class="t-warn">→ 200 OK — but: wrapped in GitHub interface, not raw content</span>
+                     <span class="t-warn">→ 1,000 of 1,310 lines recovered  (76%)  — truncated by viewer</span>
+
+<span class="t-label">[T+02]</span>  <span class="t-key">ATTEMPT 02</span>   Escalate: fetch raw endpoint (githubusercontent.com)
+                     <span class="t-blocked">→ BLOCKED  —  robots.txt: Disallow</span>
+
+<span class="t-label">[T+03]</span>  <span class="t-key">SYNTHESIS</span>    Reconstruct design intent from partial acquisition
+                     Design system: <span class="t-ok">COMPLETE</span>  ·  Slides 01–07: <span class="t-ok">COMPLETE</span>  ·  Slides 08–11: <span class="t-uv">RECONSTRUCTED</span>
+
+<span class="t-label">[T+04]</span>  <span class="t-key">STATUS</span>       New artifact created. Mission: <span class="t-ok">SUFFICIENT</span></pre>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     03 — THREE APPROACHES
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="03 Three approaches">
+<div class="s-three">
+
+  <span class="eyebrow">03 <span class="dash">/</span> <span class="accent">What the Algorithm Did</span></span>
+
+  <h2 class="slide-title">Same problem. <span class="accent">Three implicit strategies.</span></h2>
+
+  <div class="approach-rows">
+    <div class="approach-row ok">
+      <div class="a-name">Fetch</div>
+      <div class="a-q">"Can I just get the page?"</div>
+      <div class="a-result">→ Partial success. 76% recovered.</div>
+    </div>
+    <div class="approach-row blocked">
+      <div class="a-name">Escalate</div>
+      <div class="a-q">"Can I get the raw file directly?"</div>
+      <div class="a-result">→ Blocked. robots.txt.</div>
+    </div>
+    <div class="approach-row synth">
+      <div class="a-name">Synthesize</div>
+      <div class="a-q">"What can I reconstruct from what I have?"</div>
+      <div class="a-result">→ New artifact created.</div>
+    </div>
+  </div>
+
+  <p class="bridge">You have seen this shape before. <em>You will see it again.</em></p>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     04 — THE META THING
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="04 The Meta Thing">
+<div class="s-meta">
+
+  <span class="eyebrow">04 <span class="dash">/</span> <span class="cl-uv">Ultraviolet</span> <span class="dash">/</span> The Meta Thing</span>
+
+  <h2 class="slide-title">The file we were opening <span class="accent">was the template for this deck.</span></h2>
+
+  <div class="meta-body">
+
+    <blockquote class="pull-quote">
+      <span class="ql">"</span>The slide deck you are reading was built from an incomplete read of the slide deck it was modeled on.<span class="ql">"</span>
+    </blockquote>
+
+    <div style="display:flex; flex-direction:column; gap:28px;">
+      <div class="panel cl-uv">
+        <h4>This is not a bug</h4>
+        <p>This is what it looks like when a tool shows you its work — transparently, in real time, without pretending the obstacles weren't there. <em>That behavior is what you want from a tool.</em></p>
+      </div>
+      <div class="panel">
+        <h4>The original deck was teaching</h4>
+        <p><em>Same problem, different amounts of work</em> — three ways to find a square root. It accidentally demonstrated a fourth thing: three ways to acquire a file you cannot fully reach.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     05 — THE TRANSITION
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="05 The Transition">
+<div class="s-transition">
+
+  <span class="eyebrow">05 <span class="dash">/</span> <span class="accent">Orientation</span></span>
+
+  <h2 class="slide-title">So what <span class="accent">is</span> CSC 114, actually?</h2>
+
+  <div class="two-col">
+    <div class="col-a">
+      <p class="col-head">Official answer</p>
+      <p class="col-body">
+        Introduction to programming in Python.<br>
+        Eight weeks. GitHub. Assignments.<br>
+        <strong>You learn to make computers do what you intend.</strong>
+      </p>
+    </div>
+    <div class="col-b">
+      <p class="col-head">AlgoCratic answer</p>
+      <p class="col-body">
+        You are an operative learning to communicate with The Algorithm.<br>
+        The skills are <strong>identical.</strong><br>
+        The framing is <strong>optional.</strong>
+      </p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     06 — CLEARANCE MAP
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="06 Clearance Map">
+<div class="s-clearance">
+
+  <span class="eyebrow">06 <span class="dash">/</span> <span class="accent">Your Path</span></span>
+
+  <h2 class="slide-title">Everything here is accessible. <span class="accent">The labels tell you where you are.</span></h2>
+
+  <div class="clearance-grid">
+
+    <div class="cl-col cl-red">
+      <div class="cl-name">Red</div>
+      <div class="cl-items">
+        <strong>GitHub basics</strong><br>
+        Version control<br>
+        Commit · Push · PR<br>
+        Repository structure
+      </div>
+      <div class="cl-footer">
+        <span class="badge cl-red">GitHub Foundations</span>
+        <span class="cl-avail">Available: Week 1</span>
+      </div>
+    </div>
+
+    <div class="cl-col cl-orange">
+      <div class="cl-name">Orange</div>
+      <div class="cl-items">
+        <strong>Agent creation</strong><br>
+        AI tool integration<br>
+        Prompt engineering<br>
+        Workflow automation
+      </div>
+      <div class="cl-footer">
+        <span class="badge cl-orange">Agent Operator</span>
+        <span class="cl-avail">Available: Week 4</span>
+      </div>
+    </div>
+
+    <div class="cl-col cl-uv">
+      <div class="cl-name">Ultraviolet</div>
+      <div class="cl-items">
+        <strong>Advanced synthesis</strong><br>
+        Meta-programming<br>
+        The stuff you built today<br>
+        <span class="dim">Borrowed from official servers</span>
+      </div>
+      <div class="cl-footer">
+        <span class="badge cl-uv">You found this.</span>
+        <span class="cl-avail">Always available</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     07 — CLOSE
+══════════════════════════════════════════════════════════════════ -->
+<section data-label="07 End Transmission">
+<div class="s-close">
+
+  <span class="eyebrow">07 <span class="dash">/</span> <span class="accent">End Transmission</span></span>
+
+  <div class="center-card">
+    <p class="big-line">You're already inside.</p>
+    <p class="footnote">
+      Every tool you learn is <strong>real.</strong><br>
+      Every clearance level you unlock is a skill on a résumé.<br>
+      The fiction is just the door.
+    </p>
+  </div>
+
+  <div class="footer-row">
+    <span>← click left edge to review</span>
+    <span>github.com/norrisaftcc/course-csc114-template</span>
+  </div>
+
+</div>
+</section>
+
+
+</deck-stage>
+</body>
+</html>
