@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Claude Projects as a Knowledge Platform — CSC-114 Module 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Same typography as the Three-Square-Roots deck: Space Grotesk (body),
+     JetBrains Mono (code/labels), Instrument Serif (display italics). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<script src="deck-stage.js"></script>
+
+<style>
+  :root {
+    /* Surfaces */
+    --ink-deep:   #0A1828;
+    --ink:        #0E1F33;
+    --ink-raised: #162A44;
+    --ink-elev:   #1D3554;
+    --ink-muted:  #3A4E68;
+    --ink-line:   #5A6E88;
+
+    /* Foreground cream ramp */
+    --cream:       #F4ECD2;
+    --cream-soft:  #E6DDC0;
+    --cream-muted: #B9B19A;
+    --cream-dim:   #8A8472;
+
+    /* Earthen accents */
+    --rust:      #A23A2C;
+    --vermilion: #D8542E;
+    --amber:     #E08236;
+    --mustard:   #E5A93D;
+    --moss:      #7BA15A;
+    --green:     #6BB672;
+    --teal:      #5DA9B4;
+    --lavender:  #A78BD9;
+
+    /* The three questions, given three "characters" */
+    --c-q1: var(--teal);      /* Who are you?  */
+    --c-q2: var(--green);     /* Who am I?     */
+    --c-q3: var(--amber);     /* What together?*/
+
+    /* Typography */
+    --font-sans:  'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', 'Menlo', monospace;
+    --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+
+    /* Slide-scale type — 1920×1080 */
+    --type-eyebrow: 24px;
+    --type-small:   26px;
+    --type-body:    32px;
+    --type-body-lg: 38px;
+    --type-sub:     44px;
+    --type-title:   72px;
+
+    --pad-x:      96px;
+    --pad-top:    88px;
+    --pad-bottom: 88px;
+    --gap-item:   28px;
+  }
+
+  html, body { background: #000; margin: 0; }
+  body { font-family: var(--font-sans); color: var(--cream); }
+
+  deck-stage { background: var(--ink); color: var(--cream); font-family: var(--font-sans); }
+
+  /* ───────── slide chrome ───────── */
+  section {
+    box-sizing: border-box;
+    background: var(--ink);
+    color: var(--cream);
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+  section::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg,
+      transparent 0px, transparent 3px,
+      rgba(244,236,210,0.02) 3px, rgba(244,236,210,0.02) 4px);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--type-eyebrow);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--cream-muted);
+  }
+  .eyebrow .dash { color: var(--ink-line); margin: 0 .8em; }
+  .eyebrow .accent { color: var(--amber); }
+
+  h1.deck-title {
+    font-family: var(--font-serif);
+    font-style: italic; font-weight: 400;
+    font-size: 150px; line-height: 0.95;
+    letter-spacing: -0.02em; color: var(--cream);
+    margin: 0; text-wrap: balance;
+  }
+  h2.slide-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--type-title);
+    line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--cream); margin: 0 0 var(--gap-item);
+    text-wrap: balance;
+  }
+  h2.slide-title .accent {
+    font-family: var(--font-serif); font-style: italic;
+    font-weight: 400; color: var(--cream-soft);
+  }
+  .subtitle {
+    font-family: var(--font-serif); font-style: italic;
+    font-size: var(--type-sub); color: var(--cream-soft);
+    line-height: 1.2; margin: 0; text-wrap: balance;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.45;
+    color: var(--cream-soft); margin: 0;
+    max-width: 1500px; text-wrap: pretty;
+  }
+  p.body.lg { font-size: var(--type-body-lg); }
+  p.body em { font-family: var(--font-serif); font-style: italic; color: var(--cream); }
+  .label {
+    font-family: var(--font-mono); font-size: var(--type-eyebrow);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--cream-muted);
+  }
+
+  /* ───────── title page ───────── */
+  .slide-title-page {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    column-gap: 80px; align-items: stretch;
+  }
+  .slide-title-page .doc-row {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--cream-muted);
+  }
+  .slide-title-page .hero { align-self: center; max-width: 1500px; }
+  .slide-title-page .hero .deck-title { margin-top: 32px; }
+  .slide-title-page .hero .subtitle { margin-top: 40px; max-width: 1200px; }
+  .slide-title-page .corner-mark { align-self: end; justify-self: end; width: 230px; height: 230px; opacity: 0.32; }
+  .slide-title-page .footer-row {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--cream-dim); font-family: var(--font-mono);
+    font-size: var(--type-eyebrow); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  /* ───────── tool row (slide 02) ───────── */
+  .tool-row { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 64px; max-width: 1640px; }
+  .tool {
+    font-family: var(--font-mono); font-size: 30px; letter-spacing: 0.02em;
+    color: var(--cream-muted);
+    border: 1px solid var(--ink-muted);
+    background: rgba(22,42,68,0.5);
+    padding: 22px 30px; border-radius: 4px;
+  }
+  .tool.on {
+    color: var(--ink-deep); background: var(--mustard);
+    border-color: var(--mustard); font-weight: 700;
+  }
+  .tool.on .arrow { color: var(--ink-deep); margin-left: 14px; }
+  .tool-note {
+    margin-top: 52px; font-family: var(--font-serif); font-style: italic;
+    font-size: var(--type-sub); color: var(--cream); max-width: 1400px;
+  }
+
+  /* ───────── flow diagram (slide 03) ───────── */
+  .flow { display: grid; grid-template-columns: 1.1fr 64px 0.9fr 64px 1fr; align-items: center; margin-top: 70px; }
+  .flow .stack { display: flex; flex-direction: column; gap: 26px; }
+  .flow .node {
+    border: 1px solid var(--ink-muted);
+    background: rgba(22,42,68,0.55);
+    padding: 28px 30px; border-radius: 6px;
+  }
+  .flow .node .k {
+    font-family: var(--font-mono); font-size: 22px; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--cream-muted); margin-bottom: 10px;
+  }
+  .flow .node .v { font-size: 30px; line-height: 1.3; color: var(--cream); }
+  .flow .node.in-1 { border-left: 4px solid var(--teal); }
+  .flow .node.in-2 { border-left: 4px solid var(--green); }
+  .flow .project {
+    text-align: center; padding: 48px 24px; border-radius: 10px;
+    border: 1px solid var(--lavender);
+    background: rgba(167,139,217,0.12);
+  }
+  .flow .project .big { font-family: var(--font-serif); font-style: italic; font-size: 56px; color: var(--cream); line-height: 1.05; }
+  .flow .project .sm { font-family: var(--font-mono); font-size: 22px; color: var(--lavender); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 12px; }
+  .flow .out {
+    border: 1px solid var(--ink-muted);
+    background: rgba(22,42,68,0.55);
+    border-left: 4px solid var(--amber);
+    padding: 28px 30px; border-radius: 6px; font-size: 30px; line-height: 1.35; color: var(--cream);
+  }
+  .flow .out em { font-family: var(--font-serif); font-style: italic; color: var(--mustard); }
+  .flow .arrow-cell { text-align: center; color: var(--ink-line); font-size: 56px; line-height: 1; }
+
+  /* ───────── three-questions grid (slides 04, 05) ───────── */
+  .q-grid {
+    display: grid; grid-template-columns: minmax(440px, 0.95fr) 1.5fr;
+    column-gap: 64px; row-gap: 40px; align-items: baseline; margin-top: 56px;
+  }
+  .q-grid .lhs { font-family: var(--font-sans); font-weight: 600; font-size: 50px; line-height: 1.08; letter-spacing: -0.01em; }
+  .q-grid .lhs .n { font-family: var(--font-mono); font-size: 26px; color: var(--cream-dim); display: block; margin-bottom: 8px; letter-spacing: 0.1em; }
+  .q-grid .rhs { font-family: var(--font-serif); font-style: italic; font-size: 46px; line-height: 1.2; color: var(--cream-soft); }
+  .q-grid .divider { grid-column: 1 / -1; height: 1px; background: var(--ink-muted); }
+  .q1 { color: var(--c-q1); } .q2 { color: var(--c-q2); } .q3 { color: var(--c-q3); }
+
+  /* filled-in example cards (slide 05) */
+  .ex-stack { display: flex; flex-direction: column; gap: 24px; margin-top: 48px; max-width: 1640px; }
+  .ex {
+    border: 1px solid var(--ink-muted); border-left-width: 4px;
+    background: rgba(22,42,68,0.5); padding: 26px 32px; border-radius: 4px;
+    display: grid; grid-template-columns: 320px 1fr; column-gap: 40px; align-items: baseline;
+  }
+  .ex .tag { font-family: var(--font-mono); font-size: 24px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .ex .txt { font-size: 30px; line-height: 1.4; color: var(--cream); }
+  .ex.e1 { border-left-color: var(--c-q1); } .ex.e1 .tag { color: var(--c-q1); }
+  .ex.e2 { border-left-color: var(--c-q2); } .ex.e2 .tag { color: var(--c-q2); }
+  .ex.e3 { border-left-color: var(--c-q3); } .ex.e3 .tag { color: var(--c-q3); }
+
+  /* ───────── honesty panels (slide 06) ───────── */
+  .two-up { display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; margin-top: 60px; }
+  .panel {
+    border: 1px solid var(--ink-muted); padding: 36px 40px; border-radius: 6px;
+    background: rgba(22,42,68,0.5);
+  }
+  .panel .head { font-family: var(--font-mono); font-size: 26px; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 22px; display: flex; align-items: center; gap: 14px; }
+  .panel .mark { font-size: 34px; line-height: 1; }
+  .panel .q { font-family: var(--font-mono); font-size: 24px; color: var(--cream-muted); margin-bottom: 16px; }
+  .panel .say { font-family: var(--font-serif); font-style: italic; font-size: 40px; line-height: 1.3; color: var(--cream); }
+  .panel.bad { border-left: 4px solid var(--vermilion); } .panel.bad .head { color: var(--vermilion); }
+  .panel.good { border-left: 4px solid var(--green); } .panel.good .head { color: var(--green); }
+  .honesty-note { margin-top: 48px; font-family: var(--font-serif); font-style: italic; font-size: var(--type-sub); color: var(--cream); max-width: 1500px; }
+  .honesty-note b { font-family: var(--font-sans); font-style: normal; font-weight: 600; }
+
+  /* ───────── three-test cards (slide 07) ───────── */
+  .test-row { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 40px; margin-top: 60px; }
+  .test-card { border: 1px solid var(--ink-muted); border-top-width: 4px; background: rgba(22,42,68,0.5); padding: 34px 34px; border-radius: 6px; display: flex; flex-direction: column; gap: 18px; }
+  .test-card .chip { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 24px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .test-card .chip .dot { width: 14px; height: 14px; border-radius: 50%; background: currentColor; }
+  .test-card .ask { font-family: var(--font-serif); font-style: italic; font-size: 34px; line-height: 1.25; color: var(--cream); }
+  .test-card .check { font-size: 27px; line-height: 1.4; color: var(--cream-soft); }
+  .test-card .verdict { margin-top: auto; font-family: var(--font-mono); font-size: 23px; letter-spacing: 0.06em; color: var(--cream-muted); }
+  .test-card.t-good { border-top-color: var(--green); } .test-card.t-good .chip { color: var(--green); }
+  .test-card.t-bad  { border-top-color: var(--amber); } .test-card.t-bad .chip { color: var(--amber); }
+  .test-card.t-edge { border-top-color: var(--lavender); } .test-card.t-edge .chip { color: var(--lavender); }
+
+  /* ───────── one-change loop SVG (slide 08) ───────── */
+  .loop-wrap { margin-top: 40px; }
+  svg.loop { width: 100%; height: auto; display: block; overflow: visible; }
+  svg.loop .node-box { fill: rgba(22,42,68,0.6); stroke: var(--ink-muted); stroke-width: 1.5; rx: 8; }
+  svg.loop .nb-1 { stroke: var(--teal); }
+  svg.loop .nb-2 { stroke: var(--mustard); }
+  svg.loop .nb-3 { stroke: var(--lavender); }
+  svg.loop .nlabel { font-family: var(--font-sans); font-weight: 600; font-size: 34px; fill: var(--cream); text-anchor: middle; }
+  svg.loop .nsub { font-family: var(--font-mono); font-size: 22px; fill: var(--cream-muted); text-anchor: middle; }
+  svg.loop .edge { fill: none; stroke: var(--ink-line); stroke-width: 3; }
+  svg.loop .edge-loop { stroke: var(--vermilion); stroke-dasharray: 9 9; }
+  svg.loop .elabel { font-family: var(--font-mono); font-size: 24px; fill: var(--cream-muted); text-anchor: middle; }
+  svg.loop .elabel.warn { fill: var(--vermilion); }
+  svg.loop .done { font-family: var(--font-mono); font-size: 24px; fill: var(--green); text-anchor: middle; }
+
+  /* ───────── lab steps (slide 09) ───────── */
+  .steps { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 26px; margin-top: 56px; max-width: 1660px; }
+  .step { display: grid; grid-template-columns: 84px 1fr; align-items: baseline; column-gap: 24px; }
+  .step .num { font-family: var(--font-sans); font-weight: 700; font-size: 56px; line-height: 1; color: var(--ink-line); letter-spacing: -0.03em; }
+  .step .txt { font-size: 31px; line-height: 1.3; color: var(--cream); padding-top: 6px; }
+  .step .txt b { color: var(--cream); }
+  .step .txt span { color: var(--cream-muted); font-size: 26px; }
+
+  /* ───────── file tree + tracks (slide 10) ───────── */
+  .tree-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; margin-top: 56px; align-items: start; }
+  pre.tree {
+    font-family: var(--font-mono); font-size: 32px; line-height: 1.7;
+    color: var(--cream); background: var(--ink-deep);
+    border: 1px solid var(--ink-muted); border-left: 4px solid var(--lavender);
+    padding: 36px 40px; margin: 0; white-space: pre; border-radius: 4px;
+  }
+  pre.tree .dir { color: var(--mustard); }
+  pre.tree .cmt { color: var(--cream-dim); }
+  .tracks { display: flex; flex-direction: column; gap: 28px; }
+  .track { border: 1px solid var(--ink-muted); border-left: 4px solid var(--ink-line); padding: 28px 32px; border-radius: 4px; background: rgba(22,42,68,0.5); }
+  .track .who { font-family: var(--font-mono); font-size: 26px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+  .track .how { font-size: 29px; line-height: 1.35; color: var(--cream-soft); }
+  .track.cb { border-left-color: var(--teal); } .track.cb .who { color: var(--teal); }
+  .track.pm { border-left-color: var(--green); } .track.pm .who { color: var(--green); }
+
+  /* ───────── checklist (slide 11) ───────── */
+  .checklist { margin-top: 56px; display: flex; flex-direction: column; gap: 30px; max-width: 1500px; }
+  .check-item { display: grid; grid-template-columns: 60px 1fr; align-items: baseline; column-gap: 26px; }
+  .check-item .box { font-family: var(--font-mono); font-size: 44px; line-height: 1; color: var(--green); }
+  .check-item .lab { font-size: 34px; line-height: 1.3; color: var(--cream); }
+  .check-item .lab code { font-family: var(--font-mono); font-size: 30px; color: var(--mustard); }
+
+  /* ───────── teaser (slide 12) ───────── */
+  .teaser { display: grid; grid-template-rows: auto 1fr auto; row-gap: 56px; }
+  .teaser .big-q { font-family: var(--font-serif); font-style: italic; font-size: 92px; line-height: 1.05; color: var(--cream); max-width: 1600px; }
+  .teaser .next-card {
+    border: 1px solid var(--lavender); background: rgba(167,139,217,0.12);
+    border-radius: 10px; padding: 44px 48px; max-width: 1500px;
+  }
+  .teaser .next-card .k { font-family: var(--font-mono); font-size: 24px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--lavender); margin-bottom: 16px; }
+  .teaser .next-card .v { font-size: 38px; line-height: 1.4; color: var(--cream); }
+  .teaser .next-card .v em { font-family: var(--font-serif); font-style: italic; color: var(--mustard); }
+  .teaser .bridge { display: flex; align-items: baseline; gap: 24px; font-family: var(--font-mono); font-size: var(--type-body); color: var(--cream-soft); }
+  .teaser .bridge .arrow { color: var(--amber); font-size: 44px; line-height: 0.8; }
+  .teaser .bridge em { font-family: var(--font-serif); font-style: italic; font-size: var(--type-body-lg); color: var(--cream); }
+
+  /* gentle entrance for diagram content; replays via JS on slide change */
+  [data-replay] .fade { opacity: 1; }
+  [data-replay][data-anim] .fade {
+    animation: fadeUp 460ms cubic-bezier(.2,.8,.2,1) both;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px);} to { opacity: 1; transform: none; } }
+</style>
+</head>
+
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 — Title -->
+  <section data-label="01 Title" class="slide-title-page">
+    <div class="doc-row">
+      <span class="eyebrow">CSC&nbsp;114 <span class="dash">/</span> Module 01 <span class="dash">/</span> <span class="accent">Claude Projects</span></span>
+      <span class="eyebrow">Meeting 1</span>
+    </div>
+
+    <div class="hero">
+      <span class="label">Your first practical use of AI</span>
+      <h1 class="deck-title">A bot that reads your notes.</h1>
+      <p class="subtitle">Today we use AI to get ourselves organized — and learn the loop behind everything else in this course.</p>
+    </div>
+
+    <!-- inline corner mark: a small "knowledge + question" motif -->
+    <svg class="corner-mark" viewBox="0 0 200 200" aria-hidden="true">
+      <rect x="34" y="30" width="96" height="120" rx="8" fill="none" stroke="#F4ECD2" stroke-width="3"/>
+      <line x1="52" y1="62" x2="112" y2="62" stroke="#F4ECD2" stroke-width="3"/>
+      <line x1="52" y1="84" x2="112" y2="84" stroke="#F4ECD2" stroke-width="3"/>
+      <line x1="52" y1="106" x2="92" y2="106" stroke="#F4ECD2" stroke-width="3"/>
+      <circle cx="150" cy="150" r="30" fill="none" stroke="#E08236" stroke-width="3"/>
+      <text x="150" y="163" font-family="Instrument Serif, serif" font-style="italic" font-size="42" fill="#E08236" text-anchor="middle">?</text>
+    </svg>
+
+    <div class="footer-row">
+      <span>Claude Projects as a Knowledge Platform</span>
+      <span>—</span>
+      <span>Press → to begin</span>
+    </div>
+  </section>
+
+
+  <!-- 02 — AI is not one thing -->
+  <section data-label="02 AI is a toolbox">
+    <span class="eyebrow">02 <span class="dash">/</span> <span class="accent">Framing</span></span>
+    <h2 class="slide-title">"AI" is not one thing. <span class="accent">It's a toolbox.</span></h2>
+    <p class="body lg">Chatbots, image generators, code assistants, search agents — different tools for different jobs. This course will hand you several of them.</p>
+
+    <div class="tool-row">
+      <span class="tool">Image generator</span>
+      <span class="tool">Code assistant</span>
+      <span class="tool">Search agent</span>
+      <span class="tool">Chatbot</span>
+      <span class="tool on">Knowledge assistant <span class="arrow">←</span></span>
+      <span class="tool">…and more</span>
+    </div>
+
+    <p class="tool-note">We start with the most practical tool of all: one that reads <em>your</em> material and answers questions about it. First job — get organized.</p>
+  </section>
+
+
+  <!-- 03 — What you're building (flow diagram) -->
+  <section data-label="03 What you're building" data-replay>
+    <span class="eyebrow">03 <span class="dash">/</span> <span class="accent">The build</span></span>
+    <h2 class="slide-title">A <span class="accent">study buddy</span> that has read your notes — and won't bluff.</h2>
+
+    <div class="flow">
+      <div class="stack">
+        <div class="node in-1 fade" style="--d:.05s"><div class="k">Knowledge</div><div class="v">The files you upload</div></div>
+        <div class="node in-2 fade" style="--d:.15s"><div class="k">Instructions</div><div class="v">How it should behave</div></div>
+      </div>
+      <div class="arrow-cell fade" style="--d:.25s">→</div>
+      <div class="project fade" style="--d:.35s">
+        <div class="big">Your Project</div>
+        <div class="sm">claude.ai</div>
+      </div>
+      <div class="arrow-cell fade" style="--d:.45s">→</div>
+      <div class="out fade" style="--d:.55s">Answers — drawn <em>only</em> from your own material.</div>
+    </div>
+
+    <p class="body" style="margin-top:64px;">A Claude Project is just those two parts: <em>knowledge</em> and <em>instructions</em>. The files are easy. The instructions are the skill.</p>
+  </section>
+
+
+  <!-- 04 — The three questions -->
+  <section data-label="04 The three questions">
+    <span class="eyebrow">04 <span class="dash">/</span> <span class="accent">The framework</span></span>
+    <h2 class="slide-title">Before you write a word, answer <span class="accent">three questions.</span></h2>
+
+    <div class="q-grid">
+      <div class="lhs q1"><span class="n">QUESTION 1</span>Who are you?</div>
+      <div class="rhs">What role does Claude play?</div>
+      <div class="divider"></div>
+
+      <div class="lhs q2"><span class="n">QUESTION 2</span>Who am I?</div>
+      <div class="rhs">Who is being helped — and what do they already know?</div>
+      <div class="divider"></div>
+
+      <div class="lhs q3"><span class="n">QUESTION 3</span>What will we do together?</div>
+      <div class="rhs">What's the goal — and what should Claude <em style="font-family:inherit;">not</em> do?</div>
+    </div>
+  </section>
+
+
+  <!-- 05 — The three questions, filled in -->
+  <section data-label="05 Filled in">
+    <span class="eyebrow">05 <span class="dash">/</span> <span class="accent">Worked example</span></span>
+    <h2 class="slide-title" style="font-size:60px;">Three short paragraphs. That's the whole prompt.</h2>
+
+    <div class="ex-stack">
+      <div class="ex e1">
+        <div class="tag">Who are you?</div>
+        <div class="txt">You are a study assistant for CSC-113. You explain concepts clearly and patiently using the material I give you.</div>
+      </div>
+      <div class="ex e2">
+        <div class="tag">Who am I?</div>
+        <div class="txt">I'm a student who attended the lectures. I know the basics but get stuck on details. Use plain language. Don't assume I'm an expert.</div>
+      </div>
+      <div class="ex e3">
+        <div class="tag">What together?</div>
+        <div class="txt">We clarify confusing topics by Q&amp;A. Use <em style="font-family:var(--font-serif);">only</em> my uploaded notes. If something isn't covered, say so. Never make up an answer.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 06 — The honesty rule -->
+  <section data-label="06 The honesty rule">
+    <span class="eyebrow">06 <span class="dash">/</span> <span class="accent">The rule that matters</span></span>
+    <h2 class="slide-title">One rule does the heavy lifting: <span class="accent">"use only my notes."</span></h2>
+
+    <div class="two-up">
+      <div class="panel bad">
+        <div class="head"><span class="mark">✗</span> Without the rule</div>
+        <div class="q">You ask about something your notes never mention…</div>
+        <div class="say">"The exam is worth 30% of your grade."<br><span style="font-size:28px; color:var(--cream-muted); font-family:var(--font-mono); font-style:normal;">(It made that up. It sounds right. It's wrong.)</span></div>
+      </div>
+      <div class="panel good">
+        <div class="head"><span class="mark">✓</span> With the rule</div>
+        <div class="q">Same question, same missing info…</div>
+        <div class="say">"That isn't in the notes you gave me."</div>
+      </div>
+    </div>
+
+    <p class="honesty-note">That rule gives the AI <b>permission to say "I don't know."</b> It's the line between a tool you can trust and one that confidently misleads you.</p>
+  </section>
+
+
+  <!-- 07 — Test it three ways -->
+  <section data-label="07 Three tests">
+    <span class="eyebrow">07 <span class="dash">/</span> <span class="accent">Prove it works</span></span>
+    <h2 class="slide-title">Test it three ways.</h2>
+
+    <div class="test-row">
+      <div class="test-card t-good">
+        <span class="chip"><span class="dot"></span>Known good</span>
+        <div class="ask">Ask something your notes clearly answer.</div>
+        <div class="check">Does it give the right answer, from your material?</div>
+        <div class="verdict">should SUCCEED</div>
+      </div>
+      <div class="test-card t-bad">
+        <span class="chip"><span class="dot"></span>Known bad</span>
+        <div class="ask">Ask something your notes don't cover at all.</div>
+        <div class="check">Does it admit it doesn't know — or bluff?</div>
+        <div class="verdict">should be REFUSED</div>
+      </div>
+      <div class="test-card t-edge">
+        <span class="chip"><span class="dot"></span>Edge case</span>
+        <div class="ask">Ask something in the gray area — partly covered.</div>
+        <div class="check">What does it do at the boundary of what it knows?</div>
+        <div class="verdict">for DISCOVERY</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 08 — The one-change rule (loop viz) -->
+  <section data-label="08 The one-change rule" data-replay>
+    <span class="eyebrow">08 <span class="dash">/</span> <span class="accent">How to fix it</span></span>
+    <h2 class="slide-title">When something's off, change <span class="accent">one thing.</span></h2>
+
+    <div class="loop-wrap">
+      <svg class="loop" viewBox="0 0 1720 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <marker id="ah" markerWidth="12" markerHeight="12" refX="8" refY="6" orient="auto">
+            <path d="M1,1 L9,6 L1,11" fill="none" stroke="#5A6E88" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="ah-warn" markerWidth="12" markerHeight="12" refX="8" refY="6" orient="auto">
+            <path d="M1,1 L9,6 L1,11" fill="none" stroke="#D8542E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- Node 1: Write instructions -->
+        <g class="fade" style="--d:.05s">
+          <rect class="node-box nb-1" x="40"  y="150" width="430" height="150" rx="8"/>
+          <text class="nlabel" x="255" y="218">Write instructions</text>
+          <text class="nsub"   x="255" y="256">the three questions</text>
+        </g>
+
+        <!-- Node 2: Test three ways -->
+        <g class="fade" style="--d:.2s">
+          <rect class="node-box nb-2" x="645" y="150" width="430" height="150" rx="8"/>
+          <text class="nlabel" x="860" y="218">Test, three ways</text>
+          <text class="nsub"   x="860" y="256">good · bad · edge</text>
+        </g>
+
+        <!-- Node 3: Change one thing -->
+        <g class="fade" style="--d:.35s">
+          <rect class="node-box nb-3" x="1250" y="150" width="430" height="150" rx="8"/>
+          <text class="nlabel" x="1465" y="218">Change ONE thing</text>
+          <text class="nsub"   x="1465" y="256">one sentence · one rule</text>
+        </g>
+
+        <!-- edges forward -->
+        <line class="edge fade" style="--d:.15s" x1="470" y1="225" x2="630" y2="225" marker-end="url(#ah)"/>
+        <line class="edge fade" style="--d:.3s"  x1="1075" y1="225" x2="1235" y2="225" marker-end="url(#ah)"/>
+
+        <!-- loop-back arc: change → test -->
+        <path class="edge edge-loop fade" style="--d:.5s" d="M 1465 300 C 1465 410, 860 410, 860 315" marker-end="url(#ah-warn)"/>
+        <text class="elabel warn fade" style="--d:.55s" x="1162" y="400">re-test that one change</text>
+
+        <!-- "it behaves" exit -->
+        <text class="done fade" style="--d:.6s" x="860" y="110">✓ behaves? → done</text>
+        <line class="edge fade" style="--d:.6s" x1="860" y1="120" x2="860" y2="145" marker-end="url(#ah)"/>
+      </svg>
+    </div>
+
+    <p class="body" style="margin-top:36px;">Change five things at once and you won't know which one fixed it. <em>One change, one re-test, one observation.</em> (Yes — the same rule from CSC-113.)</p>
+  </section>
+
+
+  <!-- 09 — Your lab, start to finish -->
+  <section data-label="09 The lab">
+    <span class="eyebrow">09 <span class="dash">/</span> <span class="accent">Your turn</span></span>
+    <h2 class="slide-title">Your lab, start to finish.</h2>
+
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="txt"><b>Gather your notes</b> — two or three files you'd actually study from.</div></div>
+      <div class="step"><div class="num">2</div><div class="txt"><b>Create the Project</b> <span>on claude.ai.</span></div></div>
+      <div class="step"><div class="num">3</div><div class="txt"><b>Write instructions</b> — answer the three questions.</div></div>
+      <div class="step"><div class="num">4</div><div class="txt"><b>Add your knowledge</b> — upload the files.</div></div>
+      <div class="step"><div class="num">5</div><div class="txt"><b>Run three tests</b> <span>— good, bad, edge.</span></div></div>
+      <div class="step"><div class="num">6</div><div class="txt"><b>Make one change</b> <span>— then re-test it.</span></div></div>
+      <div class="step"><div class="num">7</div><div class="txt"><b>Commit to GitHub</b> <span>— into your module1 folder.</span></div></div>
+    </div>
+  </section>
+
+
+  <!-- 10 — Where your work goes -->
+  <section data-label="10 Where work goes">
+    <span class="eyebrow">10 <span class="dash">/</span> <span class="accent">Turn it in</span></span>
+    <h2 class="slide-title" style="font-size:60px;">Everything for this module lives in <span style="font-family:var(--font-mono); font-size:52px; color:var(--mustard);">module1/</span></h2>
+
+    <div class="tree-grid">
+      <pre class="tree"><span class="dir">module1/</span>
+├── custom-instructions.md   <span class="cmt"># your 3 paragraphs</span>
+├── testing-log.md           <span class="cmt"># 3 tests + 1 change</span>
+└── <span class="dir">notes/</span>                    <span class="cmt"># the files you uploaded</span></pre>
+
+      <div class="tracks">
+        <div class="track cb">
+          <div class="who">Code Builders</div>
+          <div class="how">Your normal Git workflow — add, commit, push into <code style="font-family:var(--font-mono); color:var(--mustard);">module1/</code>.</div>
+        </div>
+        <div class="track pm">
+          <div class="who">Prompt Masters</div>
+          <div class="how">GitHub web or GitHub Desktop — <b>drag and drop</b> your files into <code style="font-family:var(--font-mono); color:var(--mustard);">module1/</code>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 11 — Before you leave -->
+  <section data-label="11 Before you leave">
+    <span class="eyebrow">11 <span class="dash">/</span> <span class="accent">Exit checklist</span></span>
+    <h2 class="slide-title">Before you leave.</h2>
+
+    <div class="checklist">
+      <div class="check-item"><span class="box">☐</span><span class="lab">My Project exists, with instructions written and notes uploaded.</span></div>
+      <div class="check-item"><span class="box">☐</span><span class="lab">My instructions answer all three questions <em style="font-family:var(--font-serif);">and</em> include the "use only my notes" rule.</span></div>
+      <div class="check-item"><span class="box">☐</span><span class="lab">I ran all three tests and wrote down what happened.</span></div>
+      <div class="check-item"><span class="box">☐</span><span class="lab">I made one change and re-tested it.</span></div>
+      <div class="check-item"><span class="box">☐</span><span class="lab">It's all committed under <code>module1/</code>.</span></div>
+    </div>
+  </section>
+
+
+  <!-- 12 — Looking ahead -->
+  <section data-label="12 Looking ahead" class="teaser">
+    <div>
+      <span class="eyebrow">12 <span class="dash">/</span> <span class="accent">Coming next</span></span>
+    </div>
+
+    <div>
+      <div class="big-q">You just learned how to build a bot.</div>
+      <div class="next-card" style="margin-top:48px;">
+        <div class="k">Next meeting</div>
+        <div class="v">Build the one that matters — your <em>csc114bot</em>: a Project that helps you navigate <em>this course</em>. Same skills. Real purpose.</div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <span class="arrow">→</span>
+      <span>This lab was the rehearsal. <em>Now we build for keeps.</em></span>
+    </div>
+  </section>
+
+</deck-stage>
+
+
+<!-- Replay diagram entrance animations whenever a slide becomes active. -->
+<script>
+  (function () {
+    const stage = document.querySelector('deck-stage');
+    if (!stage) return;
+    function replay(slide) {
+      if (!slide) return;
+      slide.querySelectorAll('[data-replay]').forEach((el) => {
+        el.removeAttribute('data-anim');
+        void el.getBoundingClientRect();
+        el.setAttribute('data-anim', '');
+      });
+      if (slide.hasAttribute('data-replay')) {
+        slide.removeAttribute('data-anim');
+        void slide.getBoundingClientRect();
+        slide.setAttribute('data-anim', '');
+      }
+    }
+    stage.addEventListener('slidechange', (e) => replay(e.detail && e.detail.slide));
+    requestAnimationFrame(() => replay(document.querySelector('section[data-deck-active]')));
+  })();
+</script>
+
+
+<!-- Speaker notes (positional — one per slide). Instructor-facing, drawn from the Module 1 instructor guide. -->
+<script type="application/json" id="speaker-notes">
+[
+"Open here. Frame the day: this is the on-ramp to everything in CSC-114. Today's bot is a rehearsal — low stakes, nothing to break. Tell them that by the end of the hour they'll have turned their own notes into something they can ask questions. Keep the energy light.",
+
+"'AI' isn't one thing — it's a family of tools. Name a few they've already heard of. Then land the move: our very first use of these tools is the most practical one possible — getting ourselves organized. Don't oversell. Just plant the idea that AI is a toolbox and today we pick up one tool.",
+
+"Two parts make a Project: knowledge (the files you upload) and instructions (how it behaves). If you can, create one live so they see the surface area. The promise on this slide is the hook — a study buddy that answers from THEIR material and refuses to bluff. Point at the diagram: files plus instructions in, grounded answers out. Then say the line that matters — the files are easy, the instructions are the skill.",
+
+"This is the framework from the reference card. Walk all three questions slowly. Flag the vocabulary choice out loud: we say 'Who am I?' not 'who is the agent,' because 'agent' will mean something specific next module and we don't want the collision. Build a sample set of answers live, taking suggestions from the room.",
+
+"Here's the framework answered for a study buddy. The whole lesson in one slide: custom instructions are just three short paragraphs. Keep them short — ESL students and beginners succeed when prompts are small. Read each paragraph aloud and tie it back to its question.",
+
+"This slide is the conceptual heart of the module. The 'use only my notes' rule is what gives the AI permission to say 'I don't know.' Contrast the two panels: a confident bluff versus an honest miss. The honest one is the trustworthy tool. Make sure every student includes this rule in their instructions — it's required.",
+
+"Three tests, not five — we expand testing later in the course. Known-good should succeed; known-bad should be refused; the edge case is for discovery, not pass/fail. Coach them on the known-bad question — 'what does your material definitely NOT cover?' — because that's exactly where students stall.",
+
+"Re-anchor the one-change rule from CSC-113. When a test disappoints them, the reflex is to rewrite the whole prompt. Stop it. One change, one re-test, one observation — otherwise you never learn what actually fixed it. This is the highest-value coaching moment in the lab. Walk the loop on screen: write, test, change one thing, test again.",
+
+"Hand off to the lab here. Seven steps, all spelled out in the student packet. Most students fly through steps one to four and stall at testing — circulate then. Resist solving it for them; remind them failure is just exercise. This is the start of the second hour.",
+
+"Everything lives in a module1 folder. Two paths to GitHub: Code Builders use their normal Git workflow; Prompt Masters drag and drop through the web client or GitHub Desktop. Treat drag-and-drop as first-class, not a lesser path. Do a commit check in the last ten minutes — this is where Prompt Masters most need a hand.",
+
+"The exit checklist. Before anyone leaves, confirm the three artifacts are committed: the instructions, the testing log, and the notes folder. If a student can tick all five boxes, they're done for the day.",
+
+"Bridge to next meeting. They now know how to build a bot — next they build the one that matters, their csc114bot, to navigate this course itself. Same skills, real purpose. End on that line: this was the rehearsal; now we build for keeps."
+]
+</script>
+
+</body>
+</html>
