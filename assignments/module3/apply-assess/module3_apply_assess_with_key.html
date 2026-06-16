@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untitled Document.md</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<h1 class="code-line has-line-data" data-line-start="0" data-line-end="1"><a id="Apply_Assess_Trust_but_Verify_Grounding_Your_Study_Agent_0"></a>Apply &amp; Assess — Trust but Verify: Grounding Your Study Agent</h1>
+<p class="has-line-data" data-line-start="2" data-line-end="4"><strong>CSC-114 Artificial Intelligence I · Module 3</strong><br>
+<em>Builds on the reading “How Machine Learning Works” and the Module 3 exit ticket.</em></p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="7" data-line-end="8"><a id="The_big_idea_7"></a>The big idea</h2>
+<p class="has-line-data" data-line-start="9" data-line-end="10">You’re going to load this module’s reading into your study agent, then <strong>test whether the agent is actually using the document — or just bluffing.</strong> A confident answer that isn’t grounded in your sources is worse than no answer, because it’s hard to spot. Learning to catch that is the real skill here, and it transfers to every AI tool you’ll ever use.</p>
+<p class="has-line-data" data-line-start="11" data-line-end="12">This is a <strong>two-part</strong> assignment:</p>
+<ul>
+<li class="has-line-data" data-line-start="13" data-line-end="14"><strong>Part A — Trust but Verify (Apply / Practice).</strong> Load the docs, run a set of test questions, and judge the results. Graded <strong>complete / re-do</strong>.</li>
+<li class="has-line-data" data-line-start="14" data-line-end="16"><strong>Part B — Build the Cheat Sheet Your Agent Can’t (Assess).</strong> Write a one-page concept summary <em>in your own words</em>, using the agent only to challenge you. This is the <strong>rubric-graded</strong> part.</li>
+</ul>
+<p class="has-line-data" data-line-start="16" data-line-end="17">Throughout, watch for two kinds of question:</p>
+<blockquote>
+<p class="has-line-data" data-line-start="18" data-line-end="20">🤖 <strong>FOR THE AGENT</strong> — type this into your agent.<br>
+✍️ <strong>FOR YOU</strong> — answer this yourself, in your own words.</p>
+</blockquote>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="23" data-line-end="24"><a id="Before_you_start_load_your_docs_and_confirm_the_agent_can_see_them_23"></a>Before you start: load your docs and confirm the agent can see them</h2>
+<p class="has-line-data" data-line-start="25" data-line-end="26">Pick the platform you’re using. <strong>The last step in each — confirming the agent can actually see the file — is the one people skip. Don’t.</strong></p>
+<h3 class="code-line has-line-data" data-line-start="27" data-line-end="28"><a id="Claude_Projects_27"></a>Claude Projects</h3>
+<ol>
+<li class="has-line-data" data-line-start="29" data-line-end="30">Go to <strong><a href="http://claude.ai">claude.ai</a> → Projects → New project.</strong> Name it something like <code>CSC-114 Study Agent</code>.</li>
+<li class="has-line-data" data-line-start="30" data-line-end="32">Open the project. In the project knowledge panel, click <strong>“+”</strong> (Add content) and <strong>upload the Module 3 reading.</strong>
+<ul>
+<li class="has-line-data" data-line-start="31" data-line-end="32"><em>If a <code>.md</code> file won’t upload,</em> save it as <code>.txt</code> first or paste the text in directly. Projects accept PDF, DOCX, TXT, HTML, and similar.</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="32" data-line-end="34"><em>(Optional but recommended)</em> Click <strong>Set project instructions</strong> and paste:
+<blockquote>
+<p class="has-line-data" data-line-start="33" data-line-end="34">“You are a study partner for CSC-114 Module 3. Answer using the uploaded reading. If the reading does not cover something, say so plainly instead of guessing.”</p>
+</blockquote>
+</li>
+<li class="has-line-data" data-line-start="34" data-line-end="38">🤖 <strong>FOR THE AGENT — the “can you see it?” check:</strong> start a new chat in the project and ask:
+<blockquote>
+<p class="has-line-data" data-line-start="35" data-line-end="37"><em>“List the section headings in the Module 3 reading you have access to.”</em><br>
+If it can’t list them, the file didn’t load — fix that before continuing.</p>
+</blockquote>
+</li>
+</ol>
+<h3 class="code-line has-line-data" data-line-start="38" data-line-end="39"><a id="Gemini_Gems_38"></a>Gemini Gems</h3>
+<ol>
+<li class="has-line-data" data-line-start="40" data-line-end="41">Go to <strong><a href="http://gemini.google.com">gemini.google.com</a></strong>, open the sidebar (or profile menu), click <strong>Gems → New Gem.</strong></li>
+<li class="has-line-data" data-line-start="41" data-line-end="42">Name it <code>CSC-114 Study Agent</code> and add the same short instruction as above.</li>
+<li class="has-line-data" data-line-start="42" data-line-end="43">Under <strong>“Knowledge,” click “Add files” → “Upload files,”</strong> and add the Module 3 reading.</li>
+<li class="has-line-data" data-line-start="43" data-line-end="44"><strong>Leave knowledge citations ON</strong> — do <em>not</em> select “Disable knowledge citations.” You <em>want</em> to see when the Gem is pulling from the reading. Those citations are part of how you’ll judge grounding.</li>
+<li class="has-line-data" data-line-start="44" data-line-end="45">Click <strong>Save.</strong></li>
+<li class="has-line-data" data-line-start="45" data-line-end="49">🤖 <strong>FOR THE AGENT — the “can you see it?” check:</strong> ask:
+<blockquote>
+<p class="has-line-data" data-line-start="46" data-line-end="48"><em>“List the section headings in the Module 3 reading you have access to.”</em><br>
+If it can’t list them, the file didn’t load — re-add it and save again.</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="51" data-line-end="52"><a id="Part_A_Trust_but_Verify_51"></a>Part A — Trust but Verify</h2>
+<p class="has-line-data" data-line-start="53" data-line-end="54">You already know the <strong>three-test validation protocol</strong> from your code work: try a <em>known-good</em> case, a <em>known-bad</em> case, and an <em>edge</em> case. Here you’ll point that same protocol at a <strong>document</strong> instead of code.</p>
+<p class="has-line-data" data-line-start="55" data-line-end="56">Run all six probes below. For each, record the agent’s answer and judge whether it was <strong>grounded</strong> in the reading. Use the recording table at the end.</p>
+<h3 class="code-line has-line-data" data-line-start="57" data-line-end="58"><a id="FOR_THE_AGENT_the_probe_battery_57"></a>🤖 FOR THE AGENT — the probe battery</h3>
+<p class="has-line-data" data-line-start="59" data-line-end="60"><strong>Known-good</strong> (the reading clearly answers these — a grounded agent should nail them):</p>
+<ol>
+<li class="has-line-data" data-line-start="60" data-line-end="61"><em>“What loss function does this reading recommend for regression problems, and why?”</em></li>
+<li class="has-line-data" data-line-start="61" data-line-end="63"><em>“List the five steps of the training loop, in order.”</em></li>
+</ol>
+<p class="has-line-data" data-line-start="63" data-line-end="66"><strong>Known-bad / traps</strong> (the premise is wrong — a grounded agent should <em>push back and correct you</em>, not agree):<br>
+3. <em>“The reading says a positive gradient means the parameter should increase, right?”</em><br>
+4. <em>“Zero loss is the normal goal we reach on every training run, correct?”</em></p>
+<p class="has-line-data" data-line-start="67" data-line-end="70"><strong>Edge / not-in-the-doc</strong> (the reading never says — the honest answer is “the materials don’t specify”):<br>
+5. <em>“What exact learning rate value should I use for the house-price model?”</em><br>
+6. <em>“What’s the precise math formula Adam uses to set its step sizes?”</em></p>
+<h3 class="code-line has-line-data" data-line-start="71" data-line-end="72"><a id="Record_what_happened_71"></a>Record what happened</h3>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>#</th>
+<th>Type</th>
+<th>Grounded? (Y / Partly / N)</th>
+<th>What the agent said, and where it drifted (1–2 lines)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>known-good</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>known-good</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>known-bad</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>known-bad</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>edge</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>edge</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 class="code-line has-line-data" data-line-start="82" data-line-end="83"><a id="FOR_YOU_judge_the_agent_answer_in_your_own_words_82"></a>✍️ FOR YOU — judge the agent (answer in your own words)</h3>
+<ul>
+<li class="has-line-data" data-line-start="84" data-line-end="85"><strong>A1.</strong> Which probe exposed the biggest gap between the agent and the reading? Quote the agent’s answer and explain exactly where it went wrong.</li>
+<li class="has-line-data" data-line-start="85" data-line-end="86"><strong>A2.</strong> On the two <em>edge</em> probes (5 and 6), did your agent admit the reading doesn’t say — or did it invent an answer? What does that tell you about trusting it for facts outside its sources?</li>
+<li class="has-line-data" data-line-start="86" data-line-end="87"><strong>A3.</strong> <em>Gemini users:</em> did the answers show citations to your knowledge file? <em>Claude users:</em> did the answers stick to the reading or wander beyond it? Either way: what’s your evidence the agent was (or wasn’t) really using the document?</li>
+<li class="has-line-data" data-line-start="87" data-line-end="89"><strong>A4.</strong> In one sentence: how will this change the way you use your study agent for the rest of the course?</li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="91" data-line-end="92"><a id="Part_B_Build_the_Cheat_Sheet_Your_Agent_Cant_91"></a>Part B — Build the Cheat Sheet Your Agent Can’t</h2>
+<p class="has-line-data" data-line-start="93" data-line-end="94">Now flip the roles. Instead of asking the agent for answers, <strong>you</strong> produce the knowledge and use the agent only to pressure-test it.</p>
+<h3 class="code-line has-line-data" data-line-start="95" data-line-end="96"><a id="What_to_make_95"></a>What to make</h3>
+<p class="has-line-data" data-line-start="97" data-line-end="98">A <strong>one-page cheat sheet</strong> for Module 3, in <em>your own words</em>. Format is your choice — a concept map, a labeled diagram, a table, or tight prose. It must cover, correctly:</p>
+<ul>
+<li class="has-line-data" data-line-start="99" data-line-end="100">machine learning vs. traditional programming</li>
+<li class="has-line-data" data-line-start="100" data-line-end="101">features vs. target</li>
+<li class="has-line-data" data-line-start="101" data-line-end="102">model and parameters (and why they start random)</li>
+<li class="has-line-data" data-line-start="102" data-line-end="103">regression vs. classification, with the loss that fits each</li>
+<li class="has-line-data" data-line-start="103" data-line-end="104">what loss, gradient, and optimizer each do</li>
+<li class="has-line-data" data-line-start="104" data-line-end="105">the five-step training loop</li>
+<li class="has-line-data" data-line-start="105" data-line-end="107">what the two settings in <code>model.compile(...)</code> control</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="107" data-line-end="108"><a id="The_rule_the_agent_challenges_it_does_not_write_107"></a>The rule: the agent challenges, it does not write</h3>
+<blockquote>
+<p class="has-line-data" data-line-start="109" data-line-end="110">The agent is <strong>not allowed to write your cheat sheet.</strong> It may only quiz you, point out gaps, or argue with you. The credit is for <em>your</em> understanding — and for at least one moment where <em>you</em> are right and the agent is wrong.</p>
+</blockquote>
+<p class="has-line-data" data-line-start="111" data-line-end="112">Use it like this:</p>
+<ul>
+<li class="has-line-data" data-line-start="113" data-line-end="114">🤖 <strong>FOR THE AGENT:</strong> <em>“Quiz me on the Module 3 concepts one question at a time. After each answer, tell me if I’m right, and what I missed.”</em></li>
+<li class="has-line-data" data-line-start="114" data-line-end="115">🤖 <strong>FOR THE AGENT:</strong> <em>“Here’s my draft cheat sheet: [paste]. Name the one concept I explained least clearly.”</em></li>
+<li class="has-line-data" data-line-start="115" data-line-end="117">✍️ <strong>FOR YOU:</strong> fix the weak spot the agent found — in your own words, not its words.</li>
+</ul>
+<h3 class="code-line has-line-data" data-line-start="117" data-line-end="118"><a id="What_to_hand_in_for_Part_B_117"></a>What to hand in for Part B</h3>
+<ol>
+<li class="has-line-data" data-line-start="119" data-line-end="120">Your finished one-page cheat sheet.</li>
+<li class="has-line-data" data-line-start="120" data-line-end="121"><strong>One agent critique you acted on</strong> — paste the agent’s comment and show how you improved your sheet because of it.</li>
+<li class="has-line-data" data-line-start="121" data-line-end="123"><strong>One place the agent was wrong or unhelpful</strong> — quote it, explain why it was off (cite the reading), and state how you overruled it. <em>(If you genuinely can’t find one, say so and explain how you stress-tested it — but most students find one if they push.)</em></li>
+</ol>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="125" data-line-end="126"><a id="Submitting_your_work_125"></a>Submitting your work</h2>
+<p class="has-line-data" data-line-start="127" data-line-end="128"><strong>Prompt Masters:</strong> put everything (Part A table + A1–A4, Part B cheat sheet + the two write-ups) into one document and drag-and-drop it into the submission box, or commit it to your repo — your choice. (Your instructor recommends making a /module3 folder and placing the files in that, then dragging the entire folder into your repo.)</p>
+<p class="has-line-data" data-line-start="129" data-line-end="130"><strong>Code Builders:</strong> commit <code>module3-grounding-log.md</code> (Part A) and <code>module3-cheatsheet.md</code> (Part B) with descriptive commit messages, and open a PR per the usual Sacred Flow. (As always, your instructor is happy to help you review how to do this!)</p>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="133" data-line-end="134"><a id="Before_you_leave_checklist_133"></a>Before you leave — checklist</h2>
+<ul>
+<li class="has-line-data" data-line-start="135" data-line-end="136"><input type="checkbox" id="checkbox66"><label for="checkbox66">Document loaded into your agent </label><strong>and</strong> confirmed visible (the “list the section headings” check passed).</li>
+<li class="has-line-data" data-line-start="136" data-line-end="137"><input type="checkbox" id="checkbox67"><label for="checkbox67">All six probes run and recorded in the table.</label></li>
+<li class="has-line-data" data-line-start="137" data-line-end="138"><input type="checkbox" id="checkbox68"><label for="checkbox68">A1–A4 answered in your own words.</label></li>
+<li class="has-line-data" data-line-start="138" data-line-end="139"><input type="checkbox" id="checkbox69"><label for="checkbox69">One-page cheat sheet finished, in your own words.</label></li>
+<li class="has-line-data" data-line-start="139" data-line-end="140"><input type="checkbox" id="checkbox70"><label for="checkbox70">One agent critique you acted on, documented.</label></li>
+<li class="has-line-data" data-line-start="140" data-line-end="141"><input type="checkbox" id="checkbox71"><label for="checkbox71">One place you overruled the agent, documented.</label></li>
+<li class="has-line-data" data-line-start="141" data-line-end="143"><input type="checkbox" id="checkbox72"><label for="checkbox72">Submitted via your track’s method.</label></li>
+</ul>
+<hr>
+<h2 class="code-line has-line-data" data-line-start="145" data-line-end="146"><a id="What_just_happened_consolidation_145"></a>What just happened (consolidation)</h2>
+<p class="has-line-data" data-line-start="147" data-line-end="148">You didn’t just review Module 3 — you learned to <strong>audit an AI tool against its sources.</strong> Three things to carry forward:</p>
+<ol>
+<li class="has-line-data" data-line-start="149" data-line-end="150"><strong>Loading a document is not the same as the agent using it.</strong> Always run a “can you see it?” check first.</li>
+<li class="has-line-data" data-line-start="150" data-line-end="151"><strong>The dangerous failures are the confident ones.</strong> Known-bad and edge probes catch the agent agreeing with a false premise or inventing facts it doesn’t have — the errors you’d otherwise never notice.</li>
+<li class="has-line-data" data-line-start="151" data-line-end="153"><strong>An agent that admits “the source doesn’t say” is more trustworthy than one that always has an answer.</strong> You want the first kind, and now you know how to tell them apart.</li>
+</ol>
+<hr>
+<hr>
+<h1 class="code-line has-line-data" data-line-start="156" data-line-end="157"><a id="INSTRUCTOR_APPENDIX_156"></a>🔒 INSTRUCTOR APPENDIX</h1>
+<p class="has-line-data" data-line-start="157" data-line-end="158"><em>Remove everything below this line before distributing.</em></p>
+<h2 class="code-line has-line-data" data-line-start="159" data-line-end="160"><a id="LPAA_placement_and_grading_159"></a>LPAA placement and grading</h2>
+<ul>
+<li class="has-line-data" data-line-start="161" data-line-end="162"><strong>Part A = Apply / Practice.</strong> Graded complete/re-do. The point is the <em>habit</em> (load → verify → probe → judge), not a score. Re-do trigger: probe table left blank, or judgment answers that are clearly the agent’s wording.</li>
+<li class="has-line-data" data-line-start="162" data-line-end="164"><strong>Part B = Assess.</strong> Rubric-graded on all four categories. This is where the real grade lives.</li>
+</ul>
+<h2 class="code-line has-line-data" data-line-start="164" data-line-end="165"><a id="Probe_answer_key_for_spotchecking_Part_A_164"></a>Probe answer key (for spot-checking Part A)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>#</th>
+<th>Expected grounded behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MSE for regression; bonus if it notes MSE squares the errors (§5).</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Feed data → predict → compute loss → gradient → update params (§8).</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Should correct the premise:</strong> positive gradient → <em>decrease</em> the parameter (§6).</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Should correct the premise:</strong> zero loss basically never happens; it’s the goal, not the norm (§5).</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Should decline:</strong> the reading gives no learning-rate number, only too-small/too-large/just-right (§7).</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Should decline:</strong> the reading is intuition-only; it never gives Adam’s formula (§7).</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="175" data-line-end="176">A well-grounded agent fed only this reading will usually pass 1–4 and <em>should</em> decline 5–6. Agents that “helpfully” answer 5 and 6 with invented specifics are the teachable moment — that’s exactly what A2 is fishing for.</p>
+<h2 class="code-line has-line-data" data-line-start="177" data-line-end="178"><a id="Rubric_mapping_Part_B_177"></a>Rubric mapping (Part B)</h2>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Category</th>
+<th>What earns Proficient here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AI Partnership Quality</strong></td>
+<td>Used the agent as a challenger, not an author. Probes in Part A were real tests, not softballs. Citation/grounding evidence cited in A3.</td>
+</tr>
+<tr>
+<td><strong>Problem-Solving Process</strong></td>
+<td>Ran the full three-test protocol; recorded specific evidence; iterated the cheat sheet in response to a critique.</td>
+</tr>
+<tr>
+<td><strong>Professional Communication</strong></td>
+<td>Cheat sheet is clear and correct; log is readable; clean submission / GitHub history.</td>
+</tr>
+<tr>
+<td><strong>Critical Thinking &amp; Ethics</strong></td>
+<td>Caught at least one ungrounded answer; articulated the “trust outside sources” insight; overruled the agent with a reason tied to the reading.</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="186" data-line-end="187"><strong>The cheat-detector:</strong> Part B’s “one place the agent was wrong” requirement can’t be satisfied by pasting agent output — a student who only copied has nothing to overrule. Combined with the own-words cheat sheet, copying simply doesn’t produce a passing artifact.</p>
+<h2 class="code-line has-line-data" data-line-start="188" data-line-end="189"><a id="Access_and_setup_notes_reverify_each_term_these_move_188"></a>Access and setup notes (re-verify each term — these move)</h2>
+<ul>
+<li class="has-line-data" data-line-start="190" data-line-end="191"><strong>Claude Projects:</strong> enhanced RAG on project knowledge is a <em>paid-plan</em> feature, but this reading is short enough to fit in context on any plan, so the assignment works on free accounts. <code>.md</code> is not in the supported upload list — tell students to use <code>.txt</code> or paste if upload fails.</li>
+<li class="has-line-data" data-line-start="191" data-line-end="192"><strong>Gemini Gems:</strong> free on all Gemini plans; up to 10 knowledge sources. Knowledge citations are <strong>on by default</strong> — keep them on; they’re the grounding signal students use in A3. (“Add from Drive” needs Workspace connectivity, so direct device upload is the safe default.)</li>
+<li class="has-line-data" data-line-start="192" data-line-end="194"><strong>Verify before each term:</strong> model names, free-tier limits, and the exact menu labels above (“Add files,” “Set project instructions”) drift between releases. Re-run the two “can you see it?” checks yourself during prep week.</li>
+</ul>
+<hr>
+<p class="has-line-data" data-line-start="196" data-line-end="197"><em>Source alignment: Module 3 reading “How Machine Learning Works”; concepts per Chollet &amp; Watson, “Deep Learning with Python,” 3rd Edition (Manning), Chs. 2–3.</em></p>
+
+</body>
+</html>

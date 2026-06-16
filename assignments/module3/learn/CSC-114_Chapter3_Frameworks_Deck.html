@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC-114 · Chapter 3 — Frameworks &amp; Keras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E1F33;
+  --navy-2:#142A45;
+  --navy-3:#1B344F;
+  --cream:#F4ECD2;
+  --cream-dim:#cfc9b4;
+  --amber:#E8A33D;   /* TensorFlow */
+  --teal:#48B3A6;    /* Keras (the thing you write) */
+  --moss:#9DB04A;    /* JAX */
+  --rust:#C65D3B;    /* PyTorch */
+  --line:rgba(244,236,210,0.16);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --serif:'Instrument Serif',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--navy);
+  color:var(--cream);
+  font-family:var(--display);
+  overflow:hidden;
+}
+/* scanline texture */
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.06) 3px,
+    rgba(0,0,0,0) 4px
+  );
+  mix-blend-mode:multiply;
+}
+
+/* stage */
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.slide{
+  position:absolute;inset:0;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  padding:6vh 8vw 12vh;
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.slide.active{display:flex;opacity:1}
+@media(prefers-reduced-motion:reduce){.slide{transition:none}}
+
+/* heptagram watermark */
+.heptagram{
+  position:fixed;
+  right:3vw;top:3vh;
+  width:120px;height:120px;
+  opacity:0.10;z-index:1;pointer-events:none;
+  color:var(--cream);
+}
+
+/* shared type */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:0.78rem;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1.4rem;
+}
+h1{font-size:clamp(2.4rem,5.4vw,4.6rem);font-weight:700;line-height:1.02;letter-spacing:-0.02em}
+h2{font-size:clamp(1.8rem,3.8vw,3rem);font-weight:600;line-height:1.06;letter-spacing:-0.01em;margin-bottom:1.6rem}
+.lead{font-size:clamp(1.05rem,1.7vw,1.4rem);line-height:1.55;max-width:60ch;color:var(--cream)}
+.dim{color:var(--cream-dim)}
+.serif{font-family:var(--serif);font-style:italic}
+strong{color:var(--amber);font-weight:600}
+em{color:var(--teal);font-style:normal;font-weight:600}
+code,.mono{font-family:var(--mono)}
+
+/* title slide */
+.title-wrap{max-width:30ch}
+.title-wrap h1{margin-bottom:1.6rem}
+.title-sub{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2.4vw,2rem);color:var(--amber)}
+.title-meta{margin-top:3rem;font-family:var(--mono);font-size:0.8rem;letter-spacing:0.18em;color:var(--cream-dim);text-transform:uppercase}
+
+/* pull quote */
+.pull{font-family:var(--serif);font-style:italic;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1.15;max-width:22ch;color:var(--cream)}
+.pull .hl{color:var(--teal)}
+
+/* three jobs */
+.jobs{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:1rem}
+.job{
+  border:1px solid var(--line);
+  border-top:3px solid var(--teal);
+  background:var(--navy-2);
+  padding:1.6rem 1.4rem;border-radius:6px;
+}
+.job .n{font-family:var(--mono);font-size:0.75rem;letter-spacing:0.2em;color:var(--teal);margin-bottom:.7rem}
+.job h3{font-size:1.25rem;font-weight:600;margin-bottom:.5rem}
+.job p{font-size:0.98rem;line-height:1.45;color:var(--cream-dim)}
+
+/* timeline */
+.timeline{position:relative;margin-top:3rem;padding-top:2.4rem}
+.timeline .axis{position:absolute;top:2.4rem;left:0;right:0;height:2px;background:var(--line)}
+.tl-row{display:flex;justify-content:space-between;position:relative}
+.tl-item{flex:1;text-align:center;position:relative;padding-top:2.2rem}
+.tl-item::before{content:"";position:absolute;top:-0.55rem;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--navy);border:2px solid var(--teal)}
+.tl-item.k::before{background:var(--teal);box-shadow:0 0 0 4px rgba(72,179,166,0.25)}
+.tl-year{font-family:var(--mono);font-size:0.95rem;color:var(--amber);margin-bottom:.3rem}
+.tl-name{font-weight:600;font-size:1.05rem}
+.tl-note{font-size:0.82rem;color:var(--cream-dim);margin-top:.2rem}
+
+/* metaphor / two-column */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:2.4rem;align-items:center}
+.card{background:var(--navy-2);border:1px solid var(--line);border-radius:8px;padding:2rem}
+.card.kit{border-left:4px solid var(--teal)}
+.card.raw{border-left:4px solid var(--amber)}
+.card .tag{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1rem}
+.card.kit .tag{color:var(--teal)}
+.card.raw .tag{color:var(--amber)}
+.card h3{font-size:1.5rem;margin-bottom:.8rem}
+.card p{color:var(--cream-dim);line-height:1.5;font-size:1rem}
+
+/* the stack */
+.stack{display:flex;flex-direction:column;gap:0.9rem;max-width:760px;margin-top:1rem}
+.layer{position:relative;border-radius:8px;padding:1.4rem 1.6rem;border:1px solid var(--line)}
+.layer .lbl{position:absolute;right:1.4rem;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:0.78rem;color:var(--cream-dim);text-align:right;max-width:30%}
+.layer .name{font-weight:700;font-size:1.3rem}
+.layer .sub{font-family:var(--mono);font-size:0.82rem;color:var(--cream-dim);margin-top:.3rem}
+.layer.keras{background:rgba(72,179,166,0.14);border-color:var(--teal)}
+.layer.keras .name{color:var(--teal)}
+.layer.backend{background:var(--navy-2)}
+.layer.hw{background:var(--navy-2);opacity:0.85}
+.chips{display:flex;gap:.6rem;margin-top:.6rem;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:0.82rem;padding:.3rem .7rem;border-radius:4px;border:1px solid var(--line)}
+.chip.tf{color:var(--amber);border-color:var(--amber)}
+.chip.pt{color:var(--rust);border-color:var(--rust)}
+.chip.jax{color:var(--moss);border-color:var(--moss)}
+.chip.hw{color:var(--cream-dim)}
+
+/* tables */
+table{border-collapse:collapse;width:100%;font-size:clamp(0.82rem,1.2vw,1rem)}
+th,td{text-align:left;padding:.7rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:0.74rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:500}
+td.k{color:var(--teal);font-weight:600}
+.tf{color:var(--amber)} .pt{color:var(--rust)} .jax{color:var(--moss)}
+caption{caption-side:bottom;font-family:var(--mono);font-size:0.78rem;color:var(--cream-dim);margin-top:.9rem;text-align:left}
+
+/* flow */
+.flow{display:flex;align-items:stretch;gap:0;margin-top:1.5rem;flex-wrap:wrap}
+.step{flex:1;min-width:150px;background:var(--navy-2);border:1px solid var(--line);border-top:3px solid var(--teal);padding:1.4rem 1.1rem;position:relative}
+.step:not(:last-child){margin-right:2.2rem}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-1.7rem;top:50%;transform:translateY(-50%);color:var(--teal);font-size:1.6rem}
+.step .verb{font-family:var(--mono);color:var(--teal);font-size:1.05rem;font-weight:700;margin-bottom:.5rem}
+.step p{font-size:0.9rem;color:var(--cream-dim);line-height:1.4}
+
+/* dials */
+.dials{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin:1.4rem 0}
+.dial{background:var(--navy-2);border:1px solid var(--line);border-radius:6px;padding:1.4rem}
+.dial h3{font-size:1.15rem;color:var(--amber);margin-bottom:.5rem}
+.dial p{font-size:0.92rem;color:var(--cream-dim);line-height:1.45}
+
+/* callout */
+.callout{border:1px solid var(--rust);background:rgba(198,93,59,0.10);border-radius:8px;padding:1.6rem 1.8rem;max-width:68ch}
+.callout .warn{font-family:var(--mono);font-size:0.74rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--rust);margin-bottom:.8rem}
+.callout p{line-height:1.55;font-size:1.02rem}
+
+/* split data bar */
+.databar{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:1.6rem;max-width:760px}
+.databar .seg{padding:1.6rem 1.4rem}
+.databar .train{flex:7;background:rgba(72,179,166,0.12);border-right:2px dashed var(--teal)}
+.databar .val{flex:3;background:rgba(232,163,61,0.12)}
+.databar .seg .t{font-family:var(--mono);font-size:0.74rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:.4rem}
+.databar .train .t{color:var(--teal)} .databar .val .t{color:var(--amber)}
+.databar .seg p{font-size:0.9rem;color:var(--cream-dim);line-height:1.4}
+
+/* code snip */
+.snip{font-family:var(--mono);background:#0a1626;border:1px solid var(--line);border-radius:8px;padding:1.4rem 1.6rem;font-size:clamp(0.82rem,1.2vw,1rem);line-height:1.7;color:var(--cream);max-width:62ch;margin-top:1rem;overflow-x:auto}
+.snip .kw{color:var(--teal)} .snip .str{color:var(--amber)} .snip .cm{color:var(--cream-dim)}
+
+/* check list */
+.checks{counter-reset:c;max-width:64ch;margin-top:.5rem}
+.checks li{list-style:none;position:relative;padding:.65rem 0 .65rem 2.6rem;border-bottom:1px solid var(--line);font-size:1.02rem;line-height:1.4}
+.checks li::before{counter-increment:c;content:counter(c);position:absolute;left:0;top:.55rem;width:1.7rem;height:1.7rem;border-radius:50%;border:1px solid var(--teal);color:var(--teal);font-family:var(--mono);font-size:0.85rem;display:flex;align-items:center;justify-content:center}
+
+/* legend (color roles) */
+.legend{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.8rem;font-family:var(--mono);font-size:0.82rem;color:var(--cream-dim)}
+.legend span{display:inline-flex;align-items:center;gap:.5rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dot.teal{background:var(--teal)} .dot.tf{background:var(--amber)} .dot.pt{background:var(--rust)} .dot.jax{background:var(--moss)}
+
+/* HUD */
+#hud{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.2rem;font-family:var(--mono);font-size:0.76rem;color:var(--cream-dim);border-top:1px solid var(--line);background:rgba(14,31,51,0.85);backdrop-filter:blur(4px)}
+#hud .brand{letter-spacing:0.18em;text-transform:uppercase}
+#hud .right{display:flex;align-items:center;gap:1.2rem}
+#hud button{font-family:var(--mono);font-size:0.74rem;background:none;border:1px solid var(--line);color:var(--cream-dim);padding:.3rem .7rem;border-radius:4px;cursor:pointer;letter-spacing:0.08em}
+#hud button:hover,#hud button:focus-visible{color:var(--teal);border-color:var(--teal);outline:none}
+#counter{color:var(--cream)}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);z-index:60;transition:width .35s ease}
+
+/* presenter notes */
+#notes{position:fixed;left:0;right:0;bottom:42px;z-index:39;max-height:38vh;overflow-y:auto;padding:1.4rem 2rem;background:#0a1626;border-top:2px solid var(--amber);display:none}
+#notes.show{display:block}
+#notes .ntitle{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:.7rem}
+#notes p{font-size:0.96rem;line-height:1.55;color:var(--cream);max-width:90ch;margin-bottom:.6rem}
+#notes em{color:var(--teal);font-style:italic;font-weight:400}
+.notes-content{display:none}
+
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+@media(max-width:760px){
+  .jobs,.dials{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  .flow{flex-direction:column}
+  .step:not(:last-child){margin-right:0;margin-bottom:2rem}
+  .step:not(:last-child)::after{right:50%;top:auto;bottom:-1.7rem;transform:translateX(50%) rotate(90deg)}
+  .slide{padding:5vh 6vw 14vh}
+  .layer .lbl{position:static;transform:none;text-align:left;max-width:100%;margin-top:.5rem}
+}
+</style>
+</head>
+<body>
+
+<svg class="heptagram" viewBox="0 0 100 100" aria-hidden="true">
+  <path fill="none" stroke="currentColor" stroke-width="1"
+    d="M50 4 L77.5 88.5 L5.7 36.5 L94.3 36.5 L22.5 88.5 L50 4 L62.3 95 L9.7 24.5 L90.3 24.5 L37.7 95 Z"/>
+</svg>
+
+<div id="progress"></div>
+<div class="stage" id="stage">
+
+  <!-- 1 · TITLE -->
+  <section class="slide active">
+    <div class="title-wrap">
+      <div class="eyebrow">CSC-114 · Chapter 3</div>
+      <h1>Frameworks, and the one you actually learn.</h1>
+      <div class="title-sub">TensorFlow, PyTorch, JAX — and Keras.</div>
+      <div class="title-meta">Deep Learning with Python · Chollet &amp; Watson</div>
+    </div>
+    <div class="notes-content">
+      <p>Set the frame before any names land. Last chapter they built a network <em>by hand</em> to see the gears. This chapter says: nobody works that way in real life. You use a framework.</p>
+      <p>Tell them up front there are four names coming, but only one they have to truly learn — Keras. The other three are engines. That promise lowers the anxiety for the mixed-ability room.</p>
+      <p>Quick read-check: "Did anyone actually read the chapter?" Hands. Calibrate pace accordingly.</p>
+    </div>
+  </section>
+
+  <!-- 2 · BIG IDEA -->
+  <section class="slide">
+    <div class="eyebrow">The whole chapter in one line</div>
+    <p class="pull">Keras is the part you <span class="hl">write</span>. The other three are engines that run underneath it.</p>
+    <p class="lead dim" style="margin-top:2rem">And you can swap the engine without rewriting your work.</p>
+    <div class="notes-content">
+      <p>This is the thesis. If a student remembers nothing else, it should be this sentence. Say it twice.</p>
+      <p>Resist the urge to explain the backends yet. The payoff of "swap the engine without rewriting" comes three slides later — plant it now, deliver it then.</p>
+    </div>
+  </section>
+
+  <!-- 3 · WHY FRAMEWORKS -->
+  <section class="slide">
+    <div class="eyebrow">Why frameworks exist at all</div>
+    <h2>Three jobs, too hard to do by hand every time</h2>
+    <div class="jobs">
+      <div class="job"><div class="n">01 / AUTODIFF</div><h3>Gradients, automatically</h3><p>Compute gradients for any math you write. No hand-derived calculus.</p></div>
+      <div class="job"><div class="n">02 / GPU MATH</div><h3>Run on a GPU</h3><p>Do tensor math fast on a graphics card, not just a slow CPU.</p></div>
+      <div class="job"><div class="n">03 / SCALE OUT</div><h3>Spread the work</h3><p>Split a job across many GPUs, or many computers at once.</p></div>
+    </div>
+    <p class="lead dim" style="margin-top:1.8rem">You don't build these. You just need to know your framework does them for you.</p>
+    <div class="notes-content">
+      <p>Callback to Chapter 2: "Remember writing gradient logic by hand? That's job one, and you never have to do it again."</p>
+      <p>The 1964 autodiff paper is trivia — mention only if someone asks why it took so long. The real unlock was Python getting popular for science plus NVIDIA's CUDA letting consumer GPUs do the math. Late 2000s.</p>
+    </div>
+  </section>
+
+  <!-- 4 · HISTORY -->
+  <section class="slide">
+    <div class="eyebrow">A painless history</div>
+    <h2>So the names stop feeling mysterious</h2>
+    <div class="timeline">
+      <div class="axis"></div>
+      <div class="tl-row">
+        <div class="tl-item"><div class="tl-year">2009</div><div class="tl-name">Theano</div><div class="tl-note">the ancestor</div></div>
+        <div class="tl-item k"><div class="tl-year">2015</div><div class="tl-name">Keras</div><div class="tl-note">high-level, easy</div></div>
+        <div class="tl-item"><div class="tl-year">2015</div><div class="tl-name">TensorFlow</div><div class="tl-note">Google · scale</div></div>
+        <div class="tl-item"><div class="tl-year">2016</div><div class="tl-name">PyTorch</div><div class="tl-note">Meta · research</div></div>
+        <div class="tl-item"><div class="tl-year">2018</div><div class="tl-name">JAX</div><div class="tl-note">Google · speed</div></div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2.4rem">Keras is the <em>oldest</em> of the four. It existed before TensorFlow, PyTorch, and JAX — and outlived its first engine. <strong>That's your insurance policy.</strong></p>
+    <div class="notes-content">
+      <p>Don't drill dates. The one point that matters: Keras is the elder, and it has already survived a backend dying (Theano). When the next new framework appears, Keras can usually adopt it as a backend and your code keeps running.</p>
+      <p>If asked "what's next?" — the authors are confident Python has won and it's a stable multi-framework world. New chips and frameworks may appear, but they'll have to work with what exists.</p>
+    </div>
+  </section>
+
+  <!-- 5 · METAPHOR -->
+  <section class="slide">
+    <div class="eyebrow">The mental model</div>
+    <h2>Prefab kit vs. raw materials</h2>
+    <div class="two">
+      <div class="card kit">
+        <div class="tag">Keras</div>
+        <h3>The building kit</h3>
+        <p>A clean, guided way to assemble a model. Most of the decisions are made for you. You snap parts together.</p>
+      </div>
+      <div class="card raw">
+        <div class="tag">TensorFlow · PyTorch · JAX</div>
+        <h3>The raw lumber</h3>
+        <p>Total freedom, total responsibility. Powerful, but you do everything yourself. Most people don't need this most of the time.</p>
+      </div>
+    </div>
+    <p class="lead dim" style="margin-top:1.8rem">Building a house? Most people want the kit.</p>
+    <div class="notes-content">
+      <p>This metaphor is the authors' own. It works because it makes the tradeoff intuitive without any code on screen — perfect for the math-light goal.</p>
+      <p>Pre-empt the over-achiever: "Raw materials aren't 'better.' A pro framer uses prefab trusses too. Choosing the kit is a skill, not a shortcut."</p>
+    </div>
+  </section>
+
+  <!-- 6 · THE STACK -->
+  <section class="slide">
+    <div class="eyebrow">The picture to lock in</div>
+    <h2>The stack</h2>
+    <div class="stack">
+      <div class="layer keras">
+        <div class="name">KERAS</div>
+        <div class="sub">layers · models · compile() · fit() · predict()</div>
+        <div class="lbl">This is what YOU write.<br>Understand this layer.</div>
+      </div>
+      <div class="layer backend">
+        <div class="name">Backend engine — pick one</div>
+        <div class="chips"><span class="chip tf">TensorFlow</span><span class="chip pt">PyTorch</span><span class="chip jax">JAX</span></div>
+        <div class="lbl">Heavy lifting: tensors,<br>gradients, backprop.</div>
+      </div>
+      <div class="layer hw">
+        <div class="name">Hardware</div>
+        <div class="chips"><span class="chip hw">CPU</span><span class="chip hw">GPU</span><span class="chip hw">TPU</span></div>
+        <div class="lbl">Where it actually runs.</div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot teal"></i>Keras = what you write</span>
+      <span><i class="dot tf"></i>TensorFlow</span>
+      <span><i class="dot pt"></i>PyTorch</span>
+      <span><i class="dot jax"></i>JAX</span>
+    </div>
+    <div class="notes-content">
+      <p>The anchor visual. Draw the eye top to bottom: you live in the teal layer; the engine and hardware are below you, mostly invisible.</p>
+      <p>Flag the default: type <em>import keras</em> with no setup and you're on TensorFlow. The authors' personal pick if you have no preference is JAX, for speed. Either is fine for this course.</p>
+    </div>
+  </section>
+
+  <!-- 7 · WHAT LIVES WHERE -->
+  <section class="slide">
+    <div class="eyebrow">Division of labor</div>
+    <h2>What lives where</h2>
+    <table>
+      <thead><tr><th>Concept</th><th>Layer</th><th>Plain English</th></tr></thead>
+      <tbody>
+        <tr><td>Tensors, tensor math, backprop</td><td>Backend</td><td class="dim">The low-level machinery.</td></tr>
+        <tr><td>Layers → combined into a model</td><td class="k">Keras</td><td class="dim">The blocks you snap together.</td></tr>
+        <tr><td>Loss function</td><td class="k">Keras</td><td class="dim">How "wrong" the model is.</td></tr>
+        <tr><td>Optimizer</td><td class="k">Keras</td><td class="dim">How the model improves.</td></tr>
+        <tr><td>Metrics (e.g. accuracy)</td><td class="k">Keras</td><td class="dim">How you measure success.</td></tr>
+        <tr><td>Training loop</td><td class="k">Keras</td><td class="dim">The repeat-until-good cycle.</td></tr>
+      </tbody>
+    </table>
+    <p class="lead dim" style="margin-top:1.4rem">Almost everything you'll touch is the Keras layer.</p>
+    <div class="notes-content">
+      <p>Point at the column of teal. The visual takeaway: nearly every word a student needs lives in Keras. The backend row is the one thing they delegate.</p>
+      <p>This is also the slide to say: "When we read the textbook's TensorFlow / PyTorch / JAX code, we're peeking at that top backend row — just to see it once. You won't be writing it."</p>
+    </div>
+  </section>
+
+  <!-- 8 · KILLER FEATURE -->
+  <section class="slide">
+    <div class="eyebrow">The payoff</div>
+    <h2>Backends are pluggable</h2>
+    <p class="lead">Write your model once in Keras. Swap the engine underneath whenever it helps — <strong>no rewrite.</strong> A real workflow:</p>
+    <div class="flow" style="margin-top:2rem">
+      <div class="step"><div class="verb">Debug</div><p>on <span class="pt">PyTorch</span> — easiest to step through.</p></div>
+      <div class="step"><div class="verb">Train</div><p>on <span class="jax">JAX</span> — usually the fastest.</p></div>
+      <div class="step"><div class="verb">Deploy</div><p>with <span class="tf">TensorFlow</span> — best production tooling.</p></div>
+    </div>
+    <p class="lead dim" style="margin-top:2rem">Same Keras code. Three engines. <em>That</em> is the argument for learning Keras first.</p>
+    <div class="notes-content">
+      <p>Deliver the promise you planted on slide 2. The "debug → train → deploy" story makes pluggability concrete instead of abstract.</p>
+      <p>You don't need them to do this in CSC-114. The point is conceptual: betting on Keras means you're not locked to one company's ecosystem.</p>
+    </div>
+  </section>
+
+  <!-- 9 · BACKENDS AT A GLANCE -->
+  <section class="slide">
+    <div class="eyebrow">Awareness, not memorization</div>
+    <h2>The three engines at a glance</h2>
+    <table>
+      <thead><tr><th></th><th class="tf">TensorFlow</th><th class="pt">PyTorch</th><th class="jax">JAX</th></tr></thead>
+      <tbody>
+        <tr><td>Made by</td><td>Google</td><td>Meta</td><td>Google</td></tr>
+        <tr><td>Best at</td><td>Production &amp; deployment</td><td>Research, easy debugging</td><td>Raw speed, huge scale</td></tr>
+        <tr><td>Speed</td><td>Fast</td><td>Slowest of the three</td><td>Usually fastest</td></tr>
+        <tr><td>Model-sharing (Hugging Face)</td><td>Limited</td><td>First-class — its big draw</td><td>Growing</td></tr>
+      </tbody>
+      <caption>You will NOT be tested on the syntax differences. Know the tradeoffs; that's the skill.</caption>
+    </table>
+    <p class="lead dim" style="margin-top:1.2rem">There is no single "best." Each is a different tradeoff — which is exactly why a layer that sits on <em>all</em> of them is so valuable.</p>
+    <div class="notes-content">
+      <p>Say the caption out loud, twice. This is the slide that calms the anxious student: you do not need to memorize torch-vs-tf-vs-jnp syntax.</p>
+      <p>The textbook builds the same linear classifier three times in these three engines. The point of that exercise is platform-as-pedagogy: same job, three styles. Read for the pattern, not the API.</p>
+      <p>One quirk worth a laugh: PyTorch's package is named <em>torch</em>, not pytorch. <em>pip install torch</em>, <em>import torch</em>. As a Keras backend the magic word is "torch" — "pytorch" fails.</p>
+    </div>
+  </section>
+
+  <!-- 10 · LINEAR CLASSIFIER -->
+  <section class="slide">
+    <div class="eyebrow">The chapter's running example</div>
+    <h2>A linear classifier — no math required</h2>
+    <div class="two">
+      <div>
+        <p class="lead">Two clouds of points, two classes. The model's whole job: <strong>draw one straight line that separates them.</strong></p>
+        <p class="lead dim" style="margin-top:1.2rem">"Linear" just means a straight line (or a flat plane in higher dimensions). The model learns where to put the line.</p>
+      </div>
+      <svg viewBox="0 0 300 240" aria-label="Two clusters of points separated by a line" style="width:100%;max-width:340px;background:var(--navy-2);border:1px solid var(--line);border-radius:8px">
+        <!-- class 0 (teal) upper-left -->
+        <g fill="#48B3A6">
+          <circle cx="70" cy="60" r="5"/><circle cx="95" cy="48" r="5"/><circle cx="55" cy="85" r="5"/>
+          <circle cx="85" cy="78" r="5"/><circle cx="110" cy="70" r="5"/><circle cx="65" cy="110" r="5"/>
+          <circle cx="100" cy="100" r="5"/><circle cx="48" cy="62" r="5"/>
+        </g>
+        <!-- class 1 (amber) lower-right -->
+        <g fill="#E8A33D">
+          <circle cx="200" cy="170" r="5"/><circle cx="225" cy="155" r="5"/><circle cx="185" cy="190" r="5"/>
+          <circle cx="215" cy="185" r="5"/><circle cx="240" cy="175" r="5"/><circle cx="195" cy="150" r="5"/>
+          <circle cx="230" cy="200" r="5"/><circle cx="250" cy="148" r="5"/>
+        </g>
+        <!-- separating line -->
+        <line x1="30" y1="200" x2="270" y2="40" stroke="#C65D3B" stroke-width="2.5" stroke-dasharray="6 5"/>
+      </svg>
+    </div>
+    <p class="lead dim" style="margin-top:1.6rem">Choosing a line-shaped model is itself an assumption: that the classes <em>can</em> be split by a line. The authors call this your <strong>hypothesis space</strong> — the set of answers your model can even consider.</p>
+    <div class="notes-content">
+      <p>Keep this fully visual. Do not write the loss or the weight update on the board. The takeaway is "find the line," full stop.</p>
+      <p>Hypothesis space is a big recurring idea — introduce it gently here. If you pick the wrong shape of model, the right answer isn't in the space, so it can never be found. We come back to this in later chapters.</p>
+      <p>The book uses this example precisely because it's simpler than the Chapter 2 network — it slows down. Reassure the room that's intentional.</p>
+    </div>
+  </section>
+
+  <!-- 11 · FOUR MOVES -->
+  <section class="slide">
+    <div class="eyebrow">The part you actually learn</div>
+    <h2>Keras has four moves</h2>
+    <div class="flow">
+      <div class="step"><div class="verb">build</div><p>Stack layers into a model.</p></div>
+      <div class="step"><div class="verb">compile()</div><p>Pick loss, optimizer, metrics.</p></div>
+      <div class="step"><div class="verb">fit()</div><p>Run the training loop on your data.</p></div>
+      <div class="step"><div class="verb">predict()</div><p>Use the trained model on new data.</p></div>
+    </div>
+    <p class="lead dim" style="margin-top:2rem">Master this rhythm and you can train almost anything in Keras.</p>
+    <div class="notes-content">
+      <p>This is the spine of every Keras workflow for the rest of the course. Have them say it back: build, compile, fit, predict.</p>
+      <p>Everything that came before was context. This is the slide that's "on the test" in spirit.</p>
+    </div>
+  </section>
+
+  <!-- 12 · LAYERS = LEGO -->
+  <section class="slide">
+    <div class="eyebrow">Move 1 · build</div>
+    <h2>Layers are the LEGO bricks</h2>
+    <p class="lead">A layer takes tensors in, puts tensors out. Most layers carry <strong>weights</strong> — the numbers that get learned. Weights are where the model's knowledge lives.</p>
+    <table style="margin-top:1.6rem;max-width:620px">
+      <thead><tr><th>Data type</th><th>Typical layer</th></tr></thead>
+      <tbody>
+        <tr><td>Plain vectors / tables</td><td class="mono">Dense</td></tr>
+        <tr><td>Sequences (text, time series)</td><td class="mono">LSTM, Conv1D</td></tr>
+        <tr><td>Images</td><td class="mono">Conv2D</td></tr>
+      </tbody>
+    </table>
+    <p class="lead dim" style="margin-top:1.4rem">You list the bricks; Keras wires them together — and even figures out the sizes automatically (<em>shape inference</em>). Far cleaner than the hand-built version in Chapter 2.</p>
+    <div class="notes-content">
+      <p>The LEGO metaphor is the authors' own and it's sticky. "Compatible bricks snap; incompatible ones don't."</p>
+      <p>Contrast with Chapter 2: there they had to hand-feed every layer its input size. Keras infers it the first time it sees data. That's why Keras model code is so short — worth showing the relief on screen.</p>
+    </div>
+  </section>
+
+  <!-- 13 · COMPILE + LOSS WARNING -->
+  <section class="slide">
+    <div class="eyebrow">Move 2 · compile()</div>
+    <h2>Set three dials</h2>
+    <div class="dials">
+      <div class="dial"><h3>Optimizer</h3><p>The rule for updating weights — a flavor of gradient descent.</p></div>
+      <div class="dial"><h3>Loss</h3><p>The single number training tries to push down.</p></div>
+      <div class="dial"><h3>Metrics</h3><p>Human-friendly scores you watch. The model doesn't train on these.</p></div>
+    </div>
+    <div class="callout">
+      <div class="warn">⚠ The most important warning in the chapter</div>
+      <p>A network takes <em>any</em> shortcut to lower the loss. Told to "maximize average human well-being," a ruthless optimizer might eliminate most people and pamper the few who remain — average well-being doesn't care how many are left. <strong>The model optimizes exactly what you ask for, not what you meant.</strong> Choosing the loss is a responsibility.</p>
+    </div>
+    <div class="notes-content">
+      <p>Spend real time on the callout — it's the chapter's ethics hook and it maps straight onto our Critical Thinking &amp; Ethics rubric category. Ask: "Where else have you seen a system optimize the letter of a goal and miss the point?"</p>
+      <p>The reassuring footnote: for everyday problems there are simple rules — two classes → binary crossentropy, many classes → categorical crossentropy. You only invent a loss for genuine research.</p>
+    </div>
+  </section>
+
+  <!-- 14 · FIT + VALIDATION -->
+  <section class="slide">
+    <div class="eyebrow">Move 3 · fit() · the honesty check</div>
+    <h2>Generalization, not memorization</h2>
+    <p class="lead">Doing well on training data is easy and <strong>meaningless on its own</strong> — a model can just memorize answers. What you want is performance on data it has <em>never seen</em>. So you hold some back:</p>
+    <div class="databar">
+      <div class="seg train"><div class="t">Training data</div><p>The model learns from this.</p></div>
+      <div class="seg val"><div class="t">Validation</div><p>Never trained on. The honest test.</p></div>
+    </div>
+    <p class="lead dim" style="margin-top:1.6rem"><strong>Golden rule:</strong> keep them strictly separate. If validation data leaks into training, your scores are fake — the model "passed" because it saw the answers.</p>
+    <div class="notes-content">
+      <p>Two terms to land while here: <em>epoch</em> (one full pass over the data) and <em>batch size</em> (examples per weight update).</p>
+      <p>The leakage point is the one students violate in real projects. Make it visceral: "It's like grading an exam with the answer key stapled to it." Chapter 5 goes deep on the train/validation gap.</p>
+    </div>
+  </section>
+
+  <!-- 15 · PREDICT + CONSOLIDATION -->
+  <section class="slide">
+    <div class="eyebrow">Move 4 · predict() · what just happened</div>
+    <h2>Inference, and the takeaways</h2>
+    <p class="lead">Using a trained model on new data is called <strong>inference</strong> — that's <code>predict()</code>. Pulling it together:</p>
+    <ol class="checks">
+      <li>Frameworks handle three jobs you'll never code by hand: gradients, GPU math, scaling.</li>
+      <li>Three are low-level engines; <em>Keras</em> is the high-level kit you write — and engines are swappable.</li>
+      <li>The skill is the rhythm: <em>build → compile → fit → predict</em>.</li>
+      <li>Two ideas follow you everywhere: <em>hypothesis space</em> and <em>generalization</em>.</li>
+      <li>Loss functions carry real responsibility — the model optimizes exactly what you ask.</li>
+    </ol>
+    <div class="notes-content">
+      <p>predict() is a 30-second mention — use it in batches for large data so you don't blow up GPU memory. The weight of this slide is the consolidation list.</p>
+      <p>Read the five points slowly; this is the "What Just Happened" beat. If you do a one-question exit ticket, pull it from line 2 or line 5.</p>
+    </div>
+  </section>
+
+  <!-- 16 · CHECK YOURSELF -->
+  <section class="slide">
+    <div class="eyebrow">Before you go</div>
+    <h2>Check yourself</h2>
+    <ol class="checks">
+      <li>In the stack, which layer do you write, and which does the heavy gradient math?</li>
+      <li>Name the four Keras moves in order.</li>
+      <li>Why might a team train on JAX but deploy with TensorFlow?</li>
+      <li>99% on training, 60% on validation — what's failing, and why does validation exist to catch it?</li>
+      <li>The "maximize average well-being" AI — what's the danger, and which <code>compile()</code> dial does it warn about?</li>
+      <li>"Linear classifier" — one sentence, no math: what is it doing?</li>
+    </ol>
+    <p class="lead dim" style="margin-top:1.6rem">Next chapter: real-world problems — classification and regression with Keras.</p>
+    <div class="notes-content">
+      <p>Use as a cold-call set or a think-pair-share. Answers, quickly: (1) you write Keras, the backend does gradients; (2) build, compile, fit, predict; (3) JAX fastest to train, TF best deployment tooling; (4) failing to generalize / overfitting — validation is held-out data the model never saw; (5) optimizes the literal goal, warns about the loss function; (6) draws one line separating two classes.</p>
+      <p>Bridge to Chapter 4: now we stop with toy blobs and point Keras at real datasets.</p>
+    </div>
+  </section>
+
+</div>
+
+<div id="notes" aria-live="polite"><div class="ntitle">Speaker notes</div><div id="notes-body"></div></div>
+
+<div id="hud">
+  <div class="brand">CSC-114 · Ch.3 Frameworks &amp; Keras</div>
+  <div class="right">
+    <button id="notesBtn" aria-pressed="false">Notes (N)</button>
+    <span id="counter">1 / 16</span>
+    <button id="prevBtn" aria-label="Previous slide">◀</button>
+    <button id="nextBtn" aria-label="Next slide">▶</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var i=0, notesOn=false;
+  var counter=document.getElementById('counter');
+  var progress=document.getElementById('progress');
+  var notes=document.getElementById('notes');
+  var notesBody=document.getElementById('notes-body');
+  var notesBtn=document.getElementById('notesBtn');
+
+  function render(){
+    slides.forEach(function(s,n){s.classList.toggle('active',n===i);});
+    counter.textContent=(i+1)+' / '+slides.length;
+    progress.style.width=((i+1)/slides.length*100)+'%';
+    var nc=slides[i].querySelector('.notes-content');
+    notesBody.innerHTML=nc?nc.innerHTML:'<p class="dim">No notes for this slide.</p>';
+  }
+  function go(n){ i=Math.max(0,Math.min(slides.length-1,n)); render(); }
+  function toggleNotes(){
+    notesOn=!notesOn;
+    notes.classList.toggle('show',notesOn);
+    notesBtn.setAttribute('aria-pressed',String(notesOn));
+  }
+
+  document.getElementById('nextBtn').onclick=function(){go(i+1);};
+  document.getElementById('prevBtn').onclick=function(){go(i-1);};
+  notesBtn.onclick=toggleNotes;
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+    else if(e.key==='Home'){go(0);}
+    else if(e.key==='End'){go(slides.length-1);}
+    else if(e.key==='n'||e.key==='N'||e.key==='s'||e.key==='S'){toggleNotes();}
+  });
+  render();
+})();
+</script>
+</body>
+</html>
