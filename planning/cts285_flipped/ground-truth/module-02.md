@@ -37,11 +37,11 @@ before_class:
     channel: sim
 in_class:
   - title: "Live Backlog Grooming Session"
-    text: "Norris plays client. Students ask elicitation questions as a class. Scope negotiation live."
+    text: "Normal plays client. Students ask elicitation questions as a class. Scope negotiation live."
   - title: "MoSCoW Debate"
     text: "Small groups defend their priority decisions. Class surface where they disagreed and why."
   - title: "Story Point Calibration"
-    text: "Norris runs a planning poker round on 3-4 shared stories. Teams compare estimates and reconcile."
+    text: "Normal runs a planning poker round on 3-4 shared stories. Teams compare estimates and reconcile."
 after_class:
   - title: "Data Man Product Backlog"
     desc: "15+ user stories with format, acceptance criteria, story points, MoSCoW with written justification"
@@ -113,11 +113,11 @@ input to a prioritized backlog.
 
 ## ⬡ In Class — Facilitated
 
-- 🎤 **Live Backlog Grooming Session** — Norris plays client. Students ask elicitation
+- 🎤 **Live Backlog Grooming Session** — Normal plays client. Students ask elicitation
   questions as a class. Scope negotiation live.
 - 🗣 **MoSCoW Debate** — Small groups defend their priority decisions. Class surface
   where they disagreed and why.
-- 🗂 **Story Point Calibration** — Norris runs a planning poker round on 3-4 shared
+- 🗂 **Story Point Calibration** — Normal runs a planning poker round on 3-4 shared
   stories. Teams compare estimates and reconcile.
 
 **⚡ RSI Touchpoint:** Instructor annotates each student's submitted backlog in Canvas

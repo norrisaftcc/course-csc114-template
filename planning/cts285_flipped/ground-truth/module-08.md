@@ -28,9 +28,9 @@ before_class:
     channel: sim
 in_class:
   - title: "Final Showcase — Two Sessions"
-    text: "7-10 min per student. Norris attends all. Full glows/grows written by instructor for every student. Peer forms due within 48 hrs of last presenter."
+    text: "7-10 min per student. Normal attends all. Full glows/grows written by instructor for every student. Peer forms due within 48 hrs of last presenter."
   - title: "CSC-289 Bridge Discussion"
-    text: "Norris previews what the capstone course expects. Students use capstone brief as the handoff document. Loop 2 closes."
+    text: "Normal previews what the capstone course expects. Students use capstone brief as the handoff document. Loop 2 closes."
 after_class:
   - title: "Sprint 4 Artifact Package"
     desc: "Sprint planning doc + standup log (10+ entries) + retrospective; graded on completeness, specificity, process discipline"
@@ -41,7 +41,7 @@ after_class:
     points: 60
     type: "URL Submit · CLO 4"
   - title: "Final Showcase Presentation"
-    desc: "7-10 min; Norris attends all; full glows/grows from instructor within 72 hrs; peer forms within 48 hrs"
+    desc: "7-10 min; Normal attends all; full glows/grows from instructor within 72 hrs; peer forms within 48 hrs"
     points: 50
     type: "Presentation · CLO 5"
   - title: "Peer Glows/Grows Forms — Showcase"
@@ -115,16 +115,16 @@ Build, present, and bridge to CSC-289. Final module — no downstream gate.
 - ◈ Retrospective Board — Sprint 4 final retro, own product
 - ◈ CSC-289 Capstone Brief — structured template, all required sections
 
-**👥 Final Showcase Format:** Presentations across two class sessions. Norris attends
+**👥 Final Showcase Format:** Presentations across two class sessions. Normal attends
 every presentation and gives full written glows/grows per student within 72 hrs. Remote
 students submit recorded video by first session.
 
 ## ⬡ In Class — Facilitated
 
-- 🎤 **Final Showcase — Two Sessions** — 7-10 min per student. Norris attends all. Full
+- 🎤 **Final Showcase — Two Sessions** — 7-10 min per student. Normal attends all. Full
   glows/grows written by instructor for every student. Peer forms due within 48 hrs of
   last presenter.
-- 🗣 **CSC-289 Bridge Discussion** — Norris previews what the capstone course expects.
+- 🗣 **CSC-289 Bridge Discussion** — Normal previews what the capstone course expects.
   Students use capstone brief as the handoff document. Loop 2 closes.
 
 **⚡ RSI Touchpoint (×2):** 1. Mid-sprint check-in (async video or written) before
@@ -143,7 +143,7 @@ showcase. 2. Full written glows/grows for every student within 72 hrs of showcas
 
 - **Sprint 4 Artifact Package** — sprint planning doc + standup log (10+ entries) + retrospective; graded on completeness, specificity, process discipline · *40 pts · Rubric · CLO 1*
 - **Own Product — Functional System** — GitHub repo link; 5+ user stories implemented; meets student-defined DoD · *60 pts · URL Submit · CLO 4*
-- **Final Showcase Presentation** — 7-10 min; Norris attends all; full glows/grows from instructor within 72 hrs; peer forms within 48 hrs · *50 pts · Presentation · CLO 5*
+- **Final Showcase Presentation** — 7-10 min; Normal attends all; full glows/grows from instructor within 72 hrs; peer forms within 48 hrs · *50 pts · Presentation · CLO 5*
 - **Peer Glows/Grows Forms — Showcase** — one per review group member; due 48 hrs after last presenter; graded on specificity · *20 pts · Peer Review · CLO 5*
 - **CSC-289 Capstone Brief** — system description, user stories, design artifact links, tech stack, learning reflection citing course artifact evidence · *30 pts · Rubric · CLO 5*
 

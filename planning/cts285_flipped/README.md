@@ -83,12 +83,18 @@ the patterns already proven here:
 
 ## The interstitial is low-stakes and self-graded
 
-Per the design brief: this is a **mini** module. It does not carry a sprint, it
+Per the design brief: this is a **mini** module. It does not carry a sprint and it
 does not gate the modules around it, and **its Assess is self-graded** — the
 student, acting as the *customer* for their own agent, judges how well the
 AI-generated user stories and design actually fulfill their needs. That
-customer-judgment skill is the point; a points-bearing instructor rubric would
-undercut it.
+customer-judgment skill is the point; an *instructor* rubric would undercut it.
+
+It does, however, carry **50 points — self-graded, awarded by default on
+completion** (including the interactive TB-TV walkthrough). These are the points
+the planner cover always advertised: the former 950-vs-1,000 gap is allocated here,
+so the course total reconciles to **1,000**. The whole module is self-graded, so
+the student self-awards the 50 for honest completion — low-stakes in spirit (no
+gate, no rubric pressure), just no longer zero.
 
 ## Status / backfill
 

@@ -38,8 +38,10 @@ only the **keys and the styling hooks** may need changing:
 - [ ] **Badge classes (#4)** — add `badge-interstitial` / `badge-selfgraded` /
       `badge-focus` to the CSS, *or* remap to existing classes (the fallbacks are
       noted inline).
-- [ ] **`points:0` (#3)** — confirm the roll-up handles a 0-pt module and **does not**
-      auto-assign it the missing 50 pts (see [`crosswalk.md`](crosswalk.md) DEFECT-1).
+- [ ] **`points:50` (#3)** — confirm the roll-up includes 4.5's 50 self-graded pts;
+      **add a `4.5 = 50` grade-summary pill** so the pills sum to 1,000 (see
+      [`crosswalk.md`](crosswalk.md) DEFECT-1, resolved). Points are self-awarded —
+      no instructor rubric.
 
 ## Step 2 — Insert at the right position (1 min)
 
@@ -61,14 +63,18 @@ only the **keys and the styling hooks** may need changing:
       — the generated block should match that target (modulo the styling decision
       from Step 1).
 - [ ] Confirm **M5–M8 are unchanged** (no shifted weeks, points, or gates).
-- [ ] Confirm the **grade-summary total is unchanged** (still 950; 4.5 adds 0).
+- [ ] Confirm the **grade-summary now totals 1,000** — add a `4.5 = 50` pt pill
+      (self-graded); core 950 + 4.5 50 = 1,000, matching the cover.
 
 ## Step 4 — Don't regress the defects (1 min)
 
-- [ ] The 950-vs-1,000 (DEFECT-1) and M5 105-vs-125 (DEFECT-3) discrepancies are
-      **upstream and intentional to leave** for now. Do not "fix" them as a side
-      effect of this integration. If you *do* resolve them, do it as a separate,
-      labeled change and update [`crosswalk.md`](crosswalk.md).
+- [ ] **DEFECT-1 (950-vs-1,000) is RESOLVED** — Module 4.5 contributes the 50
+      (self-graded, awarded by default), so adding the `4.5 = 50` pill makes the
+      total 1,000. That's the intended outcome; ship it.
+- [ ] **DEFECT-3 (M5 105-vs-125) remains open** and is independent — **upstream and
+      intentional to leave** for now. Do not "fix" it as a side effect of this
+      integration. If you *do* resolve it, do it as a separate, labeled change and
+      update [`crosswalk.md`](crosswalk.md).
 
 ## Step 5 — Update the Quick Reference (optional, 2 min)
 

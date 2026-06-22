@@ -5,8 +5,9 @@ subtitle: "Interstitial — Delegate the Sacred Flow's mechanics to a coding age
 role: Tech Lead delegating to a junior
 loop: interstitial
 weeks: "between 8 & 9"
-points: 0
+points: 50
 self_graded: true
+points_award: "by default on completion (self-graded) — these 50 resolve the 950→1,000 cover gap"
 gates_next: false
 sprint_tag: Interstitial
 sim:
@@ -41,6 +42,10 @@ after_class:
     desc: "You, the customer, judge whether the AI's stories + design fulfill your need: hit rate, missing story, unstated assumptions, three edits, build/fix/restart verdict."
     points: 0
     type: Self-Graded
+  - title: "Module Completion — TB-TV Walkthrough (self-awarded)"
+    desc: "Complete the module's work and the interactive TB-TV walkthrough onboarding, then self-award the 50 pts. These are the points the planner cover always promised — the resolved 950→1,000 gap. No instructor rubric; awarded by default for honest completion."
+    points: 50
+    type: "Self-Graded · awarded by default"
 mlos:
   - id: "I.1"
     text: "Explain in plain English what the agent did during a Flow run"
@@ -77,7 +82,7 @@ gates:
 # 04.5 — Teach Your Agent The Flow
 
 **Interstitial mini-module.** Sits between Module 4 (Flask / Sprint 2) and Module
-5 (Ship, Document, Present). Low stakes, **self-graded**, gates nothing. Written
+5 (Ship, Document, Present). Low stakes, **50 pts self-graded (awarded by default)**, gates nothing. Written
 for students running the Sacred Workflow; Prompt Masters have a lighter path.
 
 Full Learn / Practice / Apply / Assess content:
@@ -122,6 +127,11 @@ The approval is the deliverable, not the automation.
 - **Plain-English Flow Write-Up + Approval Screenshot** — *self · Reflection*
 - **Filled-In Agent Corpus** — *self · Corpus*
 - **Customer Self-Assessment** — *self · Self-Graded*
+- **Module Completion — TB-TV Walkthrough (self-awarded)** — *50 pts · self-graded, awarded by default*
+
+The module carries **50 pts, self-graded — awarded by default on completion** (the
+resolved 950→1,000 cover gap). No instructor rubric; you self-award them for doing
+the work honestly.
 
 **Two-track submission.** Code Builders submit via the Flow (agent opens
 issue/PR, you merge; turn in the PR link). Prompt Masters drop the files via the

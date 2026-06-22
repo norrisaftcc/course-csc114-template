@@ -11,7 +11,7 @@ gates_next: true
 sprint_tag: Pre-Sprint
 sim:
   setting: "NTS Lobby"
-  blurb: "Orientation Day. Students receive their badge, meet the team, and tour Norris Tech Solutions. The sprint starts Monday."
+  blurb: "Orientation Day. Students receive their badge, meet the team, and tour Normal Tech Solutions. The sprint starts Monday."
   hook: "Choose your role on the team. Pick wrong and you'll find out why at standup."
 before_class:
   - text: "Agile & Scrum Vocabulary Quiz — match 20 terms"
@@ -40,11 +40,11 @@ before_class:
     channel: sim
 in_class:
   - title: "Class-Wide Standup Simulation"
-    text: "Norris initiates; every student answers three standup questions live or async. Norris responds to every post within 48 hrs."
+    text: "Normal initiates; every student answers three standup questions live or async. Normal responds to every post within 48 hrs."
   - title: "Role Debrief Discussion"
     text: "Who picked which role? What surprised them about the standup experience?"
   - title: "Introduce Data Man Project Brief"
-    text: "Norris presents the semester-long project scenario. Students begin stakeholder identification."
+    text: "Normal presents the semester-long project scenario. Students begin stakeholder identification."
 after_class:
   - title: "Module 1 Vocabulary Mastery Check"
     desc: "80% threshold · unlimited attempts · gates Module 2"
@@ -103,7 +103,7 @@ module — vocabulary, roles, and the dev mindset.
 ## ⬡ Before Class — Async (Sim + Canvas)
 
 > **NTS Lobby.** Orientation Day. Students receive their badge, meet the team, and
-> tour Norris Tech Solutions. The sprint starts Monday.
+> tour Normal Tech Solutions. The sprint starts Monday.
 > *"Choose your role on the team. Pick wrong and you'll find out why at standup."*
 
 - Q Agile & Scrum Vocabulary Quiz — match 20 terms · *MLO 1.1 · Canvas New Quiz · gates Roles activity*
@@ -115,13 +115,13 @@ module — vocabulary, roles, and the dev mindset.
 - ▶ AI Tools in the Dev Workflow — 3-decision-point branch · *MLO 1.6 · Sim*
 - ▶ Plain Language Communication — client stakeholder sim · *MLO 1.9 · Sim*
 
-## ⬡ In Class — Facilitated (Norris)
+## ⬡ In Class — Facilitated (Normal)
 
-- 🎤 **Class-Wide Standup Simulation** — Norris initiates; every student answers
-  three standup questions live or async. Norris responds to every post within 48 hrs.
+- 🎤 **Class-Wide Standup Simulation** — Normal initiates; every student answers
+  three standup questions live or async. Normal responds to every post within 48 hrs.
 - 🗣 **Role Debrief Discussion** — Who picked which role? What surprised them about
   the standup experience?
-- 🗂 **Introduce Data Man Project Brief** — Norris presents the semester-long project
+- 🗂 **Introduce Data Man Project Brief** — Normal presents the semester-long project
   scenario. Students begin stakeholder identification.
 
 **⚡ RSI Touchpoint:** Instructor initiates standup discussion and responds personally

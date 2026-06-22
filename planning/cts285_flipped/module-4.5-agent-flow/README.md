@@ -2,7 +2,8 @@
 
 **Type:** Interstitial mini-module. Sits **between Module 4 (Flask / Sprint 2)
 and Module 5 (Ship, Document, Present).**
-**Stakes:** Low. Self-graded. Does **not** gate M4 or M5.
+**Stakes:** Low. **50 pts, self-graded — awarded by default on completion.** Does
+**not** gate M4 or M5.
 **Audience lean:** Students willing to run the Sacred Workflow. Prompt Masters
 have a real lighter path (below), but the heart of this module is for the people
 automating their Flow.
@@ -57,6 +58,14 @@ By the end you can:
 | **Practice** | [`practice.md`](practice.md) | Point a CLI at a tiny throwaway task. Make it open an Issue + a PR. You approve & merge. Retry as many times as you want. | Retry-OK |
 | **Apply** | [`apply.md`](apply.md) | Fill in the **agent corpus template** for the agent *you* want. Have the AI draft user stories + a design from your plain-English needs. | Low |
 | **Assess** | [`assess.md`](assess.md) | **Self-graded.** As the customer, rate how well those AI stories + design fulfill your needs. Write where they miss. | Self-graded |
+
+## Points
+
+**50 pts · self-graded — awarded by default on completion** (including the
+interactive TB-TV walkthrough). There's no instructor rubric; you self-award the
+points for doing the work honestly. These 50 are the points the planner cover
+always promised — the resolved 950→1,000 gap. It still gates nothing and stays
+low-stakes in spirit, just no longer zero.
 
 ## What you produce (the deliverables)
 

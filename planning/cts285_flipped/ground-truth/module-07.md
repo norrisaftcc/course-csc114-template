@@ -31,9 +31,9 @@ before_class:
     channel: sim
 in_class:
   - title: "Product Concept Pitches — Whole Class"
-    text: "5-min structured pitch per student. Norris and peers give real-time glows/grows. Review group peer forms due within 48 hrs. Pitch slots assigned in Module 6."
+    text: "5-min structured pitch per student. Normal and peers give real-time glows/grows. Review group peer forms due within 48 hrs. Pitch slots assigned in Module 6."
   - title: "MVP Scope Negotiation"
-    text: "After pitches, Norris challenges MVP choices. Students must defend scope or revise. Encourages scope discipline before building begins."
+    text: "After pitches, Normal challenges MVP choices. Students must defend scope or revise. Encourages scope discipline before building begins."
 after_class:
   - title: "Own Product Brief"
     desc: "Problem, target user, MVP scope, success criteria, tech stack with justification"
@@ -134,9 +134,9 @@ planning skill reapplied to the student's own product; ends with a pitch before 
 ## ⬡ In Class — Facilitated
 
 - 🎤 **Product Concept Pitches — Whole Class** — 5-min structured pitch per student.
-  Norris and peers give real-time glows/grows. Review group peer forms due within 48
+  Normal and peers give real-time glows/grows. Review group peer forms due within 48
   hrs. Pitch slots assigned in Module 6.
-- 🗣 **MVP Scope Negotiation** — After pitches, Norris challenges MVP choices. Students
+- 🗣 **MVP Scope Negotiation** — After pitches, Normal challenges MVP choices. Students
   must defend scope or revise. Encourages scope discipline before building begins.
 
 **⚡ RSI Touchpoint (×2):** 1. Written approval on product brief before design activities

@@ -37,7 +37,8 @@ MLOs, thread, gates — same prose the planner renders>
 | `role` | string | yes | Student role, e.g. `Scrum Master / Developer`. |
 | `loop` | enum | yes | `loop1` \| `loop2` \| `interstitial`. |
 | `weeks` | string | yes | e.g. `7–8`. Interstitial uses `between 8 & 9`. |
-| `points` | int | yes | Module points. Interstitial = `0`. |
+| `points` | int | yes | Module points. Interstitial = `50` (self-graded, awarded by default on completion — the resolved 950→1,000 cover gap). |
+| `points_award` | string | no | How points are granted, when not instructor-scored. Interstitial: `by default on completion (self-graded)`. Omit for the core modules (instructor-scored). |
 | `self_graded` | bool | yes | `false` for the 8 core modules; `true` for the interstitial. |
 | `gates_next` | bool | yes | Does completing this module gate the next? Interstitial = `false`. |
 | `sprint_tag` | string | no | `Pre-Sprint`, `Sprint 1`, `Sprint 2`, `Sprint 3 Begin`, etc. Interstitial omits or uses `Interstitial`. |
@@ -56,11 +57,13 @@ MLOs, thread, gates — same prose the planner renders>
 - **Faithfulness over polish (core modules).** When disassembling Modules 1–8,
   transcribe what the planner says. Do not invent activities, points, or MLOs.
   If a field isn't present for a module, omit it rather than guess.
-- **Points: transcribe, then flag the discrepancy.** The planner's cover claims
-  **1,000** total, but the module pills (50/75/100/125/125/125/150/200) sum to
-  **950**. Transcribe the per-module pill values as written; do **not** "fix" any
-  module to force a 1,000 total. Record the 950-vs-1,000 mismatch in
-  `crosswalk.md` as a known source defect. The interstitial adds **0**.
+- **Points (core modules): transcribe as written.** The planner's cover claims
+  **1,000** total; the eight core module pills (50/75/100/125/125/125/150/200) sum
+  to **950**. Transcribe the per-module pill values as written; do **not** "fix"
+  any core module to force a different total. The **−50 gap is resolved** by course
+  ruling: the interstitial **Module 4.5 contributes 50** (self-graded, awarded by
+  default on completion), so core 950 + 4.5 50 = **1,000**, matching the cover.
+  See `crosswalk.md` DEFECT-1 (resolved).
 - **MLO ids stay as the planner labels them** (`4.4`, `7.6`, …). The interstitial
   uses `I.1`–`I.4` to avoid colliding with the numbered modules.
 - **Channel icons** map to the planner: `sim` = green ▶/🎤, `canvas` = red Q/S,
@@ -71,9 +74,12 @@ MLOs, thread, gates — same prose the planner renders>
 
 ## The interstitial's two deltas from the core schema
 
-1. `self_graded: true` — its Assess is judged by the student-as-customer, so its
-   `after_class` artifacts carry `points: 0` and `type: "Self-Graded"` /
-   `"Reflection"` / `"Corpus"`.
+1. `self_graded: true` with `points: 50` and `points_award: "by default on
+   completion (self-graded)"` — its Assess is judged by the student-as-customer
+   (no instructor rubric), and the 50 points are self-awarded by default on
+   completion (the resolved 950→1,000 cover gap). The substantive `after_class`
+   artifacts stay `points: 0` / `type: "Self-Graded"` / `"Reflection"` /
+   `"Corpus"`; a final "Module Completion" artifact carries the `50`.
 2. `rsi` is repurposed as the **human-in-the-loop approval gate** (the agent
    opens the Issue/PR; the human merges) rather than an instructor RSI touchpoint.
 
