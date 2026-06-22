@@ -1,6 +1,6 @@
 # SITREP — Module 4.5: Teach Your Agent The Flow
 
-**BLUF:** A low-stakes, self-graded interstitial that teaches students to delegate the Sacred Flow's mechanics (Issue→branch→commit→PR) to a coding agent while keeping the human merge — and seeds the Module 8 capstone by having them spec the agent they'll build. Gates nothing; 0 points; ~2–3 hrs.
+**BLUF:** A low-stakes, self-graded interstitial that teaches students to delegate the Sacred Flow's mechanics (Issue→branch→commit→PR) to a coding agent while keeping the human merge — and seeds the Module 8 capstone by having them spec the agent they'll build. Gates nothing; 50 pts · self-graded (awarded by default on completion); ~2–3 hrs.
 
 ---
 
@@ -23,13 +23,13 @@
 | Apply | Fill `AGENT_BRIEF.md`; AI drafts 5–8 GWT user stories + starter design via a real PR you approve. | Low |
 | Assess | As the customer, judge whether AI's stories + design fulfill your need. | Self-graded |
 
-**DELIVERABLES** (3, all 0 pts)
+**DELIVERABLES** (3; completing all three + the interactive "TB-TV" walkthrough self-awards the 50 pts)
 1. Plain-English Flow write-up (½ pg): which CLI, Issue#/branch/PR, + screenshot of you merging; note what agent got wrong.
 2. Filled-in agent corpus: `AGENT_BRIEF.md` + AI-drafted stories & design, recorded as-is via approved PRs.
 3. Customer self-assessment: hit rate, missing story, unstated assumptions, 3 edits, build/fix/restart verdict.
 
 **GATES**
-- Points: **0.** Self-graded. **Gates nothing** — does not block M4 or M5.
+- Points: **50 pts · self-graded (awarded by default on completion).** Completion = Learn/Practice/Apply/Assess + the interactive "TB-TV" walkthrough; no instructor rubric. These 50 = the resolved 950→1,000 cover gap (DEFECT-1), so the course total reconciles to 1,000. **Gates nothing** — does not block M4 or M5.
 - Unlocks: M4 Flask submitted (advisory, not enforced).
 - Within-module order: Learn → Practice → Apply → Assess.
 - Sacred gate: agent never merges to `main`. Human reviews + merges. Approval = the proof of work.

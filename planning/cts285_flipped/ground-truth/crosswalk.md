@@ -11,11 +11,12 @@ markdown source of record.
 - For the gate graph and RSI windows → transcribed faithfully from the planner's
   *Instructor Quick Reference* (`CTS285_Flipped_Classroom_Planner.html`).
 - For the interstitial → `module-04.5.md` and `../module-4.5-agent-flow/` win; it
-  is **self-graded, 0 points, and gates nothing.** Do not invent points or hard
-  gates for it.
+  is **self-graded, 50 points (awarded by default on completion), and gates
+  nothing.** The 50 are the resolved 950→1,000 cover gap (see DEFECT-1). Do not
+  invent *additional* points or any hard gates for it.
 
 > Course: CTS-285 Systems Analysis & Design · FTCC · CIT Division · Fall 2026 ·
-> Instructor: Andrew Norris · Instructional Design: Angela Westmoreland, M.Ed. ·
+> Instructor: Andrew Normal · Instructional Design: Angela Westmoreland, M.Ed. ·
 > Source: `modules.js v2.0` (planner HTML, this spike's upstream).
 
 ---
@@ -28,7 +29,7 @@ markdown source of record.
 | 02 | Requirements and the Backlog | loop1 | 3–4 | 75 | Pre-Sprint | **yes** → M3 |
 | 03 | Design, Build, and Prove It Works | loop1 | 5–6 | 100 | Sprint 1 | **yes** → M4 |
 | 04 | Web Front End and the Sprint Machine | loop1 | 7–8 | 125 | Sprint 2 | **yes** → M5 |
-| **04.5** | **Teach Your Agent The Flow** | **interstitial** | **between 8 & 9** | **0** | **Interstitial** | **no — gates nothing** |
+| **04.5** | **Teach Your Agent The Flow** | **interstitial** | **between 8 & 9** | **50** ¹ | **Interstitial** | **no — gates nothing** |
 | 05 | Ship It, Document It, Present It | loop1 | 9–10 | 125 | Sprint 3 Begin | **yes** → M6 |
 | 06 | Sprint 3 Close — The Live Demo | loop1 | 11–12 | 125 | Sprint 3 Review | **yes** → M7 |
 | 07 | Your Product — Discovery and Design | loop2 | 13–14 | 150 | Sprint 4 Begin | **yes** → M8 |
@@ -37,6 +38,11 @@ markdown source of record.
 The interstitial sits **inside the row gap between M4 and M5** (weeks "between 8 &
 9"). It does not consume a numbered slot, does not shift any week, and does not
 appear in the Hard Gates list because it gates nothing.
+
+¹ **M4.5 = 50 pts, self-graded, awarded by default on completion** (incl. the
+interactive TB-TV walkthrough). These are the resolved 950→1,000 cover gap — with
+4.5 counted, the eight core modules (950) + 4.5 (50) = **1,000**, matching the
+cover. See DEFECT-1 (now resolved).
 
 ---
 
@@ -148,12 +154,14 @@ they own a product in Modules 7–8.
 
 ## KNOWN SOURCE DEFECTS
 
-### DEFECT-1: Cover total (1,000) ≠ sum of module pills (950)
+### DEFECT-1 (RESOLVED by course ruling): Cover total (1,000) vs. core pills (950)
 
-The planner cover advertises **1,000 total points**, but the eight module pills
-sum to **950**. Per `SCHEMA.md`, we **transcribe the pills as written** and do
-**not** "fix" any module to force 1,000. The interstitial adds **0**, so it is not
-the cause and does not close the gap.
+The planner cover advertises **1,000 total points**; the eight core module pills
+sum to **950** — a −50 gap. **Course ruling (resolved):** the missing 50 are
+allocated to **Module 4.5**, awarded **by default on completion** (the module's
+work + the interactive TB-TV walkthrough). The whole module is self-graded, so the
+student self-awards them — no instructor rubric. With 4.5 contributing 50, the
+**course total reconciles to 1,000**, matching the cover.
 
 | Module | Pill points |
 |--------|------------:|
@@ -161,23 +169,21 @@ the cause and does not close the gap.
 | M2 | 75 |
 | M3 | 100 |
 | M4 | 125 |
-| **M4.5** | **0** (self-graded, by design) |
+| **M4.5** | **50** (self-graded · awarded by default — the resolved gap) |
 | M5 | 125 |
 | M6 | 125 |
 | M7 | 150 |
 | M8 | 200 |
-| **Sum of pills** | **950** |
+| **Sum (incl. 4.5)** | **1,000** |
 | **Cover claim** | **1,000** |
-| **Discrepancy** | **−50** (pills are 50 short of the advertised total) |
+| **Discrepancy** | **0** ✓ resolved |
 
-**Status:** recorded, not corrected. The −50 lives upstream in
-`modules.js v2.0` / the planner HTML. A future reconciliation should decide
-whether (a) the cover is a typo (should read 950), or (b) a 50-pt module artifact
-was dropped from the pills. Until the upstream owner rules, **do not redistribute
-points to paper over it** — and in particular, **do not** assign the missing 50 to
-the interstitial. The interstitial is self-graded and 0 by design; loading points
-onto it would both falsify the schema and turn a low-stakes module into a graded
-one.
+**Status:** RESOLVED. This **supersedes** the earlier guidance that the
+interstitial must stay 0 and that the 50 must not be loaded onto it — the course
+owner explicitly chose to allocate the gap to 4.5 as a self-graded, awarded-by-
+default completion credit. **Integration note:** add a `4.5 = 50` entry to the
+planner's grade-summary pills so the visible pills sum to 1,000. (DEFECT-3 below —
+M5's internal 105-vs-125 artifact gap — is independent and remains open.)
 
 ### DEFECT-3: M5 graded artifacts (105) ≠ M5 module pill (125)
 

@@ -49,9 +49,10 @@ the loop instead of rubber-stamping a bot.
 
 ## How process credit works on top of a self-graded artifact
 
-The artifact in 4.5 is **self-graded and worth 0 points** — and that does not
-change for you. You don't earn points for the corpus being "good"; you grade that
-yourself as the customer (`assess.md`).
+The artifact in 4.5 is **50 pts · self-graded (awarded by default on completion)**
+— and that does not change for you. You don't earn those points for the corpus
+being "good"; you self-award them for honest completion as the customer
+(`assess.md`).
 
 What you *do* earn, exactly as in every other module, is **process credit** for
 running it through a real Flow:
@@ -66,8 +67,8 @@ Process credit rides on the *cadence being real*, not on the artifact's quality.
 A throwaway Practice change that goes through a proper Issue → PR → merge earns the
 process credit; a brilliant corpus dropped straight onto `main` with no PR does
 not. **Same deal as every other week:** Prompt Masters and Code Builders earn
-identical credit on the artifact (here: zero, it's self-graded); Code Builders
-earn process credit on top for running the Flow.
+identical credit on the artifact (here: 50 pts · self-graded, awarded by default
+on completion); Code Builders earn process credit on top for running the Flow.
 
 > Do not let "it's self-graded" tempt you into skipping the PR. The PR *is* the
 > graded part for your track. The corpus is for you; the Flow is for the credit.

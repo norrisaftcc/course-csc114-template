@@ -13,7 +13,7 @@
 
 **The rules:**
 - The agent opens the Issue and PR. **You always merge.** Never let the bot merge `main`.
-- 0 points, self-graded, doesn't gate anything. Be honest with yourself.
+- 50 pts · self-graded (awarded by default on completion) — finish the work plus the interactive "TB-TV" walkthrough and award yourself the 50. Doesn't gate anything. Be honest with yourself.
 - Need: a repo, one CLI, and `gh auth login` working. No preference? Use Claude Code.
 
 **The whole module in one sentence:** Hand the Flow's mechanics to an agent, keep the merge and the judgment for yourself.

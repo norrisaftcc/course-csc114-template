@@ -34,11 +34,11 @@ before_class:
     channel: sim
 in_class:
   - title: "Architecture Decision Debrief"
-    text: "Class discusses flat file vs. database choices. Norris reveals trade-offs. Teams defend their ERDs."
+    text: "Class discusses flat file vs. database choices. Normal reveals trade-offs. Teams defend their ERDs."
   - title: "DoD Workshop"
     text: "Each student shares their DoD. Class votes on which criteria are truly testable. Calibrate together."
   - title: "Sprint 1 Demo (Low Stakes)"
-    text: "3-5 min class standup demo. 2 peer observation forms required. Norris facilitates; students respond to peer questions."
+    text: "3-5 min class standup demo. 2 peer observation forms required. Normal facilitates; students respond to peer questions."
 after_class:
   - title: "Data Man Design Package"
     desc: "ERD, wireframes (3+), UML use case, UML sequence, design rationale (300 words)"
@@ -123,11 +123,11 @@ the first console prototype.
 ## ⬡ In Class — Facilitated
 
 - 🎤 **Architecture Decision Debrief** — Class discusses flat file vs. database choices.
-  Norris reveals trade-offs. Teams defend their ERDs.
+  Normal reveals trade-offs. Teams defend their ERDs.
 - 🗣 **DoD Workshop** — Each student shares their DoD. Class votes on which criteria
   are truly testable. Calibrate together.
 - 🗂 **Sprint 1 Demo (Low Stakes)** — 3-5 min class standup demo. 2 peer observation
-  forms required. Norris facilitates; students respond to peer questions.
+  forms required. Normal facilitates; students respond to peer questions.
 
 **⚡ RSI Touchpoint:** Instructor reviews ERD and wireframes in Lucidchart, adding
 personalized comments on at least 2 design decisions before build begins. Gates

@@ -39,9 +39,9 @@ in_class:
   - title: "SM Facilitation Practice"
     text: "Students rotate Scrum Master role. Run a live standup where a blocker is revealed. Class debrief on SM response choices."
   - title: "Flask Architecture Discussion"
-    text: 'Share "why templates vs. inline HTML" decisions. Norris surfaces common misconceptions from quiz data.'
+    text: 'Share "why templates vs. inline HTML" decisions. Normal surfaces common misconceptions from quiz data.'
   - title: "Sprint 2 Planning Session"
-    text: "Students present reprioritized backlogs. Norris reviews risk registers together as a class — what did teams miss?"
+    text: "Students present reprioritized backlogs. Normal reviews risk registers together as a class — what did teams miss?"
 after_class:
   - title: "Sprint 2 Reprioritized Backlog"
     desc: "Updated backlog with Sprint 2 selection, revised MoSCoW, written justification for priority changes"
@@ -130,8 +130,8 @@ the console to a Flask web app while facilitating the sprint machine.
 - 🎤 **SM Facilitation Practice** — Students rotate Scrum Master role. Run a live
   standup where a blocker is revealed. Class debrief on SM response choices.
 - 🗣 **Flask Architecture Discussion** — Share "why templates vs. inline HTML"
-  decisions. Norris surfaces common misconceptions from quiz data.
-- 🗂 **Sprint 2 Planning Session** — Students present reprioritized backlogs. Norris
+  decisions. Normal surfaces common misconceptions from quiz data.
+- 🗂 **Sprint 2 Planning Session** — Students present reprioritized backlogs. Normal
   reviews risk registers together as a class — what did teams miss?
 
 **⚡ RSI Touchpoint:** Instructor reviews sprint board and reprioritized backlog

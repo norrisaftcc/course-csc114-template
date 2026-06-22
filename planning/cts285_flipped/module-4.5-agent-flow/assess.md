@@ -2,6 +2,8 @@
 
 **Slot:** Assess (self-graded — there is no instructor points rubric here, on
 purpose).
+**Points:** The module's **50 pts are self-graded — awarded by default on
+completion.** Doing this honestly *is* the grade.
 **What you submit:** A short self-assessment, written as the *customer* of your
 own agent.
 

@@ -36,7 +36,7 @@ in_class:
   - title: "Repo Swap Activity"
     text: "Students clone a classmate's repo and attempt to run it using only the README. Time-boxed 10 minutes. Report blockers live."
   - title: "Documentation Calibration"
-    text: "Class reviews sample READMEs together. Apply the quality ranking rubric as a group. Norris models what \"good\" looks like."
+    text: "Class reviews sample READMEs together. Apply the quality ranking rubric as a group. Normal models what \"good\" looks like."
   - title: "Presentation Outline Workshop"
     text: "Students draft Sprint 3 presentation outlines. Peer feedback on structure before instructor comment."
 after_class:
@@ -124,7 +124,7 @@ Module 5. Students know their group before Module 6. Groups carry forward throug
 - 🎤 **Repo Swap Activity** — Students clone a classmate's repo and attempt to run it
   using only the README. Time-boxed 10 minutes. Report blockers live.
 - 🗣 **Documentation Calibration** — Class reviews sample READMEs together. Apply the
-  quality ranking rubric as a group. Norris models what "good" looks like.
+  quality ranking rubric as a group. Normal models what "good" looks like.
 - 🗂 **Presentation Outline Workshop** — Students draft Sprint 3 presentation outlines.
   Peer feedback on structure before instructor comment.
 

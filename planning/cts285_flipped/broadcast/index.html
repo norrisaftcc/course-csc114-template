@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<!--
+  TB-TV (Teacherbot Television) · CHANNEL 4.5 — "Teach Your Agent The Flow"
+  =================================================================
+  A self-contained, no-build retro-TV / retrocomputing "news magazine"
+  walkthrough of the CTS-285 flipped material at a high level. Flip through
+  segments like channels (arrow keys / number keys / on-screen buttons).
+
+  Content is sourced from:
+    - planning/cts285_flipped/ops-reports/*.md  (SITREP, TL;DR, one-liner, instructor brief)
+    - planning/cts285_flipped/ground-truth/crosswalk.md  (the 8-module spine + 4.5)
+  Keep this file in sync if those change. Single file on purpose — drop it
+  anywhere (local, a static host) and it runs. No external JS deps; one optional
+  webfont import with system fallbacks so it still works offline.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TB-TV · Ch 4.5 · Teach Your Agent The Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=VT323&display=swap');
+
+  :root{
+    --bg:#06080d; --panel:#0b1018; --panel2:#0e1622;
+    --amber:#ffb000; --green:#39ff7a; --cyan:#34e7e7; --magenta:#ff3d75; --blue:#4aa3ff;
+    --ink:#d7f5e6; --muted:#6f8aa0; --line:#1d2c3c;
+    --disp:'Orbitron', 'Arial Narrow', system-ui, sans-serif;
+    --crt:'VT323', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(120% 90% at 50% 8%, #0c1422 0%, var(--bg) 60%, #020306 100%);
+    color:var(--ink); font-family:var(--crt); font-size:21px; line-height:1.25;
+    min-height:100%; display:flex; align-items:center; justify-content:center;
+    padding:20px; overflow-x:hidden;
+  }
+  /* faint vector grid behind everything */
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.25;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:40px 40px; mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%);
+  }
+
+  /* ===== TV SET ===== */
+  .tv{position:relative; z-index:1; width:min(980px,96vw); }
+  .bezel{
+    background:linear-gradient(170deg,#222a33,#0c0f14 70%);
+    border-radius:26px; padding:22px 22px 14px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,255,255,.06), inset 0 -8px 24px rgba(0,0,0,.6);
+    border:1px solid #2a333d;
+  }
+  .screen{
+    position:relative; background:#040a09;
+    border-radius:14px; overflow:hidden; border:2px solid #000;
+    box-shadow:inset 0 0 60px rgba(0,0,0,.9), inset 0 0 14px rgba(57,255,122,.08);
+    aspect-ratio:4/3;
+  }
+  @media (max-width:640px){ .screen{aspect-ratio:auto; min-height:78vh} }
+
+  /* CRT overlays */
+  .scanlines,.glassref,.flick{position:absolute; inset:0; pointer-events:none; z-index:6}
+  .scanlines{background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.28) 3px,rgba(0,0,0,0) 4px)}
+  .glassref{background:radial-gradient(120% 90% at 50% -10%,rgba(255,255,255,.10),transparent 45%); border-radius:14px}
+  .flick{background:rgba(57,255,122,.03); animation:flick .12s steps(2) infinite}
+  .vignette{position:absolute; inset:0; pointer-events:none; z-index:5; box-shadow:inset 0 0 120px rgba(0,0,0,.9); border-radius:14px}
+  body.nocrt .scanlines,body.nocrt .flick,body.nocrt .glassref{display:none}
+  @keyframes flick{0%{opacity:.5}100%{opacity:1}}
+  @keyframes poweron{0%{transform:scaleY(.004) scaleX(1);opacity:0}40%{transform:scaleY(.004) scaleX(1);opacity:1}60%{transform:scaleY(1) scaleX(1)}100%{transform:scaleY(1)}}
+
+  /* screen content area */
+  .stage{position:absolute; inset:0; z-index:2; display:flex; flex-direction:column}
+  .poweron{animation:poweron .55s ease-out}
+
+  /* top status strip */
+  .statusbar{display:flex; align-items:center; gap:10px; padding:8px 14px; font-family:var(--disp); font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid rgba(57,255,122,.14); background:linear-gradient(180deg,rgba(57,255,122,.05),transparent)}
+  .onair{display:flex; align-items:center; gap:6px; color:var(--magenta)}
+  .onair .dot{width:9px;height:9px;border-radius:50%;background:var(--magenta);box-shadow:0 0 10px var(--magenta);animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .statusbar .ch{color:var(--amber)}
+  .statusbar .spacer{flex:1}
+  .statusbar .clock{color:var(--cyan)}
+
+  /* body of a segment */
+  .seg{flex:1; padding:18px 26px; overflow:auto; position:relative}
+  .seg::-webkit-scrollbar{width:8px}
+  .seg::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+  .kicker{font-family:var(--disp); font-weight:700; font-size:12px; letter-spacing:4px; text-transform:uppercase; color:var(--magenta); text-shadow:0 0 8px rgba(255,61,117,.5)}
+  h1.title{font-family:var(--disp); font-weight:900; font-size:clamp(22px,4.4vw,40px); line-height:1.02; margin:6px 0 12px; color:var(--amber); text-shadow:0 0 14px rgba(255,176,0,.45),0 2px 0 #000; text-transform:uppercase}
+  h2.sub{font-family:var(--disp); font-weight:700; font-size:clamp(15px,2.4vw,20px); color:var(--cyan); text-shadow:0 0 10px rgba(52,231,231,.4); margin:14px 0 8px; letter-spacing:1px; text-transform:uppercase}
+  p{margin:8px 0; color:var(--ink)}
+  .lead{font-size:24px; color:#eafff3}
+  .amber{color:var(--amber)} .green{color:var(--green)} .cyan{color:var(--cyan)} .mag{color:var(--magenta)} .muted{color:var(--muted)}
+  b,strong{color:#fff}
+  code{font-family:var(--crt); background:rgba(52,231,231,.12); color:var(--cyan); padding:0 6px; border-radius:4px}
+
+  /* BLUF / callout box */
+  .bluf{border:1px solid var(--amber); border-left-width:6px; background:linear-gradient(90deg,rgba(255,176,0,.10),transparent); padding:12px 16px; border-radius:6px; margin:14px 0}
+  .bluf .tag{font-family:var(--disp); font-size:11px; letter-spacing:3px; color:var(--amber); text-transform:uppercase}
+
+  /* grids & cards */
+  .grid{display:grid; gap:12px; margin:12px 0}
+  .g2{grid-template-columns:1fr 1fr} .g4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:640px){.g2,.g4{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line); background:var(--panel2); border-radius:8px; padding:12px 14px}
+  .card .h{font-family:var(--disp); font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px}
+  .card.lp .h{color:var(--green)} .card.tk .h{color:var(--blue)}
+
+  ul.beam{list-style:none; margin:8px 0}
+  ul.beam li{position:relative; padding:5px 0 5px 22px}
+  ul.beam li::before{content:'▸'; position:absolute; left:2px; color:var(--green); text-shadow:0 0 8px var(--green)}
+
+  table.tv{width:100%; border-collapse:collapse; margin:10px 0; font-size:19px}
+  table.tv th{font-family:var(--disp); font-size:11px; letter-spacing:2px; text-transform:uppercase; text-align:left; color:var(--muted); border-bottom:1px solid var(--line); padding:6px 10px}
+  table.tv td{padding:7px 10px; border-bottom:1px solid rgba(29,44,60,.6); vertical-align:top}
+  table.tv tr:last-child td{border-bottom:none}
+
+  /* ===== module filmstrip (the season spine) ===== */
+  .strip{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+  .mod{flex:1 1 90px; min-width:84px; border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:9px 8px; cursor:pointer; transition:.12s; position:relative}
+  .mod:hover,.mod.active{border-color:var(--cyan); box-shadow:0 0 14px rgba(52,231,231,.35); transform:translateY(-2px)}
+  .mod .n{font-family:var(--disp); font-weight:900; font-size:18px; color:var(--cyan)}
+  .mod .t{font-size:15px; line-height:1.05; color:var(--muted); margin-top:3px; height:46px; overflow:hidden}
+  .mod .pts{font-family:var(--disp); font-size:10px; letter-spacing:1px; color:var(--amber); margin-top:4px}
+  .mod.star{border-color:var(--magenta); background:linear-gradient(180deg,rgba(255,61,117,.14),var(--panel)); box-shadow:0 0 16px rgba(255,61,117,.35)}
+  .mod.star .n{color:var(--magenta)} .mod.star .pts{color:var(--magenta)}
+  .mod .loop{position:absolute; top:6px; right:7px; width:7px;height:7px;border-radius:2px}
+  .modinfo{margin-top:10px; border:1px dashed var(--cyan); border-radius:8px; padding:10px 14px; background:rgba(52,231,231,.05); min-height:54px}
+  .modinfo .mt{font-family:var(--disp); font-size:13px; letter-spacing:1px; color:var(--cyan); text-transform:uppercase}
+
+  /* ===== ident / power screen ===== */
+  .ident{position:absolute; inset:0; z-index:8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#02060a; text-align:center}
+  .bars{position:absolute; inset:0; display:flex; opacity:.9}
+  .bars span{flex:1}
+  .ident .plate{position:relative; z-index:2; background:rgba(2,6,10,.72); padding:26px 30px; border:1px solid rgba(57,255,122,.3); border-radius:12px; box-shadow:0 0 40px rgba(0,0,0,.6)}
+  .ident .logo{font-family:var(--disp); font-weight:900; font-size:clamp(30px,7vw,58px); color:#fff; letter-spacing:4px; text-shadow:0 0 18px var(--green)}
+  .ident .logo small{color:var(--amber); text-shadow:0 0 18px var(--amber)}
+  .ident .tagline{font-family:var(--disp); font-size:13px; letter-spacing:3px; color:var(--cyan); text-transform:uppercase; margin-top:4px}
+  .startbtn{margin-top:18px; font-family:var(--disp); font-weight:700; letter-spacing:3px; font-size:15px; text-transform:uppercase; color:#02060a; background:var(--green); border:none; padding:12px 26px; border-radius:8px; cursor:pointer; box-shadow:0 0 24px rgba(57,255,122,.6); animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{box-shadow:0 0 8px rgba(57,255,122,.3)}}
+  .hint{font-size:16px; color:var(--muted); margin-top:10px}
+
+  /* ===== bottom controls + ticker ===== */
+  .controls{display:flex; align-items:center; gap:10px; padding:10px 14px; border-top:1px solid rgba(57,255,122,.14); background:linear-gradient(0deg,rgba(57,255,122,.05),transparent); z-index:7; position:relative}
+  .btn{font-family:var(--disp); font-weight:700; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--ink); background:#10202c; border:1px solid var(--line); padding:8px 12px; border-radius:6px; cursor:pointer}
+  .btn:hover{border-color:var(--cyan); color:var(--cyan)}
+  .btn:active{transform:translateY(1px)}
+  .dots{display:flex; gap:6px; flex:1; justify-content:center; flex-wrap:wrap}
+  .dot2{width:11px;height:11px;border-radius:50%; background:#16232e; border:1px solid var(--line); cursor:pointer}
+  .dot2.on{background:var(--amber); box-shadow:0 0 10px var(--amber); border-color:var(--amber)}
+  .dot2.star{background:var(--magenta); box-shadow:0 0 10px var(--magenta); border-color:var(--magenta)}
+
+  .ticker{overflow:hidden; white-space:nowrap; border-top:1px solid var(--line); background:#02060a; padding:6px 0; font-size:18px; color:var(--amber); position:relative; z-index:7}
+  .ticker .run{display:inline-block; padding-left:100%; animation:crawl 34s linear infinite}
+  .ticker b{color:var(--magenta); margin:0 4px}
+  @keyframes crawl{to{transform:translateX(-100%)}}
+
+  .legend{display:flex; gap:14px; font-size:14px; color:var(--muted); margin-top:8px; flex-wrap:wrap}
+  .legend span{display:flex; align-items:center; gap:5px}
+  .sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+  a.src{color:var(--muted); font-size:14px; text-decoration:none; border-bottom:1px dotted var(--muted)}
+</style>
+</head>
+<body>
+<div class="tv">
+  <div class="bezel">
+    <div class="screen" id="screen">
+
+      <!-- POWER-ON / STATION IDENT -->
+      <div class="ident" id="ident">
+        <div class="bars" aria-hidden="true">
+          <span style="background:#c0c0c0"></span><span style="background:#c0c000"></span>
+          <span style="background:#00c0c0"></span><span style="background:#00c000"></span>
+          <span style="background:#c000c0"></span><span style="background:#c00000"></span>
+          <span style="background:#0000c0"></span><span style="background:#101010"></span>
+        </div>
+        <div class="plate">
+          <div class="logo">TB&#8209;TV <small>4.5</small></div>
+          <div class="tagline">Teacherbot Television — Now With 100% More Sacred Flow</div>
+          <button class="startbtn" id="startbtn">▶ Press Start</button>
+          <div class="hint">A high-level walkthrough · use ← → or the buttons</div>
+        </div>
+      </div>
+
+      <!-- LIVE STAGE -->
+      <div class="stage" id="stage" hidden>
+        <div class="statusbar">
+          <span class="onair"><span class="dot"></span> On Air</span>
+          <span class="ch">TB-TV · CH <span id="chNum">4.5</span></span>
+          <span class="spacer"></span>
+          <span id="segName">—</span>
+          <span class="clock" id="clock">--:--</span>
+        </div>
+        <div class="seg" id="seg"></div>
+      </div>
+
+      <!-- CRT overlays -->
+      <div class="glassref"></div>
+      <div class="scanlines"></div>
+      <div class="flick"></div>
+      <div class="vignette"></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <button class="btn" id="prev">◀ Prev</button>
+      <div class="dots" id="dots"></div>
+      <button class="btn" id="next">Next ▶</button>
+      <button class="btn" id="crt" title="Toggle CRT effects">CRT</button>
+    </div>
+    <div class="ticker"><span class="run" id="ticker"></span></div>
+  </div>
+</div>
+
+<script>
+/* ============================ CONTENT ============================ */
+/* The 8-module season spine (+ the 4.5 interstitial), from crosswalk.md */
+const MODS = [
+  {n:"01", t:"Welcome to the Dev World", pts:"50 pts", loop:"loop1",
+   blurb:"New-hire orientation. Agile/Scrum vocabulary, the five roles, stakeholder grids, and the dev mindset. Weeks 1–2 · Pre-Sprint."},
+  {n:"02", t:"Requirements & the Backlog", pts:"75 pts", loop:"loop1",
+   blurb:"The vague client email arrives. Decompose it into well-formed user stories and a prioritized, estimated backlog. Weeks 3–4 · Pre-Sprint."},
+  {n:"03", t:"Design, Build & Prove It", pts:"100 pts", loop:"loop1",
+   blurb:"Architecture meeting. ERD, wireframes, Definition of Done — then build the first Python console app. Weeks 5–6 · Sprint 1."},
+  {n:"04", t:"Web Front End & the Sprint Machine", pts:"125 pts", loop:"loop1",
+   blurb:"You're the Scrum Master now. Run the sprint and extend the console into a Flask web app. Weeks 7–8 · Sprint 2."},
+  {n:"4.5", t:"Teach Your Agent The Flow", pts:"50 · self-graded", loop:"star", star:true,
+   blurb:"★ SPECIAL REPORT — Hand the Sacred Flow's mechanics to a coding agent; keep the merge and the judgment. Low-stakes interstitial, between Weeks 8 & 9."},
+  {n:"05", t:"Ship It, Document It, Present It", pts:"125 pts", loop:"loop1",
+   blurb:"Deploy day. Can a classmate run your app from the README alone? Docs, deployment, repo swap. Weeks 9–10 · Sprint 3."},
+  {n:"06", t:"Sprint 3 Close — The Live Demo", pts:"125 pts", loop:"loop1",
+   blurb:"Live demos to review groups, glows/grows, and a full retrospective. Loop 1 closes. Weeks 11–12."},
+  {n:"07", t:"Your Product — Discovery & Design", pts:"150 pts", loop:"loop2",
+   blurb:"New badge, your own product. Every planning skill re-applied: brief, backlog, design, pitch. Weeks 13–14 · Sprint 4."},
+  {n:"08", t:"Your Product — Sprint & Showcase", pts:"200 pts", loop:"loop2",
+   blurb:"Build a functional iteration of YOUR product, present at the showcase, and bridge to the CSC-289 capstone. Weeks 15–16."},
+];
+const loopColor = {loop1:"var(--blue)", loop2:"var(--magenta)", star:"var(--amber)"};
+
+/* Segments of the broadcast. Each is { kicker, name, html } */
+const SEGMENTS = [
+  { kicker:"Tonight's Headline", name:"Headline", html:`
+    <div class="kicker">Tonight on TB-TV</div>
+    <h1 class="title">Teach Your Agent The Flow</h1>
+    <p class="lead">Delegate the Sacred Flow's mechanics to a coding agent —
+      <span class="amber">keep the merge, and the judgment, human.</span></p>
+    <div class="bluf">
+      <div class="tag">◇ Bottom Line Up Front</div>
+      <p>A low-stakes, <b>self-graded</b> interstitial. A coding agent opens the
+      Issue and the PR; <b class="green">you</b> review the diff and merge. You also
+      start speccing the agent you'll build in the Module&nbsp;8 capstone.
+      <span class="muted">Gates nothing · 50 pts, self-graded · ~2–3 hrs.</span></p>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--blue)"></span> Loop 1 — Data Man</span>
+      <span><span class="sw" style="background:var(--magenta)"></span> Loop 2 — Own Product</span>
+      <span><span class="sw" style="background:var(--amber)"></span> ★ Interstitial 4.5</span>
+    </div>` },
+
+  { kicker:"The Season So Far", name:"Season Spine", html:`
+    <div class="kicker">The Season So Far</div>
+    <h1 class="title">8 Modules + One Special Report</h1>
+    <p class="muted">Click a module to tune in. The dashed star sits in the gap between Sprint 2 and Sprint 3.</p>
+    <div class="strip" id="strip"></div>
+    <div class="modinfo" id="modinfo"><span class="mt">Select a module ▸</span></div>` },
+
+  { kicker:"Special Report", name:"Why It Exists", html:`
+    <div class="kicker">Special Report · Field Desk</div>
+    <h1 class="title">Why We Cut To This Segment</h1>
+    <div class="grid g2">
+      <div class="card"><div class="h" style="color:var(--cyan)">The Situation</div>
+        <ul class="beam">
+          <li>Modules 3–4: students ran the Sacred Flow <b>by hand</b>.</li>
+          <li>It works — and it's <b class="amber">repetitive</b>.</li>
+          <li>From M5 on, stakes rise (deploy, docs, your own product).</li>
+          <li>Manual ceremony starts taxing the focus you'd rather spend on the product.</li>
+        </ul>
+      </div>
+      <div class="card"><div class="h" style="color:var(--green)">The Mission</div>
+        <ul class="beam">
+          <li>Hand the mechanical Flow to a coding agent — ceremony gets <b class="green">cheaper</b> as stakes rise.</li>
+          <li>Stay the decision-maker: agent opens Issue + PR; <b>human merges</b>.</li>
+          <li>Start a corpus describing the agent you may build in <b class="mag">Module 8</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="bluf"><div class="tag">◇ The whole module in one sentence</div>
+      <p class="lead">Hand the Flow's mechanics to an agent, keep the merge and the judgment for yourself.</p></div>` },
+
+  { kicker:"The Rundown", name:"L · P · A · A", html:`
+    <div class="kicker">Segment Rundown</div>
+    <h1 class="title">Learn ▸ Practice ▸ Apply ▸ Assess</h1>
+    <div class="grid g4">
+      <div class="card lp"><div class="h">① Learn</div><p>What "an agent runs the Flow" means + why the approval gate stays human. <span class="muted">~15 min · no stakes.</span></p></div>
+      <div class="card lp"><div class="h">② Practice</div><p>Point a CLI at a throwaway change; agent opens Issue + PR; <b>you</b> review &amp; merge. <span class="muted">Retry freely.</span></p></div>
+      <div class="card lp"><div class="h">③ Apply</div><p>Fill <code>AGENT_BRIEF.md</code>; AI drafts 5–8 GWT user stories + a starter design via a PR you approve. <span class="muted">Low stakes.</span></p></div>
+      <div class="card lp"><div class="h">④ Assess</div><p>As the <b class="amber">customer</b>, judge whether the AI's stories + design fulfill your need. <span class="muted">Self-graded.</span></p></div>
+    </div>
+    <h2 class="sub">3 Deliverables — 50 pts, self-graded (awarded by default)</h2>
+    <ul class="beam">
+      <li><b>Plain-English Flow write-up</b> (½ pg): which CLI, the Issue#/branch/PR, + a <b class="green">screenshot of you merging</b>; note what the agent got wrong.</li>
+      <li><b>Filled-in agent corpus</b>: <code>AGENT_BRIEF.md</code> + AI-drafted stories &amp; design, recorded as-is via approved PRs.</li>
+      <li><b>Customer self-assessment</b>: hit rate · missing story · unstated assumptions · 3 edits · build/fix/restart verdict.</li>
+    </ul>` },
+
+  { kicker:"House Rules", name:"The Rules", html:`
+    <div class="kicker">House Rules · Standards & Practices</div>
+    <h1 class="title">The One Gate You Don't Cross</h1>
+    <div class="bluf"><div class="tag">◇ Sacred Gate</div>
+      <p class="lead">The agent never merges to <code>main</code>. <b class="green">You</b> review and merge. The approval <b>is</b> the proof of work.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="h" style="color:var(--amber)">Stakes</div>
+        <ul class="beam"><li><b>50 pts · self-graded</b> (awarded by default).</li><li>These close the planner cover's <b class="green">950→1,000</b> gap.</li><li><b>Gates nothing</b> — blocks neither M4 nor M5.</li><li>Unlocks after M4 Flask submit <span class="muted">(advisory, not enforced)</span>.</li></ul></div>
+      <div class="card"><div class="h" style="color:var(--cyan)">Why human-in-the-loop</div>
+        <ul class="beam"><li><code>main</code> is your portfolio — you own what lands there.</li><li>The agent is fast and <b class="mag">often confidently wrong</b>.</li><li>It mirrors real teams: bots open PRs, humans merge.</li></ul></div>
+    </div>` },
+
+  { kicker:"Two-Track Broadcast", name:"Two Tracks", html:`
+    <div class="kicker">Simulcast · Two Channels</div>
+    <h1 class="title">Same Thinking, Two Ways In</h1>
+    <table class="tv">
+      <thead><tr><th>Track</th><th>How you submit</th><th>Extra</th></tr></thead>
+      <tbody>
+        <tr><td><b class="blue" style="color:var(--blue)">Code Builders</b></td><td>Via the Flow — agent opens Issue/PR, <b>you merge</b>; turn in the PR link.</td><td><b class="green">Process credit</b></td></tr>
+        <tr><td><b class="mag">Prompt Masters</b></td><td>By drop — chat surface or GitHub web "add file." No issue/branch/PR required.</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Both turn in the same 3 deliverables. Prompt Masters skip the CLI wiring, <b>not</b> the analysis. No CLI handy? Use Claude Code, or take the Prompt Master path — same thinking.</p>` },
+
+  { kicker:"Satellite Feed", name:"Tooling", html:`
+    <div class="kicker">Satellite Feed · Tooling</div>
+    <h1 class="title">Three CLIs, One Substrate</h1>
+    <div class="grid g4">
+      <div class="card tk"><div class="h">Claude Code</div><p>The <b class="amber">baseline</b> these materials are written against.</p></div>
+      <div class="card tk"><div class="h">Codex CLI</div><p>Full equivalent. Use suggest/approval mode so it pauses.</p></div>
+      <div class="card tk"><div class="h">Gemini CLI</div><p>Full equivalent. Per-action shell approval by default.</p></div>
+      <div class="card tk"><div class="h">The Substrate</div><p><code>gh</code> + <code>git</code>. Every CLI drives the same commands — the skill transfers.</p></div>
+    </div>
+    <h2 class="sub">Hazard Report</h2>
+    <table class="tv"><thead><tr><th>Symptom</th><th>Nudge</th></tr></thead><tbody>
+      <tr><td>Agent committed to <code>main</code></td><td>Turn on branch protection · "branch first."</td></tr>
+      <tr><td>Agent self-merged the PR</td><td>Over-authorized — never pre-authorize merge.</td></tr>
+      <tr><td><code>gh: command not found</code></td><td>Install <code>gh</code> · <code>gh auth login</code> · restart the CLI.</td></tr>
+      <tr><td>"Nothing missing" in self-assessment</td><td>You didn't read as the customer. Find one concrete miss.</td></tr>
+    </tbody></table>` },
+
+  { kicker:"Next Episode", name:"What's Next", html:`
+    <div class="kicker">Coming Up · Module 8</div>
+    <h1 class="title">The Agent You Spec Today, You Build at the Capstone</h1>
+    <div class="grid g2">
+      <div class="card"><div class="h" style="color:var(--mag)">Pays Forward</div>
+        <ul class="beam">
+          <li><code>AGENT_BRIEF.md</code> → first draft of the <b>M7 product brief</b>.</li>
+          <li>AI-drafted stories → seed of the <b>M7 backlog</b>.</li>
+          <li>Starter design → seed of the <b>M7 design package</b>.</li>
+          <li>The Flow-on-autopilot move → the working cadence for the <b>M8 build</b>.</li>
+        </ul></div>
+      <div class="card"><div class="h" style="color:var(--green)">The Asymmetry To Feel</div>
+        <p>In 4.5 the corpus is <b class="amber">self-graded &amp; ungated</b>. The same corpus, matured, becomes <b class="mag">instructor-gated</b> in M7. That's the stakes ramp working as designed — practice now, real gates when it's the actual product.</p></div>
+    </div>
+    <div class="bluf"><div class="tag">◇ Sign-off</div>
+      <p class="lead">Correct process. Creative code. Failure is just exercise.</p>
+      <p class="muted">— TB-TV · that's our broadcast. Roll credits.
+      <a class="src" href="../ops-reports/SITREP.md">source: ops-reports/SITREP.md</a></p></div>` },
+];
+
+/* News-ticker facts */
+const TICKER = [
+  "50 PTS · SELF-GRADED","COMPLETION AWARDS THE POINTS BY DEFAULT","GATES NOTHING","THE AGENT NEVER MERGES main",
+  "YOU REVIEW THE DIFF AND MERGE","CLAUDE CODE · CODEX CLI · GEMINI CLI",
+  "SUBSTRATE: gh + git","SEEDS THE MODULE 8 CAPSTONE",
+  "AGENT OPENS THE ISSUE + PR · HUMAN APPROVES","CUSTOMER JUDGMENT IS THE WHOLE POINT",
+  "~2–3 HR FIRST RUN · ~20 MIN AFTER","PROMPT MASTERS: SAME THINKING, LIGHTER MECHANICS"
+];
+
+/* ============================ ENGINE ============================ */
+const seg = document.getElementById('seg');
+const dots = document.getElementById('dots');
+const segName = document.getElementById('segName');
+let i = 0;
+
+function renderDots(){
+  dots.innerHTML = '';
+  SEGMENTS.forEach((s,k)=>{
+    const d = document.createElement('div');
+    d.className = 'dot2' + (k===i?' on':'') + (s.kicker.includes('Special')?' ':'');
+    d.title = s.name;
+    d.onclick = ()=>go(k);
+    dots.appendChild(d);
+  });
+}
+function buildStrip(){
+  const strip = document.getElementById('strip'); if(!strip) return;
+  const info = document.getElementById('modinfo');
+  strip.innerHTML='';
+  MODS.forEach((m,idx)=>{
+    const el = document.createElement('div');
+    el.className = 'mod' + (m.star?' star':'');
+    el.innerHTML = `<span class="loop" style="background:${loopColor[m.loop]}"></span>
+      <div class="n">${m.n}</div><div class="t">${m.t}</div><div class="pts">${m.pts}</div>`;
+    el.onclick = ()=>{
+      document.querySelectorAll('.mod').forEach(x=>x.classList.remove('active'));
+      el.classList.add('active');
+      info.innerHTML = `<span class="mt">${m.n} · ${m.t}</span><p>${m.blurb}</p>`;
+    };
+    strip.appendChild(el);
+    if(m.star) el.click(); // spotlight the interstitial by default
+  });
+}
+function render(){
+  const s = SEGMENTS[i];
+  seg.innerHTML = s.html;
+  seg.classList.remove('poweron'); void seg.offsetWidth; seg.classList.add('poweron');
+  segName.textContent = s.name;
+  renderDots();
+  if(document.getElementById('strip')) buildStrip();
+  seg.scrollTop = 0;
+}
+function go(k){ i = (k+SEGMENTS.length)%SEGMENTS.length; render(); }
+function next(){ go(i+1); }
+function prev(){ go(i-1); }
+
+/* ticker */
+document.getElementById('ticker').innerHTML =
+  Array(2).fill(TICKER.join('  <b>◆</b>  ')).join('  <b>◆</b>  ');
+
+/* clock */
+function tick(){
+  const d = new Date();
+  document.getElementById('clock').textContent =
+    String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+setInterval(tick,1000); tick();
+
+/* power-on */
+const ident = document.getElementById('ident');
+const stage = document.getElementById('stage');
+function powerOn(){
+  ident.style.display='none';
+  stage.hidden=false;
+  stage.classList.add('poweron');
+  render();
+}
+document.getElementById('startbtn').onclick = powerOn;
+
+/* controls */
+document.getElementById('next').onclick = next;
+document.getElementById('prev').onclick = prev;
+document.getElementById('crt').onclick = ()=>document.body.classList.toggle('nocrt');
+document.addEventListener('keydown',e=>{
+  if(ident.style.display!=='none'){ if(e.key==='Enter'||e.key===' '){powerOn(); e.preventDefault();} return; }
+  if(e.key==='ArrowRight') next();
+  else if(e.key==='ArrowLeft') prev();
+  else if(e.key>='1' && e.key<='9'){ const k=+e.key-1; if(k<SEGMENTS.length) go(k); }
+  else if(e.key.toLowerCase()==='c') document.body.classList.toggle('nocrt');
+});
+</script>
+</body>
+</html>

@@ -1,15 +1,15 @@
 # Instructor Brief — Module 4.5: Teach Your Agent The Flow
 
-**BLUF:** Near-zero load for you. Self-graded, 0 points, gates nothing. Interstitial between M4 and M5. Your job is light spot-checking, not grading.
+**BLUF:** Near-zero load for you. Self-graded, 50 pts · awarded by default on completion, gates nothing. Interstitial between M4 and M5. Your job is light spot-checking, not grading.
 
 ---
 
 **What changes for you:** Almost nothing.
-- No rubric to score. The Assess is self-graded by design — the student is the customer of their own agent; an instructor score would corrupt the skill.
+- No rubric to score. The whole module is self-graded — the student self-awards the 50 pts by default on completion (Learn/Practice/Apply/Assess + the interactive "TB-TV" walkthrough). These 50 = the resolved 950→1,000 cover gap (DEFECT-1), so the course total reconciles to 1,000. The student is the customer of their own agent; an instructor score would corrupt the skill.
 - It blocks nothing. M5 proceeds whether or not a student does this.
 - No new platform to stand up; students use their own repo + a CLI.
 
-**What to spot-check** (presence, not quality):
+**What to spot-check** (presence, not quality — the 50 pts are self-awarded on completion, not instructor-scored):
 1. Flow write-up exists (½ pg) + **PR-merge screenshot** present.
 2. Filled `AGENT_BRIEF.md` + AI-drafted stories/design recorded in their corpus.
 3. Self-assessment names a *specific* miss (a missing story, an unstated assumption) — not "the AI was pretty good."

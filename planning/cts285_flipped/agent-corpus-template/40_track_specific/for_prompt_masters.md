@@ -8,9 +8,9 @@ don't do is plumb a terminal CLI into `gh` + `git`. That's a mechanics choice, n
 a thinking discount.
 
 Code Builders earn *process credit* for running it through a real PR. You earn the
-**same credit on the artifact** (here: zero — it's self-graded for everyone). The
-only thing you forgo is the on-top process credit, and that's by design for your
-track in every module, not a penalty for this one.
+**same credit on the artifact** (here: 50 pts · self-graded, awarded by default on
+completion for everyone). The only thing you forgo is the on-top process credit,
+and that's by design for your track in every module, not a penalty for this one.
 
 > The one idea that's identical across both tracks: **the AI proposes; you
 > approve.** A Code Builder approves by clicking *merge* on a PR. You approve by

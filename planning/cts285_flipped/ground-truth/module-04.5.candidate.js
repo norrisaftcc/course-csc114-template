@@ -25,15 +25,16 @@ const MODULE_4_5 = {
   sub: "Interstitial — Delegate the Sacred Flow's mechanics to a coding agent; keep the merge · Role: Tech Lead delegating to a junior", // → .module-titles .sub
   loop: "interstitial",             // not loop1/loop2 — see RECONCILE #2
   weeks: "Between Wk 8 & 9",        // → .badge-weeks
-  points: 0,                        // self-graded, 0 — see RECONCILE #3 (do NOT load the missing 50 here)
-  selfGraded: true,                 // NEW flag — renderer may ignore; used to render "Self-Graded · 0 pts"
+  points: 50,                       // self-graded, awarded by default on completion — the resolved 950→1,000 gap (see RECONCILE #3)
+  pointsAward: "by default on completion (self-graded)",
+  selfGraded: true,                 // NEW flag — renderer may ignore; used to render "50 pts · Self-Graded"
   gatesNext: false,                 // gates nothing
 
   // --- badges (renders to .module-badges; classes in brackets are the inferred CSS hooks)
   badges: [
     { label: "⌁ Interstitial",       css: "badge-interstitial" },   // NEW class — see RECONCILE #4
     { label: "Between Wk 8 & 9",     css: "badge-weeks" },
-    { label: "Self-Graded · 0 pts",  css: "badge-selfgraded" },     // NEW class — falls back to badge-sprint green
+    { label: "50 pts · Self-Graded",  css: "badge-selfgraded" },    // NEW class — falls back to badge-sprint green
     { label: "Sacred-Workflow Focus", css: "badge-focus" }          // NEW class — falls back to badge-pre orange
   ],
 
@@ -119,9 +120,11 @@ const MODULE_4_5 = {
  *  2. loop:"interstitial" — the real field may be an enum the renderer switches on
  *     for the section-divider grouping. Confirm it tolerates a third value, or set
  *     loop:"loop1" so it files under "Loop 1 — Data Man" without throwing.
- *  3. points:0 — confirm the grade-summary roll-up either skips 0-pt modules or
- *     adds 0 cleanly. DO NOT let an integration "helpfully" assign it the missing
- *     50 pts from DEFECT-1 (see crosswalk.md).
+ *  3. points:50 — Module 4.5 carries 50 self-graded pts, awarded by default on
+ *     completion (the resolved 950→1,000 gap). ADD a 4.5 = 50 entry to the
+ *     grade-summary pills so the visible pills sum to 1,000, matching the cover
+ *     (see crosswalk.md DEFECT-1, now resolved). The points are self-awarded —
+ *     don't wire an instructor rubric.
  *  4. badge css classes badge-interstitial / badge-selfgraded / badge-focus do NOT
  *     exist in the planner CSS yet. Either add them, or remap to existing classes:
  *       badge-interstitial → badge-loop1 (blue) is the safest fallback
