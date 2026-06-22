@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CSC-114 · Module 4 · IMDB Sentiment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E1F33; --navy-2:#15293f; --panel:#1b3147;
+  --cream:#F4ECD2; --dim:#b9b09a;
+  --amber:#E0A93B; --teal:#34B3A0; --moss:#8FA85A; --rust:#C9603F;
+  --sans:'Space Grotesk',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Instrument Serif',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--navy);color:var(--cream);font-family:var(--sans);overflow:hidden}
+/* scanline + heptagram overlays */
+.scan{position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.055) 2px 3px);}
+.mark{position:fixed;right:-60px;bottom:-60px;width:360px;height:360px;z-index:0;opacity:.06;pointer-events:none}
+.mark svg{width:100%;height:100%}
+deck-stage,.stage{display:block;height:100vh;width:100vw;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:5.5vh 7vw;z-index:1}
+.slide.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin:0 0 .6rem}
+h1{font-family:var(--sans);font-weight:700;font-size:clamp(2rem,5vw,3.6rem);line-height:1.05;margin:.1rem 0}
+h2{font-weight:700;font-size:clamp(1.4rem,3.4vw,2.4rem);line-height:1.1;margin:.1rem 0 1.1rem}
+p{font-size:clamp(1rem,1.7vw,1.35rem);line-height:1.5;max-width:60ch;color:var(--cream)}
+.sub{color:var(--dim)}
+.serif{font-family:var(--serif);font-style:italic}
+.quote{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2.8vw,2.1rem);color:var(--cream);line-height:1.3;max-width:30ch}
+.mono{font-family:var(--mono)}
+.pos{color:var(--teal)} .neg{color:var(--rust)} .key{color:var(--amber)} .safe{color:var(--moss)}
+.row{display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
+.col{flex:1 1 320px;min-width:280px}
+.card{background:var(--navy-2);border:1px solid #ffffff14;border-radius:14px;padding:1.1rem 1.3rem}
+.card h3{margin:.1rem 0 .5rem;font-size:1rem;letter-spacing:.04em;color:var(--amber);text-transform:uppercase}
+code,.codeblock{font-family:var(--mono)}
+.codeblock{background:#0b1828;border:1px solid #ffffff14;border-radius:10px;padding:.9rem 1.1rem;
+  font-size:clamp(.8rem,1.4vw,1.05rem);line-height:1.6;white-space:pre;overflow:auto;color:var(--cream)}
+.tok{color:var(--teal)} .num{color:var(--amber)} .com{color:#6f8aa3}
+table{border-collapse:collapse;font-size:clamp(.85rem,1.5vw,1.1rem);width:100%}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid #ffffff1a}
+th{color:var(--amber);font-weight:500;text-transform:uppercase;letter-spacing:.05em;font-size:.78rem}
+td.mono{font-family:var(--mono)}
+svg .ax{stroke:#ffffff3a;stroke-width:1.5}
+svg text{fill:var(--cream);font-family:var(--sans);font-size:13px}
+svg .lbl{fill:var(--dim);font-size:12px}
+.pill{display:inline-block;padding:.15em .6em;border-radius:999px;font-size:.85em;font-family:var(--mono)}
+.pill.pos{background:#34b3a022;border:1px solid var(--teal)}
+.pill.neg{background:#c9603f22;border:1px solid var(--rust)}
+.trap{border-left:3px solid var(--rust);padding:.3rem 0 .3rem 1rem;color:var(--cream);font-size:1rem;max-width:58ch}
+.trap b{color:var(--rust)}
+/* chrome */
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);z-index:60;transition:width .25s}
+#count{position:fixed;right:18px;bottom:14px;font-family:var(--mono);font-size:.8rem;color:var(--dim);z-index:60}
+#hint{position:fixed;left:18px;bottom:14px;font-family:var(--mono);font-size:.72rem;color:#6f8aa3;z-index:60}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:42vh;overflow:auto;z-index:70;
+  background:#0b1828f2;border-top:2px solid var(--amber);padding:1.1rem 7vw 1.4rem;display:none}
+#notes.show{display:block}
+#notes h4{margin:.1rem 0 .5rem;color:var(--amber);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+#notes p{font-size:1rem;line-height:1.55;max-width:90ch;color:var(--cream)}
+.legend{display:flex;gap:1.4rem;font-size:.95rem;color:var(--dim);flex-wrap:wrap}
+.legend span::before{content:"";display:inline-block;width:18px;height:0;vertical-align:middle;margin-right:.4rem}
+.legend .ln-train::before{border-top:2px dashed var(--cream)}
+.legend .ln-val::before{border-top:3px solid var(--amber)}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div class="scan"></div>
+<div class="mark"><svg viewBox="0 0 200 200"><path d="M100,10 L139.1,181.1 L29.6,43.9 L187.7,120 L12.3,120 L170.4,43.9 L60.9,181.1 Z" fill="none" stroke="var(--cream)" stroke-width="2"/></svg></div>
+
+<div class="stage" id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide active">
+  <p class="kicker">CSC-114 · Artificial Intelligence I · Module 4</p>
+  <h1>Positive or Negative?</h1>
+  <p class="quote" style="margin-top:1rem">Teaching a network to read a movie review<br>and guess how it felt.</p>
+  <p class="sub" style="margin-top:1.4rem">Binary classification · the IMDB dataset · Chollet &amp; Watson, Ch. 4</p>
+  <aside class="notes">Welcome them in. Today we build the first real text classifier of the course. The whole arc: a computer can't read, so we'll turn words into numbers, stack three layers, and watch it learn — and then watch it overfit, which is the lesson that actually sticks. Tell them the one number to leave with: a model that gets better on its training data is not automatically a better model.</aside>
+</section>
+
+<!-- 2 THE JOB -->
+<section class="slide">
+  <p class="kicker">The job</p>
+  <h2>Two buckets. One decision.</h2>
+  <div class="row">
+    <div class="col">
+      <p>Read a review. Decide: <span class="pos">positive</span> or <span class="neg">negative</span>. That's <span class="key">binary classification</span> — sorting each input into one of exactly two buckets.</p>
+      <p class="serif" style="font-size:1.25rem;color:var(--cream);margin-top:1rem">"? this film was just brilliant casting location scenery story direction everyone…"</p>
+      <p class="sub">Review&nbsp;#0 — a person reads this and instantly knows. Our model has to learn to.</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 360 200" width="100%">
+        <rect x="10" y="70" width="120" height="60" rx="10" fill="var(--navy-2)" stroke="#ffffff22"/>
+        <text x="70" y="96" text-anchor="middle">a review</text>
+        <text x="70" y="116" text-anchor="middle" class="lbl">(words)</text>
+        <rect x="150" y="70" width="70" height="60" rx="10" fill="var(--panel)" stroke="var(--amber)"/>
+        <text x="185" y="105" text-anchor="middle" class="key">model</text>
+        <rect x="240" y="40" width="110" height="44" rx="10" fill="#34b3a022" stroke="var(--teal)"/>
+        <text x="295" y="67" text-anchor="middle" class="pos">positive</text>
+        <rect x="240" y="116" width="110" height="44" rx="10" fill="#c9603f22" stroke="var(--rust)"/>
+        <text x="295" y="143" text-anchor="middle" class="neg">negative</text>
+        <line x1="130" y1="100" x2="150" y2="100" class="ax"/>
+        <line x1="220" y1="92" x2="240" y2="62" class="ax"/>
+        <line x1="220" y1="108" x2="240" y2="138" class="ax"/>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">Anchor the running example here: review #0, which is labeled positive (1). We'll carry this exact review through the deck. Note the goal isn't a hard yes/no yet — it's a probability. A number between 0 and 1. Keep "two buckets" in their ears; the binary-classification recipe at the end all flows from "two."</aside>
+</section>
+
+<!-- 3 THE WALL -->
+<section class="slide">
+  <p class="kicker">The wall</p>
+  <h2>A computer can't read. It does math on numbers.</h2>
+  <p>So every review is delivered to us already turned into numbers — each integer stands for one word.</p>
+  <div class="row" style="margin-top:1rem">
+    <div class="col card">
+      <h3>Review #0 — as words</h3>
+      <p class="mono" style="font-size:1rem">this film was just brilliant …</p>
+    </div>
+    <div class="col card">
+      <h3>Review #0 — as numbers</h3>
+      <p class="mono num" style="font-size:1.05rem">[1, 14, 22, 16, 43, 530, …]</p>
+    </div>
+    <div class="col card">
+      <h3>Its label</h3>
+      <p class="mono"><span class="num">0</span> = <span class="neg">negative</span><br><span class="num">1</span> = <span class="pos">positive</span><br>Review&nbsp;#0 → <span class="num pos">1</span></p>
+    </div>
+  </div>
+  <aside class="notes">The IMDB dataset: 50,000 reviews, 25k train / 25k test, half positive half negative, and it ships inside Keras already converted to integer lists. Stress that the labels live in a separate list — features and target, the same vocabulary from Module 3. The features are the word-numbers; the target is the 0/1 label.</aside>
+</section>
+
+<!-- 4 DECODE / OFFSET -->
+<section class="slide">
+  <p class="kicker">A detail that bites</p>
+  <h2>Decoding: mind the shift of 3</h2>
+  <div class="row">
+    <div class="col">
+      <p>To read a review we look up each number's word. But indices <span class="key">0, 1, 2</span> are reserved for housekeeping — so every real word is shifted by <span class="key">3</span>.</p>
+      <div class="trap" style="margin-top:1rem"><b>Trap:</b> forget the <span class="mono">- 3</span> and your decoded reviews come out as nonsense. Your AI partner forgets this constantly — now you won't.</div>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 360 220" width="100%">
+        <text x="0" y="24" class="lbl">reserved (no English word):</text>
+        <rect x="0" y="34" width="64" height="40" rx="8" fill="var(--navy-2)" stroke="var(--rust)"/>
+        <text x="32" y="59" text-anchor="middle" class="mono"><tspan class="neg">0</tspan></text>
+        <rect x="72" y="34" width="64" height="40" rx="8" fill="var(--navy-2)" stroke="var(--rust)"/>
+        <text x="104" y="59" text-anchor="middle" class="mono"><tspan class="neg">1</tspan></text>
+        <rect x="144" y="34" width="64" height="40" rx="8" fill="var(--navy-2)" stroke="var(--rust)"/>
+        <text x="176" y="59" text-anchor="middle" class="mono"><tspan class="neg">2</tspan></text>
+        <text x="0" y="64" class="lbl"></text>
+        <text x="6" y="92" class="lbl" font-size="11">pad</text>
+        <text x="86" y="92" class="lbl" font-size="11">start</text>
+        <text x="150" y="92" class="lbl" font-size="11">unknown</text>
+        <line x1="180" y1="120" x2="180" y2="150" class="ax"/>
+        <text x="30" y="140" class="mono num">number 16</text>
+        <text x="30" y="180" class="mono">→ index 16 − 3 = <tspan class="key">13</tspan></text>
+        <text x="30" y="205" class="mono">→ word "<tspan class="pos">brilliant</tspan>"</text>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">The leading "?" in the decoded review is the start token (index 1), which maps to no English word. This slide quietly plants Trap #3 for the assessment. If you have a minute, show the live decode in the notebook with and without the -3 to make the failure visceral.</aside>
+</section>
+
+<!-- 5 NUM_WORDS -->
+<section class="slide">
+  <p class="kicker">A cheap, smart cut</p>
+  <h2>Keep the top 10,000 words. Drop the rest.</h2>
+  <div class="row">
+    <div class="col">
+      <p>The full vocabulary is over <span class="mono">88,000</span> words. Most appear in a single review — they can't teach a general pattern, and they'd make every review enormously wide.</p>
+      <p class="codeblock"><span class="tok">from</span> keras.datasets <span class="tok">import</span> imdb
+(train, _), (test, _) = imdb.load_data(
+    num_words=<span class="num">10000</span>)</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 360 170" width="100%">
+        <rect x="20" y="40" width="320" height="34" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/>
+        <text x="180" y="30" text-anchor="middle" class="lbl">88,585 unique words</text>
+        <rect x="20" y="100" width="36" height="34" rx="6" fill="#E0A93B33" stroke="var(--amber)"/>
+        <rect x="56" y="100" width="284" height="34" rx="6" fill="var(--navy-2)" stroke="#ffffff14" opacity=".4"/>
+        <text x="38" y="156" text-anchor="middle" class="key" font-size="12">keep 10k</text>
+        <text x="200" y="156" text-anchor="middle" class="lbl" font-size="12">discard the long tail</text>
+      </svg>
+      <p class="sub" style="margin-top:.4rem"><b class="key">Why it matters:</b> manageable data size, almost no lost signal.</p>
+    </div>
+  </div>
+  <aside class="notes">Plants Trap #5: students should be able to say WHY 10,000, not just parrot the number. Two reasons: rare words don't generalize, and capping the vocabulary keeps the encoded vectors a sane width (next slide). If an agent gives them the line without the reasoning, that's the tell.</aside>
+</section>
+
+<!-- 6 MULTI-HOT -->
+<section class="slide">
+  <p class="kicker">Same shape for every review</p>
+  <h2>Multi-hot encoding</h2>
+  <div class="row">
+    <div class="col">
+      <p>Reviews differ in length; the network needs one fixed shape. So: a row of <span class="key">10,000 slots</span>, one per word. Put a <span class="mono key">1</span> where a word is present, <span class="mono">0</span> everywhere else.</p>
+      <p class="sub">It loses word order and counts. It keeps <i>which words appeared</i> — enough to judge sentiment well.</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 360 180" width="100%">
+        <text x="0" y="22" class="lbl">a review with words at slots 5 and 8:</text>
+        <g font-family="var(--mono)" font-size="14">
+        <!-- 10 slots -->
+        <g>
+        <!-- build slots -->
+        <rect x="0"   y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="17" y="65" text-anchor="middle">0</text>
+        <rect x="36"  y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="53" y="65" text-anchor="middle">0</text>
+        <rect x="72"  y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="89" y="65" text-anchor="middle">0</text>
+        <rect x="108" y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="125" y="65" text-anchor="middle">0</text>
+        <rect x="144" y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="161" y="65" text-anchor="middle">0</text>
+        <rect x="180" y="40" width="34" height="40" rx="6" fill="#E0A93B33" stroke="var(--amber)"/><text x="197" y="65" text-anchor="middle" class="key">1</text>
+        <rect x="216" y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="233" y="65" text-anchor="middle">0</text>
+        <rect x="252" y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="269" y="65" text-anchor="middle">0</text>
+        <rect x="288" y="40" width="34" height="40" rx="6" fill="#E0A93B33" stroke="var(--amber)"/><text x="305" y="65" text-anchor="middle" class="key">1</text>
+        <rect x="324" y="40" width="34" height="40" rx="6" fill="var(--navy-2)" stroke="#ffffff22"/><text x="341" y="65" text-anchor="middle">…</text>
+        </g>
+        </g>
+        <text x="197" y="102" text-anchor="middle" class="lbl">slot 5</text>
+        <text x="305" y="102" text-anchor="middle" class="lbl">slot 8</text>
+        <text x="0" y="150" class="lbl">result: every review → one row, 10,000 numbers wide</text>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">This is the one genuinely new idea in the unit and the thing the assessment asks them to explain in their own words. Use the textbook's tiny example: the sequence [8,5] becomes a 10,000-long vector that is all zeros except 1s at positions 5 and 8. Emphasize what's thrown away (order, frequency) — surprising that this still works, which is the interesting part.</aside>
+</section>
+
+<!-- 7 MODEL -->
+<section class="slide">
+  <p class="kicker">The model</p>
+  <h2>Three layers, ending in one yes/no knob</h2>
+  <svg viewBox="0 0 900 200" width="100%" style="max-width:980px">
+    <rect x="0" y="70" width="150" height="60" rx="10" fill="var(--navy-2)" stroke="#ffffff22"/>
+    <text x="75" y="95" text-anchor="middle">review vector</text>
+    <text x="75" y="116" text-anchor="middle" class="lbl">10,000 wide</text>
+    <line x1="150" y1="100" x2="210" y2="100" class="ax"/>
+    <rect x="210" y="60" width="150" height="80" rx="10" fill="var(--panel)" stroke="#ffffff22"/>
+    <text x="285" y="95" text-anchor="middle" class="mono">Dense 16</text>
+    <text x="285" y="118" text-anchor="middle" class="lbl">relu</text>
+    <line x1="360" y1="100" x2="410" y2="100" class="ax"/>
+    <rect x="410" y="60" width="150" height="80" rx="10" fill="var(--panel)" stroke="#ffffff22"/>
+    <text x="485" y="95" text-anchor="middle" class="mono">Dense 16</text>
+    <text x="485" y="118" text-anchor="middle" class="lbl">relu</text>
+    <line x1="560" y1="100" x2="610" y2="100" class="ax"/>
+    <rect x="610" y="62" width="150" height="76" rx="10" fill="#34b3a022" stroke="var(--teal)"/>
+    <text x="685" y="95" text-anchor="middle" class="mono pos">Dense 1</text>
+    <text x="685" y="118" text-anchor="middle" class="lbl">sigmoid</text>
+    <line x1="760" y1="100" x2="810" y2="100" class="ax"/>
+    <text x="855" y="106" text-anchor="middle" class="key mono" font-size="22">0.93</text>
+  </svg>
+  <p style="margin-top:1rem"><span class="key">Units</span> = how much room to find patterns. <span class="key">relu</span> = lets it learn non-straight-line patterns. <span class="pos">1 sigmoid unit</span> = a single probability out.</p>
+  <aside class="notes">Read it left to right as a pipeline. Don't over-explain relu — "lets the model bend, otherwise the whole stack collapses to one straight line" is enough at this stage; chapter 5 formalizes it. The part to burn in is the right end: one unit, sigmoid. That ending IS binary classification. Everything on the recipe card later hangs off it.</aside>
+</section>
+
+<!-- 8 SIGMOID -->
+<section class="slide">
+  <p class="kicker">Why sigmoid</p>
+  <h2>It squashes any number into 0–1</h2>
+  <div class="row">
+    <div class="col">
+      <svg viewBox="0 0 320 220" width="100%">
+        <line x1="20" y1="110" x2="300" y2="110" class="ax"/>
+        <line x1="160" y1="20" x2="160" y2="200" class="ax"/>
+        <text x="296" y="128" class="lbl">input</text>
+        <text x="168" y="30" class="lbl">1</text>
+        <text x="168" y="205" class="lbl">0</text>
+        <path d="M20,196 C90,196 120,180 160,110 C200,40 230,24 300,24" fill="none" stroke="var(--teal)" stroke-width="3"/>
+      </svg>
+    </div>
+    <div class="col">
+      <p>The output reads as a probability: <span class="pos">near 1 → positive</span>, <span class="neg">near 0 → negative</span>, <span class="key">near 0.5 → unsure</span>.</p>
+      <p class="codeblock">layers.Dense(<span class="num">1</span>, activation=<span class="tok">"sigmoid"</span>)</p>
+    </div>
+  </div>
+  <aside class="notes">Keep this short and visual. The single takeaway: sigmoid turns the model's raw score into something we can read as a probability. That's why the final layer has exactly one unit and a sigmoid — and it's why the loss on the next slide is binary_crossentropy, which is built for probabilities.</aside>
+</section>
+
+<!-- 9 TRAINING LOOP -->
+<section class="slide">
+  <p class="kicker">How it learns it's wrong</p>
+  <h2>The same loop from Module 3</h2>
+  <svg viewBox="0 0 820 190" width="100%" style="max-width:920px">
+    <rect x="0" y="70" width="150" height="50" rx="10" fill="var(--navy-2)" stroke="#ffffff22"/><text x="75" y="100" text-anchor="middle">guess</text>
+    <line x1="150" y1="95" x2="205" y2="95" class="ax"/>
+    <rect x="205" y="62" width="190" height="66" rx="10" fill="var(--panel)" stroke="var(--amber)"/>
+    <text x="300" y="90" text-anchor="middle" class="key">measure how wrong</text>
+    <text x="300" y="112" text-anchor="middle" class="mono lbl">binary_crossentropy</text>
+    <line x1="395" y1="95" x2="450" y2="95" class="ax"/>
+    <rect x="450" y="62" width="190" height="66" rx="10" fill="var(--panel)" stroke="var(--moss)"/>
+    <text x="545" y="90" text-anchor="middle" class="safe">nudge the knobs</text>
+    <text x="545" y="112" text-anchor="middle" class="mono lbl">adam</text>
+    <path d="M640,128 C700,170 400,178 250,150 C150,132 110,128 75,120" fill="none" stroke="#ffffff3a" stroke-width="1.5" marker-end="url(#a)"/>
+    <defs><marker id="a" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffffff7a"/></marker></defs>
+    <text x="360" y="186" text-anchor="middle" class="lbl">repeat, many times</text>
+  </svg>
+  <p style="margin-top:.8rem"><span class="key">binary_crossentropy</span> punishes confident wrong answers hardest. <span class="safe">adam</span> is the reliable default optimizer. We also <i>watch</i> accuracy — but the model trains on the loss.</p>
+  <aside class="notes">Tie it explicitly back to Module 3's training loop so it feels like return, not new material. The one nuance worth stating: loss vs metric. We minimize binary_crossentropy; accuracy is just a human-readable scoreboard we monitor. Students conflate the two constantly.</aside>
+</section>
+
+<!-- 10 VALIDATION TRAP -->
+<section class="slide">
+  <p class="kicker">A trap that quietly ruins everything</p>
+  <h2>Never tune on the test set</h2>
+  <div class="row">
+    <div class="col">
+      <svg viewBox="0 0 360 210" width="100%">
+        <rect x="0" y="20" width="150" height="56" rx="10" fill="#8FA85A22" stroke="var(--moss)"/>
+        <text x="75" y="44" text-anchor="middle" class="safe">training</text>
+        <text x="75" y="64" text-anchor="middle" class="lbl">learn here</text>
+        <rect x="0" y="86" width="150" height="56" rx="10" fill="#E0A93B22" stroke="var(--amber)"/>
+        <text x="75" y="110" text-anchor="middle" class="key">validation</text>
+        <text x="75" y="130" text-anchor="middle" class="lbl">tune here</text>
+        <rect x="0" y="152" width="150" height="56" rx="10" fill="#c9603f22" stroke="var(--rust)"/>
+        <text x="75" y="176" text-anchor="middle" class="neg">test</text>
+        <text x="75" y="196" text-anchor="middle" class="lbl">sealed 🔒</text>
+        <text x="200" y="60" class="lbl">10,000 reviews</text>
+        <text x="200" y="78" class="lbl">held out of training</text>
+        <text x="200" y="176" class="lbl">opened once,</text>
+        <text x="200" y="194" class="lbl">at the very end</text>
+      </svg>
+    </div>
+    <div class="col">
+      <p>Tune against the <span class="key">validation</span> set as much as you like. If you tune against the <span class="neg">test</span> set, you've let the model peek at the final exam — its score stops meaning anything.</p>
+      <p class="codeblock">x_val = x_train[:<span class="num">10000</span>]
+partial = x_train[<span class="num">10000</span>:]</p>
+    </div>
+  </div>
+  <aside class="notes">Plants Trap #4. The intuition that lands: the test set is a final exam you only get to sit once. Every time you peek and adjust, you've turned it into a practice test. Three piles, three jobs — keep them straight. The validation set is what makes the next slide (overfitting) observable at all.</aside>
+</section>
+
+<!-- 11 OVERFITTING (centerpiece) -->
+<section class="slide">
+  <p class="kicker">The most important picture in this unit</p>
+  <h2>Watch it overfit</h2>
+  <div class="row">
+    <div class="col" style="flex:2 1 460px">
+      <svg viewBox="0 0 600 330" width="100%">
+        <rect x="122" y="40" width="438" height="270" fill="#c9603f12"/>
+        <line x1="40" y1="40" x2="40" y2="310" class="ax"/>
+        <line x1="40" y1="310" x2="560" y2="310" class="ax"/>
+        <text x="300" y="328" text-anchor="middle" class="lbl">Epochs →</text>
+        <text x="14" y="180" text-anchor="middle" class="lbl" transform="rotate(-90 14 180)">Loss →</text>
+        <!-- training loss: cream dashed, monotonic down -->
+        <polyline points="40,77 67,144 95,181 122,207 150,226 177,241 232,259 286,268 368,278 451,283 560,289" fill="none" stroke="var(--cream)" stroke-width="2" stroke-dasharray="6 5"/>
+        <!-- validation loss: amber solid, U-shape -->
+        <polyline points="40,114 67,166 95,189 122,196 150,192 177,185 232,170 286,151 368,125 451,107 560,92" fill="none" stroke="var(--amber)" stroke-width="3"/>
+        <!-- best epoch marker -->
+        <line x1="122" y1="40" x2="122" y2="310" stroke="var(--moss)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <circle cx="122" cy="196" r="5" fill="var(--moss)"/>
+        <text x="130" y="58" class="safe" font-size="13">epoch ~4: validation best</text>
+        <text x="360" y="58" class="neg" font-size="13">overfitting zone →</text>
+      </svg>
+    </div>
+    <div class="col">
+      <div class="legend" style="margin-bottom:.8rem">
+        <span class="ln-train">training loss — keeps dropping</span>
+        <span class="ln-val">validation loss — dips, then climbs</span>
+      </div>
+      <p>Better on the practice test, <span class="neg">worse on the real exam.</span> After ~epoch 4 the model memorizes quirks that don't carry to new reviews.</p>
+      <div class="trap" style="margin-top:.8rem"><b>Trap:</b> "more epochs = better." This curve is the counter-evidence.</div>
+    </div>
+  </div>
+  <aside class="notes">Spend real time here — this is the slide they should leave with in their heads. Walk the two lines separately: training loss falls forever (it's just getting better at memorizing what it's already seen); validation loss is the honest signal, and it turns around. The exact turnaround epoch wanders run to run — teach the SHAPE, not "4." This is also the anchor for the graded assessment: students will point at their OWN run's turnaround and explain it.</aside>
+</section>
+
+<!-- 12 THE FIX / SCORE -->
+<section class="slide">
+  <p class="kicker">The fix</p>
+  <h2>Retrain for ~4 epochs, then grade once</h2>
+  <div class="row">
+    <div class="col">
+      <p class="codeblock"><span class="com"># fresh model, stop at the peak</span>
+model.fit(x_train, y_train,
+          epochs=<span class="num">4</span>, batch_size=<span class="num">512</span>)
+model.evaluate(x_test, y_test)</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 360 150" width="100%">
+        <line x1="20" y1="100" x2="340" y2="100" class="ax"/>
+        <text x="20" y="135" text-anchor="middle" class="lbl">50%</text>
+        <text x="220" y="135" text-anchor="middle" class="lbl">88%</text>
+        <text x="330" y="135" text-anchor="middle" class="lbl">95%</text>
+        <circle cx="20" cy="100" r="6" fill="var(--rust)"/><text x="20" y="80" text-anchor="middle" class="neg" font-size="12">coin flip</text>
+        <circle cx="220" cy="100" r="8" fill="var(--teal)"/><text x="220" y="78" text-anchor="middle" class="pos" font-size="13">ours</text>
+        <circle cx="330" cy="100" r="6" fill="var(--amber)"/><text x="330" y="80" text-anchor="middle" class="key" font-size="12">SOTA</text>
+      </svg>
+      <p class="sub" style="margin-top:.4rem"><span class="pos">~88%</span> from a few lines. Your number wobbles a little each run — random start, expected.</p>
+    </div>
+  </div>
+  <aside class="notes">The fix is blunt: throw away the overtrained model, train a fresh one only to the peak, evaluate once on the sealed test set. ~88% is the honest number for this naive approach; ~95% is what polished methods reach. Use the wobble to pre-empt the inevitable "I got 0.87, is that wrong?" — no, that's random initialization, it's fine.</aside>
+</section>
+
+<!-- 13 PREDICTIONS -->
+<section class="slide">
+  <p class="kicker">Using the trained model</p>
+  <h2>Predictions are probabilities</h2>
+  <div class="row">
+    <div class="col">
+      <table>
+        <tr><th>predict()</th><th>read as</th></tr>
+        <tr><td class="mono pos">0.98</td><td><span class="pill pos">very sure: positive</span></td></tr>
+        <tr><td class="mono pos">0.99</td><td><span class="pill pos">very sure: positive</span></td></tr>
+        <tr><td class="mono neg">0.02</td><td><span class="pill neg">very sure: negative</span></td></tr>
+        <tr><td class="mono key">0.65</td><td><span class="lbl">leaning positive, unsure</span></td></tr>
+        <tr><td class="mono key">0.41</td><td><span class="lbl">leaning negative, unsure</span></td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <p>A confidently positive review like <span class="key">#0</span> scores up near 1. Some land near <span class="key">0.5</span> — the model is honestly on the fence, the way a person is about a mixed review.</p>
+      <p class="sub">That uncertainty isn't a bug. It's the model declining to fake confidence.</p>
+    </div>
+  </div>
+  <aside class="notes">Close the loop on the running review: #0 was positive, and a confident model scores reviews like it near 1. (Don't claim a specific predicted value for #0 — predict() in the book runs on the test set, a different review.) The 0.5-ish outputs are worth dwelling on for the ethics thread: a model that outputs honest uncertainty is more trustworthy than one that always sounds sure.</aside>
+</section>
+
+<!-- 14 RECIPE CARD -->
+<section class="slide">
+  <p class="kicker">Carry this forward</p>
+  <h2>The binary-classification recipe</h2>
+  <table style="max-width:820px">
+    <tr><th>Decision</th><th>Choice</th><th>Why</th></tr>
+    <tr><td>Final layer</td><td class="mono pos">Dense(1)</td><td>one number out: a single probability</td></tr>
+    <tr><td>Final activation</td><td class="mono pos">sigmoid</td><td>squashes the output into 0–1</td></tr>
+    <tr><td>Loss</td><td class="mono key">binary_crossentropy</td><td>built for probability outputs</td></tr>
+    <tr><td>Optimizer</td><td class="mono safe">adam</td><td>reliable default for almost anything</td></tr>
+    <tr><td>Watch out for</td><td class="neg">overfitting</td><td>monitor validation, not just training</td></tr>
+  </table>
+  <div class="trap" style="margin-top:1.1rem"><b>Catch the AI:</b> this is a <i>two-bucket</i> problem. If an agent reaches for <span class="mono">softmax</span> or <span class="mono">categorical_crossentropy</span>, it's confusing this with a many-class problem — wrong tool.</div>
+  <aside class="notes">This is the keeper slide — tell them to photograph it. Then plant the headline trap (Trap #1) explicitly: softmax and categorical_crossentropy are for many mutually-exclusive classes; binary is one sigmoid unit + binary_crossentropy. Because we deliberately never taught the multiclass case, an agent bleeding the two together is exactly the kind of confident error the assessment rewards them for catching.</aside>
+</section>
+
+<!-- 15 ONE-CHANGE -->
+<section class="slide">
+  <p class="kicker">In the lab</p>
+  <h2>Change one knob. Re-run. Write it down.</h2>
+  <div class="row">
+    <div class="col">
+      <p>The core discipline of the whole course. Change <span class="key">two</span> things and you won't know which one mattered.</p>
+      <table>
+        <tr><th>Try</th><th>Instead of</th></tr>
+        <tr><td>1 or 3 layers</td><td class="mono">2</td></tr>
+        <tr><td class="mono">32 / 64 units</td><td class="mono">16</td></tr>
+        <tr><td class="mono">mean_squared_error</td><td class="mono">binary_crossentropy</td></tr>
+        <tr><td class="mono">tanh</td><td class="mono">relu</td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 300 180" width="100%">
+        <circle cx="60" cy="60" r="26" fill="var(--navy-2)" stroke="var(--amber)"/><line x1="60" y1="60" x2="60" y2="40" stroke="var(--amber)" stroke-width="3"/>
+        <circle cx="150" cy="60" r="26" fill="var(--navy-2)" stroke="#ffffff33"/><line x1="150" y1="60" x2="166" y2="48" stroke="#ffffff88" stroke-width="3"/>
+        <circle cx="240" cy="60" r="26" fill="var(--navy-2)" stroke="#ffffff33"/><line x1="240" y1="60" x2="224" y2="48" stroke="#ffffff88" stroke-width="3"/>
+        <text x="60" y="110" text-anchor="middle" class="key" font-size="12">change THIS one</text>
+        <text x="195" y="110" text-anchor="middle" class="lbl" font-size="12">leave the rest</text>
+        <text x="150" y="160" text-anchor="middle" class="lbl">predict → run → compare</text>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">Frame the lab's payload. Before each run they write a one-line prediction, then check it. The prediction is the point — it forces a mental model. For Prompt Masters, the twist is to ask their AI partner to predict first, then catch it when it's wrong. That's the bridge into the Apply/Assess agent-probing work.</aside>
+</section>
+
+<!-- 16 CLOSE -->
+<section class="slide">
+  <p class="kicker">Module 4 · IMDB Sentiment</p>
+  <h1>Two buckets,<br>one honest number.</h1>
+  <p style="margin-top:1rem">Text → numbers → a stack of layers → a probability. Watch the validation curve, stop at the peak, and never trust a model just because it sounds sure.</p>
+  <p class="sub" style="margin-top:1.2rem">Next: run it yourself in the lab, then probe your agent in Apply/Assess.</p>
+  <aside class="notes">Land the three keepers: (1) vectorize text before a network can use it; (2) binary = one sigmoid unit + binary_crossentropy; (3) more training is not more better — the validation curve is the judge. Send them to the notebook.</aside>
+</section>
+
+</div>
+
+<div id="count"></div>
+<div id="hint">← → move · N notes · F fullscreen</div>
+<div id="notes"><h4>Speaker notes</h4><p></p></div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const bar=document.getElementById('bar'),count=document.getElementById('count'),
+      notes=document.getElementById('notes'),notesP=notes.querySelector('p');
+function render(){
+  slides.forEach((s,n)=>s.classList.toggle('active',n===i));
+  bar.style.width=((i+1)/slides.length*100)+'%';
+  count.textContent=(i+1)+' / '+slides.length;
+  const a=slides[i].querySelector('.notes');
+  notesP.textContent=a?a.textContent:'(no notes)';
+  location.hash=i+1;
+}
+function go(n){i=Math.max(0,Math.min(slides.length-1,n));render();}
+addEventListener('keydown',e=>{
+  if(['ArrowRight',' ','PageDown'].includes(e.key)){go(i+1);e.preventDefault();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){go(i-1);e.preventDefault();}
+  else if(e.key==='Home'){go(0);}
+  else if(e.key==='End'){go(slides.length-1);}
+  else if(e.key.toLowerCase()==='n'){notes.classList.toggle('show');}
+  else if(e.key.toLowerCase()==='f'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+});
+addEventListener('click',e=>{ if(e.target.closest('#notes'))return; go(i+1); });
+const h=parseInt(location.hash.slice(1)); if(h){i=h-1;}
+render();
+</script>
+</body>
+</html>
