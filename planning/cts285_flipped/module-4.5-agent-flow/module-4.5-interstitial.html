@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!--
+  Module 4.5 — Interstitial: "Teach Your Agent The Flow"
+  ======================================================
+  Placement: between MODULE 4 (Flask / Sprint 2) and MODULE 5 (Ship/Document)
+             in CTS285_Flipped_Classroom_Planner.html.
+
+  HOW TO USE
+  ----------
+  This file is a previewable standalone page so you can eyeball the block.
+  The part you actually splice into the planner is everything between the
+  <!-- BEGIN SPLICE --> and <!-- END SPLICE --> markers below. It uses only
+  classes already defined in the planner's <style> block, plus a few inline
+  accents for the interstitial treatment, so it drops in without CSS changes.
+
+  If/when you wire this into the modules.js v2.0 source instead of the rendered
+  HTML, model it as a module with id "4.5" (or "interlude-1") rendered with the
+  same template the other modules use; the column content maps 1:1 to the
+  three <div class="col"> blocks below.
+
+  The styles below are a trimmed copy of the planner's own CSS, included ONLY so
+  this file previews on its own. Do not copy the <style> block into the planner —
+  the planner already has these rules.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Module 4.5 — Teach Your Agent The Flow (Interstitial Preview)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  :root{
+    --navy:#0d1b2a;--navy2:#162538;--teal:#00897b;--teal-light:#e0f2f0;--gold:#e6a817;--gold-light:#fdf6e3;
+    --red:#c62828;--red-light:#fdecea;--blue:#1565c0;--blue-light:#e3f0ff;--purple:#6a1b9a;--purple-light:#f3e5f5;
+    --slate:#53565a;--border:#dde3ea;--bg:#f5f7fa;--white:#fff;--text:#1a2332;--muted:#64748b;
+    --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;padding:32px 24px}
+  .planner-body{max-width:1100px;margin:0 auto}
+  .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px}
+  .section-divider .div-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--slate);white-space:nowrap}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+  .module-block{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+  .module-header{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+  .module-num{font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;background:var(--navy);border-radius:6px;padding:6px 10px;white-space:nowrap}
+  .module-titles h2{font-size:15px;font-weight:700;color:var(--navy)}
+  .module-titles .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .module-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;white-space:nowrap}
+  .badge-loop1{background:#e3f0ff;color:#1565c0}
+  .badge-weeks{background:var(--bg);color:var(--slate);border:1px solid var(--border)}
+  .badge-pts{background:var(--gold-light);color:#92650a}
+  .badge-sprint{background:#e8f5e9;color:#2e7d32}
+  .module-body{display:grid;grid-template-columns:1fr 1fr 1fr}
+  .col{padding:16px 18px;border-right:1px solid var(--border)}
+  .col:last-child{border-right:none}
+  .col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+  .before-label{color:#1565c0;border-bottom-color:#1565c0}
+  .during-label{color:#00897b;border-bottom-color:#00897b}
+  .after-label{color:#6a1b9a;border-bottom-color:#6a1b9a}
+  .sim-box{background:var(--navy);color:#fff;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-size:11px;line-height:1.5}
+  .sim-box .sim-floor{font-family:var(--mono);font-size:10px;color:var(--teal);margin-bottom:4px}
+  .sim-box .sim-hook{color:var(--gold);font-style:italic;margin-top:6px;font-size:10.5px}
+  .activity-list{list-style:none}
+  .activity-item{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid #f0f2f5;font-size:11.5px;line-height:1.4}
+  .activity-item:last-child{border-bottom:none}
+  .act-icon{flex-shrink:0;width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px}
+  .icon-sim{background:#e8f5e9;color:#2e7d32}
+  .icon-canvas{background:var(--red-light);color:var(--red)}
+  .icon-dash{background:var(--blue-light);color:var(--blue)}
+  .act-text{flex:1}
+  .act-mlo{font-family:var(--mono);font-size:9.5px;color:var(--muted)}
+  .rsi-box{background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:10px 12px;margin-top:8px;font-size:11px;line-height:1.5}
+  .rsi-box .rsi-label{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#f57f17;margin-bottom:4px}
+  .rsi-hours{font-family:var(--mono);font-size:10px;color:#e65100;margin-top:4px}
+  .artifact-list{list-style:none}
+  .artifact-item{padding:6px 0;border-bottom:1px solid #f0f2f5;font-size:11.5px}
+  .artifact-item:last-child{border-bottom:none}
+  .artifact-title{font-weight:600;color:var(--navy);margin-bottom:2px}
+  .artifact-desc{font-size:10.5px;color:var(--muted);line-height:1.4}
+  .artifact-meta{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap}
+  .artifact-pts{font-family:var(--mono);font-size:10px;font-weight:600;color:#92650a;background:var(--gold-light);padding:1px 7px;border-radius:10px}
+  .artifact-type{font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:10px}
+  .mlo-list{list-style:none}
+  .mlo-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0f2f5;font-size:11px;line-height:1.4}
+  .mlo-item:last-child{border-bottom:none}
+  .mlo-id{font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;background:var(--slate);border-radius:4px;padding:2px 6px;white-space:nowrap;height:fit-content;margin-top:1px;flex-shrink:0}
+  .mlo-blooms{font-size:9.5px;color:var(--muted);margin-top:2px;font-style:italic}
+  .thread-bar{background:linear-gradient(90deg,#0d1b2a,#162538);color:#fff;padding:8px 18px;display:flex;gap:12px;align-items:center;font-size:11px;border-top:1px solid rgba(255,255,255,.06)}
+  .thread-label{font-family:var(--mono);font-size:9.5px;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+  .thread-text{color:#c8d8e8}
+  .thread-deliverable{font-family:var(--mono);font-size:10px;color:var(--gold);white-space:nowrap}
+  .lock-row{background:var(--bg);border-top:1px solid var(--border);padding:8px 18px;display:flex;gap:24px;font-size:10.5px;align-items:center;flex-wrap:wrap}
+  .lock-item{display:flex;gap:6px;align-items:center}
+  .lock-label{font-weight:600;color:var(--slate)}
+  .lock-val{font-family:var(--mono);font-size:10px;color:var(--navy)}
+  @media(max-width:900px){.module-body{grid-template-columns:1fr}.col{border-right:none;border-bottom:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<div class="planner-body">
+
+<!-- BEGIN SPLICE — insert everything from here to END SPLICE between MOD 04 and MOD 05 -->
+
+  <!-- INTERSTITIAL DIVIDER -->
+  <div class="section-divider">
+    <div class="div-label" style="color:var(--teal)">⌁ Interstitial — Teach Your Agent The Flow (between Sprint 2 &amp; Sprint 3)</div>
+  </div>
+
+  <!-- MODULE 4.5 (INTERSTITIAL) -->
+  <div class="module-block" style="border:2px dashed var(--teal);background:linear-gradient(180deg,var(--teal-light) 0,#fff 90px)">
+    <div class="module-header" style="border-bottom-color:var(--teal)">
+      <div class="module-num" style="background:var(--teal)">MOD 4.5</div>
+      <div class="module-titles">
+        <h2>Teach Your Agent The Flow</h2>
+        <div class="sub">Interstitial — Delegate the Sacred Flow's mechanics to a coding agent; keep the merge · Role: Tech Lead delegating to a junior</div>
+      </div>
+      <div class="module-badges">
+        <span class="badge" style="background:var(--teal-light);color:var(--teal)">⌁ Interstitial</span>
+        <span class="badge badge-weeks">Between Wk 8 &amp; 9</span>
+        <span class="badge badge-pts" style="background:#e8f5e9;color:#2e7d32">Self-Graded · 0 pts</span>
+        <span class="badge" style="background:#fff3e0;color:#e65100">Sacred-Workflow Focus</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <!-- LEARN (maps to Before-Class column) -->
+      <div class="col">
+        <div class="col-label before-label">⬡ Learn — Async (read, ~15 min)</div>
+        <div class="sim-box">
+          <div class="sim-floor">NTS — Your Desk, Day After Sprint 2</div>
+          You ran two sprints opening every Issue and PR by hand. It worked — and it got repetitive. The new junior on the team is an AI. Time to delegate the ceremony and keep the judgment.
+          <div class="sim-hook">"The bot can open the PR in three seconds. It still can't tell you if it's the PR you wanted. That part's yours."</div>
+        </div>
+        <ul class="activity-list">
+          <li class="activity-item"><div class="act-icon icon-sim">▶</div><div class="act-text">What "an agent running the Flow" means — Issue→Branch→PR from one sentence<div class="act-mlo">learn.md · the one idea</div></div></li>
+          <li class="activity-item"><div class="act-icon icon-sim">▶</div><div class="act-text">The approval gate is sacred — why the human still merges to <code>main</code><div class="act-mlo">learn.md · the gate is yours</div></div></li>
+          <li class="activity-item"><div class="act-icon icon-dash">D</div><div class="act-text">The common substrate — every CLI drives <code>gh</code> + <code>git</code><div class="act-mlo">Claude Code · Codex CLI · Gemini CLI</div></div></li>
+        </ul>
+      </div>
+
+      <!-- PRACTICE + APPLY (maps to In-Class column) -->
+      <div class="col">
+        <div class="col-label during-label">⬡ Practice &amp; Apply — Hands-on</div>
+        <ul class="activity-list">
+          <li class="activity-item"><div class="act-icon icon-sim">🤖</div><div class="act-text"><strong>Practice (retry-OK): Agent runs one slice of the Flow.</strong> Throwaway change — agent opens an Issue + PR; <em>you</em> review the diff and merge. Capture the approval.<div class="act-mlo">practice.md · Claude Code / Codex CLI / Gemini CLI</div></div></li>
+          <li class="activity-item" style="margin-top:8px;"><div class="act-icon icon-dash">🗂</div><div class="act-text"><strong>Apply: Describe your agent as a corpus.</strong> Fill in <code>AGENT_BRIEF.md</code>; have the AI draft 5–8 user stories (GWT) + a starter design. Reach it via a real PR you approve.<div class="act-mlo">apply.md · seeds the Module 8 capstone</div></div></li>
+        </ul>
+        <div class="rsi-box" style="background:var(--teal-light);border-color:#80cbc4">
+          <div class="rsi-label" style="color:var(--teal)">⚡ Human-in-the-Loop Gate</div>
+          The agent opens the Issue and the PR. It does <strong>not</strong> merge. You read the diff and merge — and screenshot the moment you did. The approval is the deliverable, not the automation.
+          <div class="rsi-hours">Substrate: <code>gh</code> + <code>git</code> · Gate: manual merge to <code>main</code> only</div>
+        </div>
+        <ul class="mlo-list" style="margin-top:12px;">
+          <li class="mlo-item"><div class="mlo-id">I.1</div><div><div>Explain in plain English what the agent did during a Flow run</div><div class="mlo-blooms">Understand/Apply · CLO 5</div></div></li>
+          <li class="mlo-item"><div class="mlo-id">I.2</div><div><div>Drive a coding-agent CLI to open an Issue + PR via gh/git</div><div class="mlo-blooms">Apply · CLO 1 + CLO 4</div></div></li>
+          <li class="mlo-item"><div class="mlo-id">I.3</div><div><div>Locate &amp; defend the human approval gate on <code>main</code></div><div class="mlo-blooms">Evaluate · CLO 1</div></div></li>
+          <li class="mlo-item"><div class="mlo-id">I.4</div><div><div>Describe a desired agent as a Claude-code-compatible corpus</div><div class="mlo-blooms">Create · CLO 2 + CLO 3</div></div></li>
+        </ul>
+      </div>
+
+      <!-- ASSESS (maps to After-Class column) -->
+      <div class="col">
+        <div class="col-label after-label">⬡ Assess — Self-Graded Submission</div>
+        <ul class="artifact-list">
+          <li class="artifact-item">
+            <div class="artifact-title">Plain-English Flow Write-Up + Approval Screenshot</div>
+            <div class="artifact-desc">½ page: which CLI, what it did (Issue#, branch, PR), and a screenshot of you merging. Note what the agent got wrong.</div>
+            <div class="artifact-meta"><span class="artifact-pts">self</span><span class="artifact-type">Reflection</span></div>
+          </li>
+          <li class="artifact-item">
+            <div class="artifact-title">Filled-In Agent Corpus</div>
+            <div class="artifact-desc">Your <code>AGENT_BRIEF.md</code> + AI-drafted user stories &amp; design, recorded as-is via approved PRs. First draft of a Module 8 spec.</div>
+            <div class="artifact-meta"><span class="artifact-pts">self</span><span class="artifact-type">Corpus</span></div>
+          </li>
+          <li class="artifact-item">
+            <div class="artifact-title">Customer Self-Assessment</div>
+            <div class="artifact-desc">You, the customer, judge whether the AI's stories + design fulfill your need: hit rate, missing story, unstated assumptions, three edits, build/fix/restart verdict.</div>
+            <div class="artifact-meta"><span class="artifact-pts">self</span><span class="artifact-type">Self-Graded</span></div>
+          </li>
+        </ul>
+        <div class="rsi-box" style="margin-top:10px">
+          <div class="rsi-label">Two-track submission</div>
+          <strong>Code Builders:</strong> submit via the Flow — agent opens issue/PR, you merge; turn in the PR link. <strong>Prompt Masters:</strong> drop the files via GitHub web "add file." Same thinking; lighter mechanics. Code Builders earn process credit on top.
+        </div>
+      </div>
+    </div>
+    <div class="thread-bar">
+      <span class="thread-label">Agent Thread</span>
+      <span class="thread-text">Hand the Flow's mechanics to a coding agent (Claude Code baseline; Codex + Gemini equivalents). Keep the merge human. Start the corpus for the agent you'll build in Module 8.</span>
+      <span class="thread-deliverable">↳ Deliverable: Flow write-up + agent corpus + self-assessment</span>
+    </div>
+    <div class="lock-row">
+      <div class="lock-item"><span class="lock-label">Unlocks when:</span><span class="lock-val">M4 Flask app submitted (advisory)</span></div>
+      <div class="lock-item"><span class="lock-label">Gates:</span><span class="lock-val">nothing — interstitial does not block M5</span></div>
+      <div class="lock-item"><span class="lock-label">For:</span><span class="lock-val">students running the Sacred Workflow</span></div>
+    </div>
+  </div>
+
+<!-- END SPLICE -->
+
+</div>
+</body>
+</html>
