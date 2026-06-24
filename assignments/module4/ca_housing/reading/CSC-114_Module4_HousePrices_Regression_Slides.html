@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Much Is This House Worth? — CSC-114 Module 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E1F33; --cream:#F4ECD2; --amber:#E0A93B;
+    --teal:#34B3A0; --moss:#8FA85A; --rust:#C9603F;
+    --navy-2:#13283f; --ink:#F4ECD2;
+    --ui:'Space Grotesk',system-ui,sans-serif;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Instrument Serif',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--navy); color:var(--cream);
+    font-family:var(--ui); overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* scanline texture */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:9; pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.045) 3px, rgba(0,0,0,0.045) 4px);
+    mix-blend-mode:multiply;
+  }
+  .deck{position:relative; width:100vw; height:100vh; overflow:hidden}
+  .slide{
+    position:absolute; inset:0; display:none;
+    flex-direction:column; justify-content:center;
+    padding:5.5vh 7vw 8vh; opacity:0;
+    transition:opacity .35s ease;
+  }
+  .slide.active{display:flex; opacity:1}
+  /* heptagram watermark */
+  .slide::after{
+    content:""; position:absolute; right:3.5vw; bottom:3vh;
+    width:150px; height:150px; opacity:.10; pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,4 71.7,95.5 4.6,37.3 95.4,37.3 28.3,95.5' fill='none' stroke='%23F4ECD2' stroke-width='1.1'/><circle cx='50' cy='50' r='46' fill='none' stroke='%23F4ECD2' stroke-width='0.6'/></svg>");
+    background-repeat:no-repeat; background-size:contain;
+  }
+  .kicker{
+    font-family:var(--mono); font-size:.8rem; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--amber); margin-bottom:1.1rem;
+  }
+  h1{font-size:clamp(2.2rem,5.2vw,4.4rem); font-weight:700; line-height:1.04; letter-spacing:-.01em}
+  h2{font-size:clamp(1.7rem,3.8vw,3rem); font-weight:600; line-height:1.08; letter-spacing:-.01em; margin-bottom:1.4rem}
+  .sub{font-family:var(--serif); font-style:italic; font-size:clamp(1.2rem,2.4vw,1.9rem); color:var(--cream); opacity:.85; margin-top:1.2rem; line-height:1.3}
+  .meta{font-family:var(--mono); font-size:.85rem; color:var(--teal); margin-top:2rem; letter-spacing:.04em}
+  .body{font-size:clamp(1rem,1.55vw,1.32rem); line-height:1.5; max-width:46ch; color:var(--cream); opacity:.95}
+  .body strong{color:var(--amber); font-weight:600}
+  .layout{display:grid; grid-template-columns:1fr 1.05fr; gap:4vw; align-items:center; width:100%}
+  .layout.wide-viz{grid-template-columns:0.85fr 1.25fr}
+  .viz{width:100%; display:flex; align-items:center; justify-content:center}
+  .viz svg{width:100%; height:auto; max-height:64vh}
+  code,.code{font-family:var(--mono)}
+  .codeblock{
+    font-family:var(--mono); font-size:clamp(.78rem,1.1vw,1rem);
+    background:var(--navy-2); border:1px solid rgba(244,236,210,.14);
+    border-radius:8px; padding:.7rem 1rem; margin-top:1.4rem;
+    color:var(--cream); display:inline-block; line-height:1.55;
+  }
+  .codeblock .k{color:var(--amber)} .codeblock .s{color:var(--teal)} .codeblock .c{color:var(--moss); opacity:.85}
+  table.recipe{border-collapse:collapse; font-size:clamp(.82rem,1.15vw,1.05rem); margin-top:.4rem; width:100%}
+  table.recipe td,table.recipe th{border:1px solid rgba(244,236,210,.18); padding:.5rem .75rem; text-align:left}
+  table.recipe th{font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--amber)}
+  table.recipe td:nth-child(2){font-family:var(--mono); color:var(--teal)}
+  .pill{display:inline-block; padding:.15em .6em; border-radius:999px; font-family:var(--mono); font-size:.85em}
+  .pill.teal{background:rgba(52,179,160,.18); color:var(--teal); border:1px solid var(--teal)}
+  .pill.rust{background:rgba(201,96,63,.18); color:var(--rust); border:1px solid var(--rust)}
+  .callout{margin-top:1.4rem; padding:.7rem 1rem; border-left:3px solid var(--teal); background:rgba(52,179,160,.08); font-size:.95rem; line-height:1.45}
+  .callout.rust{border-left-color:var(--rust); background:rgba(201,96,63,.08)}
+  .callout .tag{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); display:block; margin-bottom:.25rem}
+  .callout.rust .tag{color:var(--rust)}
+
+  /* progress + chrome */
+  .progress{position:fixed; bottom:0; left:0; height:3px; background:var(--amber); z-index:20; transition:width .35s ease}
+  .pagenum{position:fixed; bottom:1.4vh; left:7vw; font-family:var(--mono); font-size:.78rem; color:rgba(244,236,210,.5); z-index:20}
+  .hint{position:fixed; bottom:1.4vh; right:3.5vw; font-family:var(--mono); font-size:.72rem; color:rgba(244,236,210,.4); z-index:20}
+  /* speaker notes drawer */
+  .notes{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:rgba(7,16,28,.97); border-top:2px solid var(--amber);
+    padding:1.4rem 7vw 1.6rem; transform:translateY(100%);
+    transition:transform .3s ease; max-height:46vh; overflow-y:auto;
+  }
+  .notes.open{transform:translateY(0)}
+  .notes h4{font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); margin-bottom:.6rem}
+  .notes p{font-size:.98rem; line-height:1.5; color:var(--cream); opacity:.9; max-width:90ch}
+  .notes strong{color:var(--amber)}
+  .legend{display:flex; gap:1.2rem; flex-wrap:wrap; margin-top:1.5rem; font-family:var(--mono); font-size:.78rem}
+  .legend span{display:inline-flex; align-items:center; gap:.4rem}
+  .swatch{width:12px; height:12px; border-radius:3px; display:inline-block}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 — TITLE -->
+  <section class="slide active" data-notes="Welcome them in. The arc: last unit sorted reviews into two buckets and ended in a probability. This unit predicts a <strong>number</strong> — a dollar amount — and ends in a single linear output. Same training loop, same overfitting story, but a new shape at both ends (numeric inputs, numeric output) and a new trick for tiny datasets. Name the one keeper up front: when you barely have any data, <strong>how you measure</strong> the model matters as much as the model itself.">
+    <div class="kicker">CSC-114 · Module 4 · Regression</div>
+    <h1>How Much Is<br>This House Worth?</h1>
+    <p class="sub">Teaching a network to read facts about a neighborhood and guess a price.</p>
+    <p class="meta">Scalar regression · the California Housing dataset · Chollet &amp; Watson, Ch. 4</p>
+  </section>
+
+  <!-- SLIDE 2 — TWO KINDS OF QUESTION -->
+  <section class="slide" data-notes="Anchor the contrast that runs through the whole deck. Last unit: discrete label, two buckets, a probability. This unit: a continuous value, a price, a real number that can land anywhere on the line. The word 'scalar' just means 'a single number.' Logistic regression aside (optional): warn them the name 'regression' is overloaded — logistic regression is actually classification — but we're doing the real thing, predicting a continuous value.">
+    <div class="kicker">Two kinds of question</div>
+    <div class="layout">
+      <div>
+        <h2>Which bucket?<br>vs. How much?</h2>
+        <p class="body">Classification answers <strong>which category?</strong> Regression answers <strong>how much?</strong> — a continuous number, not a label. Our target: the median home price in a California district.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 460 320" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- left: classification -->
+          <rect x="14" y="34" width="200" height="250" rx="12" fill="none" stroke="#C9603F" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="114" y="60" fill="#C9603F" font-size="14" text-anchor="middle" font-family="JetBrains Mono">LAST UNIT</text>
+          <text x="114" y="86" fill="#F4ECD2" font-size="17" text-anchor="middle" font-weight="600">Which bucket?</text>
+          <rect x="40" y="118" width="148" height="48" rx="8" fill="rgba(52,179,160,.16)" stroke="#34B3A0"/>
+          <text x="114" y="147" fill="#34B3A0" font-size="15" text-anchor="middle">positive</text>
+          <rect x="40" y="186" width="148" height="48" rx="8" fill="rgba(201,96,63,.16)" stroke="#C9603F"/>
+          <text x="114" y="215" fill="#C9603F" font-size="15" text-anchor="middle">negative</text>
+          <!-- right: regression -->
+          <rect x="246" y="34" width="200" height="250" rx="12" fill="none" stroke="#34B3A0" stroke-width="2"/>
+          <text x="346" y="60" fill="#34B3A0" font-size="14" text-anchor="middle" font-family="JetBrains Mono">THIS UNIT</text>
+          <text x="346" y="86" fill="#F4ECD2" font-size="17" text-anchor="middle" font-weight="600">How much?</text>
+          <line x1="270" y1="180" x2="422" y2="180" stroke="#F4ECD2" stroke-width="1.5"/>
+          <line x1="270" y1="174" x2="270" y2="186" stroke="#F4ECD2" stroke-width="1.5"/>
+          <line x1="422" y1="174" x2="422" y2="186" stroke="#F4ECD2" stroke-width="1.5"/>
+          <text x="270" y="205" fill="#F4ECD2" font-size="11" text-anchor="middle" font-family="JetBrains Mono" opacity=".7">$60k</text>
+          <text x="422" y="205" fill="#F4ECD2" font-size="11" text-anchor="middle" font-family="JetBrains Mono" opacity=".7">$500k</text>
+          <circle cx="360" cy="180" r="7" fill="#34B3A0"/>
+          <text x="360" y="150" fill="#34B3A0" font-size="14" text-anchor="middle" font-family="JetBrains Mono">$283k</text>
+          <!-- arrow -->
+          <text x="230" y="305" fill="#E0A93B" font-size="13" text-anchor="middle" font-family="JetBrains Mono">→ a number on a line</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — EIGHT FACTS -->
+  <section class="slide" data-notes="Features = the 8 descriptive numbers; target = the price. Stress these are already numbers — unlike the movie reviews, there's no text to convert. That's a relief and a new problem: the 8 numbers live on wildly different scales (latitude ≈ 34, population ≈ 1,400), which the next slides fix. The 'block group' detail: average population ~1,425, so think 'small neighborhood,' not 'city.'">
+    <div class="kicker">The data</div>
+    <div class="layout">
+      <div>
+        <h2>Eight facts about<br>a neighborhood</h2>
+        <p class="body">Each data point is a <strong>district</strong> (a block group ≈ a neighborhood). We get 8 numbers describing it; we predict 1 number — the median home price. 1990 census; prices run ~$60k–$500k.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 470 330" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono">
+          <rect x="10" y="14" width="300" height="302" rx="12" fill="#13283f" stroke="rgba(244,236,210,.2)"/>
+          <text x="30" y="44" fill="#E0A93B" font-size="13" font-family="Space Grotesk" font-weight="600">DISTRICT #0 — 8 features</text>
+          <g fill="#F4ECD2" font-size="13">
+            <text x="30" y="78">longitude</text><text x="30" y="104">latitude</text>
+            <text x="30" y="130">median house age</text><text x="30" y="156">population</text>
+            <text x="30" y="182">households</text><text x="30" y="208">median income</text>
+            <text x="30" y="234">total rooms</text><text x="30" y="260">total bedrooms</text>
+          </g>
+          <g fill="#34B3A0" font-size="13" text-anchor="end">
+            <text x="290" y="78">-122.2</text><text x="290" y="104">37.8</text>
+            <text x="290" y="130">41</text><text x="290" y="156">1,425</text>
+            <text x="290" y="182">499</text><text x="290" y="208">3.87</text>
+            <text x="290" y="234">2,643</text><text x="290" y="260">521</text>
+          </g>
+          <text x="160" y="296" fill="#F4ECD2" font-size="11" opacity=".55" text-anchor="middle" font-family="Space Grotesk">8 numbers in →</text>
+          <!-- arrow -->
+          <path d="M315 165 L350 165" stroke="#E0A93B" stroke-width="2" marker-end="url(#a3)"/>
+          <defs><marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker></defs>
+          <!-- target -->
+          <rect x="356" y="128" width="104" height="74" rx="10" fill="rgba(52,179,160,.16)" stroke="#34B3A0" stroke-width="2"/>
+          <text x="408" y="158" fill="#F4ECD2" font-size="11" text-anchor="middle" font-family="Space Grotesk">median price</text>
+          <text x="408" y="184" fill="#34B3A0" font-size="17" text-anchor="middle" font-weight="700">$283k</text>
+          <text x="408" y="222" fill="#34B3A0" font-size="11" text-anchor="middle" font-family="Space Grotesk">1 number out</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — TINY DATA -->
+  <section class="slide" data-notes="This is the slide that sets up the entire back half. Burn in '480.' Everything unusual we do later — normalizing carefully, scaling targets, K-fold validation, a deliberately small model — traces back to <strong>we barely have any data</strong>. Make them feel the scarcity now so K-fold lands as an obvious fix later, not a random technique. The book deliberately picks the 600-district version over the 20,640 one to teach the small-data skills.">
+    <div class="kicker">The catch</div>
+    <div class="layout">
+      <div>
+        <h2>Tiny data.<br>480 to learn from.</h2>
+        <p class="body">480 training districts, 120 test. The small version is chosen <strong>on purpose</strong> — real datasets are often tiny, and you need to handle that.</p>
+        <div class="codeblock"><span class="k">california_housing</span>.load_data(<br>&nbsp;&nbsp;version=<span class="s">"small"</span>)<br><span class="c"># train (480, 8) · test (120, 8)</span></div>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- train stack -->
+          <g>
+            <rect x="40" y="70" width="150" height="150" rx="8" fill="rgba(52,179,160,.14)" stroke="#34B3A0" stroke-width="2"/>
+            <text x="115" y="135" fill="#34B3A0" font-size="40" text-anchor="middle" font-weight="700" font-family="JetBrains Mono">480</text>
+            <text x="115" y="165" fill="#F4ECD2" font-size="14" text-anchor="middle">training</text>
+            <text x="115" y="248" fill="#34B3A0" font-size="12" text-anchor="middle" font-family="JetBrains Mono">learn here</text>
+          </g>
+          <!-- test stack -->
+          <g>
+            <rect x="250" y="120" width="100" height="100" rx="8" fill="rgba(201,96,63,.12)" stroke="#C9603F" stroke-width="2"/>
+            <text x="300" y="165" fill="#C9603F" font-size="30" text-anchor="middle" font-weight="700" font-family="JetBrains Mono">120</text>
+            <text x="300" y="190" fill="#F4ECD2" font-size="13" text-anchor="middle">test</text>
+            <text x="300" y="248" fill="#C9603F" font-size="12" text-anchor="middle" font-family="JetBrains Mono">🔒 sealed</text>
+          </g>
+          <text x="220" y="40" fill="#E0A93B" font-size="14" text-anchor="middle" font-family="JetBrains Mono">small on purpose</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — NORMALIZE -->
+  <section class="slide" data-notes="This is <strong>feature-wise normalization</strong> and it's the regression equivalent of multi-hot encoding — the preprocessing idea this unit owns. Keep the math friendly: 'subtract the average, divide by how spread out it is.' A network fed raw numbers where one feature is in the thousands and another is near 34 will struggle; leveling them lets every feature get a fair say. Don't prove anything — just give the intuition that mismatched scales drown out the small-numbered features.">
+    <div class="kicker">Preprocessing · 1 of 2</div>
+    <div class="layout">
+      <div>
+        <h2>Put every feature<br>on the same scale</h2>
+        <p class="body">Features on different scales make learning hard. Fix: for each column, subtract its mean and divide by its standard deviation. Now every feature is centered at 0 with a similar spread.</p>
+        <div class="codeblock"><span class="s">(value − mean) / std</span></div>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <text x="110" y="28" fill="#C9603F" font-size="13" text-anchor="middle" font-family="JetBrains Mono">BEFORE</text>
+          <text x="350" y="28" fill="#E0A93B" font-size="13" text-anchor="middle" font-family="JetBrains Mono">AFTER</text>
+          <!-- before: wildly different bars -->
+          <line x1="40" y1="250" x2="200" y2="250" stroke="rgba(244,236,210,.3)"/>
+          <rect x="55" y="60" width="30" height="190" fill="#C9603F" opacity=".7"/>
+          <text x="70" y="270" fill="#F4ECD2" font-size="10" text-anchor="middle">pop</text>
+          <rect x="105" y="150" width="30" height="100" fill="#C9603F" opacity=".7"/>
+          <text x="120" y="270" fill="#F4ECD2" font-size="10" text-anchor="middle">lat</text>
+          <rect x="155" y="225" width="30" height="25" fill="#C9603F" opacity=".7"/>
+          <text x="170" y="270" fill="#F4ECD2" font-size="10" text-anchor="middle">inc</text>
+          <!-- arrow -->
+          <path d="M210 155 L250 155" stroke="#E0A93B" stroke-width="2" marker-end="url(#a5)"/>
+          <defs><marker id="a5" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker></defs>
+          <!-- after: all centered, similar -->
+          <line x1="270" y1="155" x2="440" y2="155" stroke="#E0A93B" stroke-dasharray="3 3" opacity=".6"/>
+          <text x="455" y="159" fill="#E0A93B" font-size="11" text-anchor="end" font-family="JetBrains Mono"></text>
+          <rect x="285" y="110" width="30" height="90" fill="#34B3A0" opacity=".85"/>
+          <rect x="335" y="118" width="30" height="74" fill="#34B3A0" opacity=".85"/>
+          <rect x="385" y="105" width="30" height="100" fill="#34B3A0" opacity=".85"/>
+          <text x="355" y="245" fill="#34B3A0" font-size="12" text-anchor="middle" font-family="JetBrains Mono">centered at 0</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — TRAIN-ONLY STATS -->
+  <section class="slide" data-notes="The one discipline point in preprocessing, and a real-world habit worth forming. The test set is supposed to stand in for 'data we've never seen.' If we peek at it even to compute an average, it stops being a fair final exam. Tie it back to the classification unit's 'never tune on the test set' — same principle, new place it shows up. Agents and beginners both slip here by normalizing the whole dataset at once.">
+    <div class="kicker">Preprocessing · the discipline</div>
+    <div class="layout">
+      <div>
+        <h2>Mean &amp; std come<br>from TRAIN only</h2>
+        <p class="body">Compute mean and std on the <strong>training</strong> data, then use those same numbers to normalize the test data. Never compute anything from the test set — even an average.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 460 280" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <rect x="20" y="80" width="160" height="120" rx="10" fill="rgba(52,179,160,.14)" stroke="#34B3A0" stroke-width="2"/>
+          <text x="100" y="120" fill="#34B3A0" font-size="18" text-anchor="middle" font-weight="700">TRAIN</text>
+          <text x="100" y="148" fill="#F4ECD2" font-size="12" text-anchor="middle">compute</text>
+          <text x="100" y="166" fill="#F4ECD2" font-size="12" text-anchor="middle">mean + std</text>
+          <!-- allowed arrow -->
+          <path d="M182 120 L278 120" stroke="#8FA85A" stroke-width="2.5" marker-end="url(#a6)"/>
+          <text x="230" y="108" fill="#8FA85A" font-size="11" text-anchor="middle" font-family="JetBrains Mono">reuse here</text>
+          <defs><marker id="a6" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#8FA85A"/></marker></defs>
+          <rect x="280" y="80" width="160" height="120" rx="10" fill="rgba(201,96,63,.10)" stroke="#C9603F" stroke-width="2"/>
+          <text x="360" y="120" fill="#C9603F" font-size="18" text-anchor="middle" font-weight="700">TEST 🔒</text>
+          <text x="360" y="148" fill="#F4ECD2" font-size="12" text-anchor="middle">normalize with</text>
+          <text x="360" y="166" fill="#F4ECD2" font-size="12" text-anchor="middle">train's numbers</text>
+          <!-- forbidden arrow -->
+          <path d="M278 175 L182 175" stroke="#C9603F" stroke-width="2" stroke-dasharray="5 4" opacity=".8"/>
+          <text x="230" y="200" fill="#C9603F" font-size="20" text-anchor="middle" font-weight="700">✗</text>
+          <text x="230" y="225" fill="#C9603F" font-size="11" text-anchor="middle" font-family="JetBrains Mono">never the other way</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — SCALE TARGET -->
+  <section class="slide" data-notes="<strong>Target scaling.</strong> The inputs are now small numbers near 0, and the model starts with small random weights — so its first guesses are small. Asking it to output 283,000 from that starting point means crawling uphill forever at a small learning rate. Dividing targets by 100,000 puts them in the 0.6–5.0 range, same neighborhood as everything else, so training is quick. It's a convenience, not a law; you just remember to undo it when you report a dollar figure.">
+    <div class="kicker">Preprocessing · 2 of 2</div>
+    <div class="layout">
+      <div>
+        <h2>Shrink the<br>price too</h2>
+        <p class="body">Prices in the hundreds of thousands force the network to learn huge weights, which trains slowly. Divide every price by 100,000: $283,000 → 2.83. Multiply back at the end to read dollars.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 440 250" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono">
+          <rect x="20" y="95" width="150" height="60" rx="10" fill="#13283f" stroke="rgba(244,236,210,.25)"/>
+          <text x="95" y="132" fill="#F4ECD2" font-size="22" text-anchor="middle" font-weight="700">$283,000</text>
+          <path d="M178 125 L252 125" stroke="#E0A93B" stroke-width="2" marker-end="url(#a7)"/>
+          <text x="215" y="113" fill="#E0A93B" font-size="13" text-anchor="middle">÷ 100,000</text>
+          <defs><marker id="a7" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker></defs>
+          <rect x="258" y="95" width="120" height="60" rx="10" fill="rgba(52,179,160,.16)" stroke="#34B3A0" stroke-width="2"/>
+          <text x="318" y="132" fill="#34B3A0" font-size="26" text-anchor="middle" font-weight="700">2.83</text>
+          <text x="220" y="195" fill="#F4ECD2" font-size="12" text-anchor="middle" font-family="Space Grotesk" opacity=".75">multiply back by 100,000 to read dollars</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — SMALL MODEL -->
+  <section class="slide" data-notes="Read it as a pipeline, same as the classification deck. The relu layers do the pattern-finding (chapter 5 formalizes why the non-linearity matters; keep it light — 'lets the model bend'). The deliberately small size is a small-data move: a big model on 480 samples overfits hard. The interesting end is the <strong>last</strong> box — and the next slide is entirely about why it has no activation.">
+    <div class="kicker">The model</div>
+    <h2>Small data → small model</h2>
+    <div class="viz" style="margin-top:1rem">
+      <svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+        <!-- input -->
+        <rect x="10" y="80" width="130" height="70" rx="10" fill="#13283f" stroke="rgba(244,236,210,.25)"/>
+        <text x="75" y="112" fill="#F4ECD2" font-size="14" text-anchor="middle">8 features</text>
+        <text x="75" y="133" fill="#F4ECD2" font-size="11" text-anchor="middle" opacity=".6" font-family="JetBrains Mono">normalized</text>
+        <path d="M144 115 L184 115" stroke="#E0A93B" stroke-width="2" marker-end="url(#a8)"/>
+        <!-- dense 64 -->
+        <rect x="188" y="80" width="150" height="70" rx="10" fill="rgba(224,169,59,.10)" stroke="#E0A93B"/>
+        <text x="263" y="108" fill="#F4ECD2" font-size="14" text-anchor="middle">Dense 64</text>
+        <text x="263" y="130" fill="#E0A93B" font-size="12" text-anchor="middle" font-family="JetBrains Mono">relu</text>
+        <path d="M342 115 L382 115" stroke="#E0A93B" stroke-width="2" marker-end="url(#a8)"/>
+        <!-- dense 64 -->
+        <rect x="386" y="80" width="150" height="70" rx="10" fill="rgba(224,169,59,.10)" stroke="#E0A93B"/>
+        <text x="461" y="108" fill="#F4ECD2" font-size="14" text-anchor="middle">Dense 64</text>
+        <text x="461" y="130" fill="#E0A93B" font-size="12" text-anchor="middle" font-family="JetBrains Mono">relu</text>
+        <path d="M540 115 L580 115" stroke="#34B3A0" stroke-width="2.5" marker-end="url(#a8t)"/>
+        <!-- dense 1 -->
+        <rect x="584" y="80" width="150" height="70" rx="10" fill="rgba(52,179,160,.16)" stroke="#34B3A0" stroke-width="2"/>
+        <text x="659" y="108" fill="#F4ECD2" font-size="14" text-anchor="middle">Dense 1</text>
+        <text x="659" y="130" fill="#34B3A0" font-size="11" text-anchor="middle" font-family="JetBrains Mono">no activation</text>
+        <path d="M738 115 L778 115" stroke="#34B3A0" stroke-width="2.5" marker-end="url(#a8t)"/>
+        <text x="828" y="122" fill="#34B3A0" font-size="22" text-anchor="middle" font-weight="700" font-family="JetBrains Mono">2.83</text>
+        <text x="659" y="178" fill="#34B3A0" font-size="11" text-anchor="middle" font-family="JetBrains Mono">linear — any number out</text>
+        <defs>
+          <marker id="a8" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker>
+          <marker id="a8t" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#34B3A0"/></marker>
+        </defs>
+      </svg>
+    </div>
+    <p class="body" style="max-width:60ch; margin-top:.5rem">Two hidden layers, 64 units each, then one output unit. Fewer samples → use a smaller model, or it memorizes instead of learning.</p>
+  </section>
+
+  <!-- SLIDE 9 — NAKED LAST LAYER -->
+  <section class="slide" data-notes="This is the headline regression idea and the cleanest contrast with the classification unit. There, the final sigmoid was the whole point — it squashed the score into a 0–1 probability. Here, squashing is exactly wrong: a house price can be 2.83 or 4.9 or anything, so the last layer must be a plain linear unit with no activation. 'Naked last layer' is the phrase to leave in their heads. This is the single thing most likely to get copied wrong from the classification recipe.">
+    <div class="kicker">The key difference</div>
+    <div class="layout">
+      <div>
+        <h2>The last layer is naked<br>(and that's the point)</h2>
+        <p class="body">A regression output must be free to land anywhere. Put <strong>no activation</strong> on the last layer — it stays linear. A sigmoid here would trap every prediction between 0 and 1.</p>
+        <div class="codeblock">layers.<span class="k">Dense</span>(<span class="s">1</span>) <span class="c"># no activation</span></div>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- sigmoid (wrong) -->
+          <text x="210" y="26" fill="#C9603F" font-size="13" text-anchor="middle" font-family="JetBrains Mono">sigmoid → ✗ traps to 0–1</text>
+          <line x1="40" y1="120" x2="380" y2="120" stroke="rgba(244,236,210,.2)"/>
+          <line x1="210" y1="50" x2="210" y2="150" stroke="rgba(244,236,210,.2)"/>
+          <path d="M50 140 C150 140 170 60 210 60 C250 60 270 60 370 60" fill="none" stroke="#C9603F" stroke-width="2.5"/>
+          <text x="386" y="64" fill="#C9603F" font-size="11" font-family="JetBrains Mono">1</text>
+          <text x="386" y="144" fill="#C9603F" font-size="11" font-family="JetBrains Mono">0</text>
+          <!-- linear (right) -->
+          <text x="210" y="196" fill="#34B3A0" font-size="13" text-anchor="middle" font-family="JetBrains Mono">linear → ✓ any value</text>
+          <line x1="40" y1="280" x2="380" y2="280" stroke="rgba(244,236,210,.2)"/>
+          <line x1="210" y1="215" x2="210" y2="305" stroke="rgba(244,236,210,.2)"/>
+          <path d="M55 300 L365 220" fill="none" stroke="#34B3A0" stroke-width="2.5"/>
+          <circle cx="300" cy="240" r="5" fill="#34B3A0"/>
+          <text x="318" y="236" fill="#34B3A0" font-size="11" font-family="JetBrains Mono">2.83</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — MSE / MAE -->
+  <section class="slide" data-notes="Parallel to the classification unit's 'train on loss, watch accuracy,' with new names. MSE is the loss the optimizer minimizes; squaring means a single wild miss matters a lot, which pushes the model to avoid big errors. MAE is the human-readable scoreboard — and because of the ÷100,000 scaling, an MAE of 0.5 reads as '$50,000 off on average.' Keep hammering the dollar translation; it makes every later number meaningful. adam is still the optimizer — unchanged, one less thing to think about.">
+    <div class="kicker">The scoreboard</div>
+    <div class="layout">
+      <div>
+        <h2>New scoreboard:<br>MSE &amp; MAE</h2>
+        <p class="body">No "accuracy" for numbers. Train on <strong>mean squared error</strong> (squares the miss, so big misses hurt most). Watch <strong>mean absolute error</strong> — the average dollars you're off.</p>
+        <div class="callout"><span class="tag">translate it</span>MAE 0.5 ≈ off by $50,000 (because targets were ÷100,000).</div>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 440 290" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- MSE card -->
+          <rect x="20" y="30" width="180" height="230" rx="12" fill="rgba(224,169,59,.08)" stroke="#E0A93B"/>
+          <text x="110" y="58" fill="#E0A93B" font-size="15" text-anchor="middle" font-weight="600">MSE</text>
+          <text x="110" y="78" fill="#F4ECD2" font-size="11" text-anchor="middle" font-family="JetBrains Mono">train on this</text>
+          <path d="M40 230 Q110 90 180 230" fill="none" stroke="#E0A93B" stroke-width="2.5"/>
+          <text x="110" y="252" fill="#F4ECD2" font-size="11" text-anchor="middle">big misses hurt extra</text>
+          <!-- MAE card -->
+          <rect x="240" y="30" width="180" height="230" rx="12" fill="rgba(52,179,160,.10)" stroke="#34B3A0"/>
+          <text x="330" y="58" fill="#34B3A0" font-size="15" text-anchor="middle" font-weight="600">MAE</text>
+          <text x="330" y="78" fill="#F4ECD2" font-size="11" text-anchor="middle" font-family="JetBrains Mono">read this</text>
+          <path d="M260 230 L330 110 L400 230" fill="none" stroke="#34B3A0" stroke-width="2.5"/>
+          <text x="330" y="252" fill="#F4ECD2" font-size="11" text-anchor="middle">average dollars off</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 — SMALL-DATA PROBLEM -->
+  <section class="slide" data-notes="This is the problem K-fold solves; spend real time setting it up before showing the fix. With 480 total, a single validation slice is ~100 districts — small enough that luck dominates. Pick an easy 100 and the model looks great; pick a hard 100 and it looks terrible. The score has high <strong>variance</strong>: it bounces around for reasons that have nothing to do with the model's real quality. Frame the next slide as 'so how do we get a number we can actually trust?'">
+    <div class="kicker">★ The problem · part 1</div>
+    <div class="layout">
+      <div>
+        <h2>The small-data<br>problem</h2>
+        <p class="body">A normal split leaves only ~100 districts to validate on. With so few, the score swings wildly depending on <strong>which</strong> 100 you happened to pick. You can't trust it.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 440 300" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <rect x="40" y="40" width="280" height="44" rx="8" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+          <rect x="250" y="40" width="70" height="44" rx="8" fill="rgba(224,169,59,.2)" stroke="#E0A93B"/>
+          <text x="145" y="67" fill="#34B3A0" font-size="13" text-anchor="middle" font-family="JetBrains Mono">~380 train</text>
+          <text x="285" y="67" fill="#E0A93B" font-size="12" text-anchor="middle" font-family="JetBrains Mono">~100</text>
+          <text x="285" y="100" fill="#E0A93B" font-size="10" text-anchor="middle">validate</text>
+          <!-- two outcomes -->
+          <g>
+            <rect x="40" y="150" width="170" height="60" rx="8" fill="#13283f" stroke="rgba(244,236,210,.18)"/>
+            <text x="125" y="178" fill="#34B3A0" font-size="16" text-anchor="middle" font-family="JetBrains Mono">looks great!</text>
+            <text x="125" y="198" fill="#F4ECD2" font-size="10" text-anchor="middle" opacity=".6">(easy 100)</text>
+          </g>
+          <g>
+            <rect x="230" y="150" width="170" height="60" rx="8" fill="#13283f" stroke="rgba(244,236,210,.18)"/>
+            <text x="315" y="178" fill="#C9603F" font-size="16" text-anchor="middle" font-family="JetBrains Mono">looks awful!</text>
+            <text x="315" y="198" fill="#F4ECD2" font-size="10" text-anchor="middle" opacity=".6">(hard 100)</text>
+          </g>
+          <text x="220" y="248" fill="#C9603F" font-size="13" text-anchor="middle" font-family="JetBrains Mono">same model — luck decides</text>
+          <text x="220" y="278" fill="#F4ECD2" font-size="12" text-anchor="middle" opacity=".7">100 examples → noisy, unreliable score</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12 — K-FOLD GRID -->
+  <section class="slide" data-notes="Walk the grid one row at a time — fold 1 validates on block 1, trains on 2–3–4; fold 2 validates on block 2; and so on. The payoff is the average: instead of one shaky number from one lucky/unlucky 100, you get four numbers and average them, which cancels out the luck. 'Everyone gets a turn in the validation seat' is the line. K is usually 4 or 5; we use 4. Note it costs 4× the training time — that's the price of a trustworthy number on tiny data, and it's worth it here.">
+    <div class="kicker">★ The fix · K-fold cross-validation</div>
+    <div class="layout wide-viz">
+      <div>
+        <h2>K-fold: everyone<br>gets a turn</h2>
+        <p class="body">Split into 4 folds. Train 4 times; each time a different fold is the validation set, the other three are training. Average the 4 scores. Every district validates exactly once.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 540 300" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- 4 rows x 4 blocks; amber block walks down -->
+          <!-- row 1 -->
+          <g>
+            <text x="14" y="46" fill="#F4ECD2" font-size="12" opacity=".7" font-family="JetBrains Mono">fold 1</text>
+            <rect x="70" y="28" width="90" height="34" rx="5" fill="rgba(224,169,59,.25)" stroke="#E0A93B"/>
+            <rect x="166" y="28" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="262" y="28" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="358" y="28" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <text x="478" y="50" fill="#F4ECD2" font-size="12" font-family="JetBrains Mono">0.298</text>
+          </g>
+          <!-- row 2 -->
+          <g>
+            <text x="14" y="106" fill="#F4ECD2" font-size="12" opacity=".7" font-family="JetBrains Mono">fold 2</text>
+            <rect x="70" y="88" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="166" y="88" width="90" height="34" rx="5" fill="rgba(224,169,59,.25)" stroke="#E0A93B"/>
+            <rect x="262" y="88" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="358" y="88" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <text x="478" y="110" fill="#F4ECD2" font-size="12" font-family="JetBrains Mono">0.349</text>
+          </g>
+          <!-- row 3 -->
+          <g>
+            <text x="14" y="166" fill="#F4ECD2" font-size="12" opacity=".7" font-family="JetBrains Mono">fold 3</text>
+            <rect x="70" y="148" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="166" y="148" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="262" y="148" width="90" height="34" rx="5" fill="rgba(224,169,59,.25)" stroke="#E0A93B"/>
+            <rect x="358" y="148" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <text x="478" y="170" fill="#F4ECD2" font-size="12" font-family="JetBrains Mono">0.232</text>
+          </g>
+          <!-- row 4 -->
+          <g>
+            <text x="14" y="226" fill="#F4ECD2" font-size="12" opacity=".7" font-family="JetBrains Mono">fold 4</text>
+            <rect x="70" y="208" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="166" y="208" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="262" y="208" width="90" height="34" rx="5" fill="rgba(52,179,160,.14)" stroke="#34B3A0"/>
+            <rect x="358" y="208" width="90" height="34" rx="5" fill="rgba(224,169,59,.25)" stroke="#E0A93B"/>
+            <text x="478" y="230" fill="#F4ECD2" font-size="12" font-family="JetBrains Mono">0.305</text>
+          </g>
+          <!-- average -->
+          <line x1="468" y1="250" x2="520" y2="250" stroke="rgba(244,236,210,.3)"/>
+          <text x="478" y="276" fill="#8FA85A" font-size="13" font-family="JetBrains Mono" font-weight="700">0.296</text>
+          <text x="225" y="276" fill="#E0A93B" font-size="12" text-anchor="middle" font-family="JetBrains Mono">amber = validate · teal = train</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13 — FOUR SCORES -->
+  <section class="slide" data-notes="Make the spread visceral: the best fold says '$23,200 off,' the worst says '$34,900 off.' If you'd done one split and landed on fold 3, you'd brag; on fold 2, you'd panic. Neither is the truth. The average, ~$29,600, is honest. This is the concrete evidence for why slide 12's extra work pays off — point at the numbers. (Remind them: these wobble run-to-run from random initialization, so their numbers will differ.)">
+    <div class="kicker">Why we bother</div>
+    <div class="layout">
+      <div>
+        <h2>The four scores</h2>
+        <p class="body">Our folds scored 0.298, 0.349, 0.232, 0.305 — a real spread (off by $23k to $35k). Any single one would mislead. The average, <strong>0.296</strong> (~$29,600 off), is the number to trust.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono">
+          <line x1="40" y1="120" x2="420" y2="120" stroke="rgba(244,236,210,.25)"/>
+          <text x="40" y="160" fill="#F4ECD2" font-size="10" text-anchor="middle" opacity=".6">0.23</text>
+          <text x="420" y="160" fill="#F4ECD2" font-size="10" text-anchor="middle" opacity=".6">0.35</text>
+          <!-- chips positioned by value across 0.23-0.35 -->
+          <!-- 0.232 -> x~46 ; 0.305 -> x~277 ; 0.298 -> x~255 ; 0.349 -> x~416 -->
+          <circle cx="46" cy="120" r="8" fill="#34B3A0"/><text x="46" y="100" fill="#34B3A0" font-size="12" text-anchor="middle">.232</text>
+          <circle cx="255" cy="120" r="8" fill="#34B3A0"/><text x="255" y="100" fill="#34B3A0" font-size="12" text-anchor="middle">.298</text>
+          <circle cx="277" cy="120" r="8" fill="#34B3A0"/><text x="290" y="148" fill="#34B3A0" font-size="12" text-anchor="middle">.305</text>
+          <circle cx="416" cy="120" r="8" fill="#34B3A0"/><text x="416" y="100" fill="#34B3A0" font-size="12" text-anchor="middle">.349</text>
+          <!-- average -->
+          <line x1="247" y1="60" x2="247" y2="180" stroke="#8FA85A" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="247" y="200" fill="#8FA85A" font-size="14" text-anchor="middle" font-weight="700">avg 0.296</text>
+          <!-- spread bracket -->
+          <path d="M46 210 L416 210" stroke="#C9603F" stroke-width="1.5"/>
+          <path d="M46 204 L46 216 M416 204 L416 216" stroke="#C9603F" stroke-width="1.5"/>
+          <text x="231" y="234" fill="#C9603F" font-size="11" text-anchor="middle" font-family="Space Grotesk">this swing is the whole point</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14 — VALIDATION CURVE -->
+  <section class="slide" data-notes="Same overfitting shape as the classification unit's loss curve, found a different way — through K-fold instead of a single validation split. The early epochs are so bad they squash the scale, so we crop the first 10 to actually see the valley. The lesson is identical and worth repeating: more training is not automatically better; the validation curve is the judge of when to stop. The exact stall point wanders run to run — teach the SHAPE (drop, flatten, rise), not '130.'">
+    <div class="kicker">How long to train?</div>
+    <div class="layout">
+      <div>
+        <h2>Watch the curve</h2>
+        <p class="body">Average the per-epoch MAE across folds and plot it. It drops fast, flattens, then creeps back up. Improvement stalls around <strong>120–140 epochs</strong> — past there, overfitting.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+          <!-- axes -->
+          <line x1="50" y1="40" x2="50" y2="250" stroke="rgba(244,236,210,.3)"/>
+          <line x1="50" y1="250" x2="430" y2="250" stroke="rgba(244,236,210,.3)"/>
+          <text x="40" y="46" fill="#F4ECD2" font-size="10" text-anchor="end" opacity=".6" font-family="JetBrains Mono">MAE</text>
+          <text x="430" y="270" fill="#F4ECD2" font-size="10" text-anchor="end" opacity=".6" font-family="JetBrains Mono">epochs →</text>
+          <!-- best-epoch band ~120-140 -->
+          <rect x="248" y="40" width="44" height="210" fill="rgba(143,168,90,.16)"/>
+          <text x="270" y="34" fill="#8FA85A" font-size="10" text-anchor="middle" font-family="JetBrains Mono">stops improving</text>
+          <!-- overfitting zone -->
+          <rect x="292" y="40" width="138" height="210" fill="rgba(201,96,63,.10)"/>
+          <text x="361" y="34" fill="#C9603F" font-size="10" text-anchor="middle" font-family="JetBrains Mono">overfitting</text>
+          <!-- curve: steep drop, flat valley, slow rise -->
+          <path d="M60 70 C90 200 150 220 200 224 C240 227 250 226 270 226 C320 226 380 212 425 196" fill="none" stroke="#34B3A0" stroke-width="2.5"/>
+          <text x="120" y="120" fill="#F4ECD2" font-size="10" opacity=".55" font-family="JetBrains Mono">(first 10 cropped)</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15 — TRAIN ONCE, GRADE ONCE -->
+  <section class="slide" data-notes="Close the loop exactly like the classification unit: throw away the experiments, train one fresh model to the chosen epoch count, open the test set a single time. ~$31,000 off sounds like a lot until you remember the range is $60k–$500k — it's a respectable first pass from a tiny model and tiny data. The test MAE (0.31) landing near the K-fold estimate (0.296) is the happy sign that our validation was honest.">
+    <div class="kicker">The final run</div>
+    <h2>Train once at 130,<br>then grade once</h2>
+    <div class="viz" style="margin-top:.6rem">
+      <svg viewBox="0 0 860 200" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk">
+        <rect x="10" y="60" width="160" height="70" rx="10" fill="#13283f" stroke="rgba(244,236,210,.25)"/>
+        <text x="90" y="90" fill="#F4ECD2" font-size="13" text-anchor="middle">fresh model</text>
+        <text x="90" y="111" fill="#F4ECD2" font-size="11" text-anchor="middle" opacity=".6">all 480 districts</text>
+        <path d="M174 95 L214 95" stroke="#E0A93B" stroke-width="2" marker-end="url(#a15)"/>
+        <rect x="218" y="60" width="160" height="70" rx="10" fill="rgba(224,169,59,.10)" stroke="#E0A93B"/>
+        <text x="298" y="90" fill="#F4ECD2" font-size="13" text-anchor="middle">train</text>
+        <text x="298" y="111" fill="#E0A93B" font-size="12" text-anchor="middle" font-family="JetBrains Mono">epochs=130</text>
+        <path d="M382 95 L422 95" stroke="#C9603F" stroke-width="2" marker-end="url(#a15r)"/>
+        <rect x="426" y="60" width="170" height="70" rx="10" fill="rgba(201,96,63,.10)" stroke="#C9603F" stroke-width="2"/>
+        <text x="511" y="90" fill="#F4ECD2" font-size="13" text-anchor="middle">open test set</text>
+        <text x="511" y="111" fill="#C9603F" font-size="12" text-anchor="middle" font-family="JetBrains Mono">🔒 → once</text>
+        <path d="M600 95 L640 95" stroke="#34B3A0" stroke-width="2.5" marker-end="url(#a15t)"/>
+        <rect x="644" y="55" width="200" height="80" rx="10" fill="rgba(52,179,160,.16)" stroke="#34B3A0" stroke-width="2"/>
+        <text x="744" y="88" fill="#34B3A0" font-size="20" text-anchor="middle" font-weight="700" font-family="JetBrains Mono">MAE 0.31</text>
+        <text x="744" y="113" fill="#F4ECD2" font-size="12" text-anchor="middle">≈ $31,000 off</text>
+        <defs>
+          <marker id="a15" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker>
+          <marker id="a15r" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#C9603F"/></marker>
+          <marker id="a15t" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#34B3A0"/></marker>
+        </defs>
+      </svg>
+    </div>
+    <p class="body" style="max-width:64ch; margin-top:.4rem">Off by ~$31,000 against a $60k–$500k range — a solid first pass. That the test score lands near the K-fold estimate (0.296) means our validation was honest.</p>
+  </section>
+
+  <!-- SLIDE 16 — READING A PREDICTION -->
+  <section class="slide" data-notes="Contrast with both earlier models to lock in the difference: binary gave a probability you threshold at 0.5; multiclass gave a distribution you argmax; regression gives the answer directly — you just rescale it. Remind them to undo the ÷100,000 from slide 7. This is the moment the whole pipeline pays off: eight neighborhood facts went in, one dollar figure came out.">
+    <div class="kicker">Using the model</div>
+    <div class="layout">
+      <div>
+        <h2>Reading a<br>prediction</h2>
+        <p class="body"><code>predict()</code> returns a number: 2.83. Multiply by 100,000 → ~$283,000, the model's price guess for that district. No 0.5 cutoff, no class — the number is the answer.</p>
+      </div>
+      <div class="viz">
+        <svg viewBox="0 0 440 230" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono">
+          <rect x="20" y="90" width="120" height="56" rx="10" fill="#13283f" stroke="rgba(244,236,210,.25)"/>
+          <text x="80" y="116" fill="#F4ECD2" font-size="12" text-anchor="middle" font-family="Space Grotesk">predict()</text>
+          <text x="80" y="136" fill="#34B3A0" font-size="16" text-anchor="middle" font-weight="700">2.83</text>
+          <path d="M146 118 L196 118" stroke="#E0A93B" stroke-width="2" marker-end="url(#a16)"/>
+          <text x="171" y="106" fill="#E0A93B" font-size="11" text-anchor="middle">×100k</text>
+          <defs><marker id="a16" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#E0A93B"/></marker></defs>
+          <rect x="202" y="84" width="180" height="68" rx="999" fill="rgba(52,179,160,.16)" stroke="#34B3A0" stroke-width="2"/>
+          <text x="292" y="126" fill="#34B3A0" font-size="22" text-anchor="middle" font-weight="700">$283,000</text>
+          <text x="220" y="190" fill="#F4ECD2" font-size="12" text-anchor="middle" font-family="Space Grotesk" opacity=".75">the output IS the answer — no threshold, no bucket</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17 — RECIPE -->
+  <section class="slide" data-notes="Tell them to photograph this slide — it's the partner to the binary-classification recipe. Lay the two side by side out loud: same optimizer (adam), same overfitting vigilance, but the three regression-specific swaps are (1) Dense(1) with <strong>no activation</strong> instead of sigmoid, (2) <strong>mean_squared_error</strong> instead of binary_crossentropy, (3) <strong>MAE</strong> as the scoreboard instead of accuracy — and K-fold whenever data is scarce. Those swaps ARE scalar regression.">
+    <div class="kicker">★ Keeper · photograph this</div>
+    <div class="layout">
+      <div>
+        <h2>The regression<br>recipe</h2>
+        <div class="callout"><span class="tag">the partner recipe</span>Same as binary classification but for numbers: swap sigmoid → none, crossentropy → MSE, accuracy → MAE.</div>
+      </div>
+      <div>
+        <table class="recipe">
+          <tr><th>Decision</th><th>Choice</th><th>Why</th></tr>
+          <tr><td>Final layer</td><td>Dense(1)</td><td>one number out</td></tr>
+          <tr><td>Final activation</td><td>none (linear)</td><td>any value, not just 0–1</td></tr>
+          <tr><td>Loss</td><td>mean_squared_error</td><td>punishes big misses</td></tr>
+          <tr><td>Watch</td><td>mean_absolute_error</td><td>average dollars off</td></tr>
+          <tr><td>Optimizer</td><td>adam</td><td>reliable default</td></tr>
+          <tr><td>Small data</td><td>K-fold</td><td>a score you can trust</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 18 — EXPERIMENTS -->
+  <section class="slide" data-notes="The lab's payload, same discipline as the classification unit. Before each run, write a one-line prediction, then check it — the prediction is what builds the mental model. Watch especially how the K-fold average and its spread move when they change model size. Prompt Masters: ask the AI partner to predict a run's outcome first, then catch it when it's wrong — that's the bridge into Apply/Assess.">
+    <div class="kicker">The lab</div>
+    <div class="layout">
+      <div>
+        <h2>Change one knob.<br>Re-run. Write it down.</h2>
+        <p class="body">Change one thing at a time so you know what caused what. <strong>Predict → run → compare.</strong></p>
+      </div>
+      <div>
+        <table class="recipe">
+          <tr><th>Knob</th><th>Try</th></tr>
+          <tr><td>Layers</td><td>1 or 3</td></tr>
+          <tr><td>Units</td><td>32 or 128</td></tr>
+          <tr><td>Epochs</td><td>fewer / more</td></tr>
+          <tr><td>K value</td><td>5 instead of 4</td></tr>
+        </table>
+        <div class="callout" style="margin-top:1.2rem"><span class="tag">prompt masters</span>Ask your AI partner to predict a run's outcome first — then catch it when it's wrong.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 19 — CLOSE -->
+  <section class="slide" data-notes="Land the three keepers: (1) regression ends in one <strong>linear</strong> unit — no activation; (2) train on <strong>MSE</strong>, read <strong>MAE</strong> in dollars; (3) tiny data demands <strong>K-fold</strong> for a trustworthy score. Tie the bow back to the classification unit — same loop, same overfitting lesson, different shape at the ends — and send them to the notebook.">
+    <div class="kicker">Close</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,3.6rem)">Eight facts in,<br>one price out.</h1>
+    <p class="sub" style="max-width:54ch">Numbers → normalize → a small stack → a single linear value. Scale the target, trust K-fold when data is thin, stop where the validation curve flattens.</p>
+    <div class="legend">
+      <span><i class="swatch" style="background:#34B3A0"></i>linear output — any number</span>
+      <span><i class="swatch" style="background:#E0A93B"></i>train on MSE, read MAE</span>
+      <span><i class="swatch" style="background:#8FA85A"></i>K-fold for tiny data</span>
+    </div>
+    <p class="meta">Next: the lab, then probe your agent in Apply/Assess.</p>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="pagenum" id="pagenum">01 / 19</div>
+<div class="hint">← → move · N notes · F fullscreen</div>
+
+<div class="notes" id="notes">
+  <h4>Speaker notes</h4>
+  <p id="notesbody"></p>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const notes=document.getElementById('notes');
+  const notesbody=document.getElementById('notesbody');
+  const progress=document.getElementById('progress');
+  const pagenum=document.getElementById('pagenum');
+  let i=0, notesOpen=false;
+  const pad=n=>String(n).padStart(2,'0');
+
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    progress.style.width=((i+1)/slides.length*100)+'%';
+    pagenum.textContent=pad(i+1)+' / '+pad(slides.length);
+    notesbody.innerHTML=slides[i].dataset.notes||'';
+  }
+  function next(){show(i+1)} function prev(){show(i-1)}
+  function toggleNotes(){notesOpen=!notesOpen; notes.classList.toggle('open',notesOpen)}
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+    else if(e.key==='ArrowLeft'){prev()}
+    else if(e.key==='n'||e.key==='N'){toggleNotes()}
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  document.getElementById('deck').addEventListener('click',e=>{
+    if(e.clientY>window.innerHeight*0.82)return; // don't advance when clicking chrome
+    next();
+  });
+  show(0);
+</script>
+</body>
+</html>
